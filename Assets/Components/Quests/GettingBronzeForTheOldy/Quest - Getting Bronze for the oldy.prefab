@@ -1,0 +1,363 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5892557626920591999
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5892557626920591997}
+  - component: {fileID: 5069326385172854310}
+  m_Layer: 0
+  m_Name: Quest - Getting Bronze for the oldy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5892557626920591997
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5892557626920591999}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 6652071295390983521}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5069326385172854310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5892557626920591999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f4e662a92c7db4498224fb1e6315b5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Dialog: {fileID: 0}
+  title: Getting some bronze for the oldy
+  icon: {fileID: 21300000, guid: 7e5d4555455560742a29f8389ac31e8a, type: 3}
+  questId: 1
+  questDialogueController: {fileID: 6652071295390983522}
+--- !u!1001 &5069326385071527395
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 5892557626920591997}
+    m_Modifications:
+    - target: {fileID: 1876095472119835684, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472119835684, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472330298928, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472603184189, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_Text
+      value: NPC Name
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: NPCName
+      value: Old Joe
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: questId
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].text
+      value: Hi there! I'm too old for this crap. Can you get me 20 bronze?
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[1].text
+      value: Did ya find enough bronze? I need 20 bronze ores!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[2].text
+      value: Thanks! Here, take my old miner hat! I'm retiring.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[2].leftButton.text
+      value: Alrighty!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.text
+      value: Ok!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[2].leftButton.onClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[2].leftButton.onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].leftButton.onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[1].leftButton.onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[2].leftButton.onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5069326385172854310}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 6652071295390983522}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[2].leftButton.onClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[2].leftButton.onClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: EnableTalkUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartQuest
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetCurrentQuestDialog
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: HoldOutHand
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_IntArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[2].leftButton.onClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: dialogues.Array.data[0].rightButton.onClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 480
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 190
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.466
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.13485107
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9908659
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 96.543
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.7739999
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798218, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_Name
+      value: QuestDialog
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876095472698798218, guid: d61dfa31de3a62446b5bda865c7c7672,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d61dfa31de3a62446b5bda865c7c7672, type: 3}
+--- !u!224 &6652071295390983521 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1876095472698798210, guid: d61dfa31de3a62446b5bda865c7c7672,
+    type: 3}
+  m_PrefabInstance: {fileID: 5069326385071527395}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6652071295390983522 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1876095472698798209, guid: d61dfa31de3a62446b5bda865c7c7672,
+    type: 3}
+  m_PrefabInstance: {fileID: 5069326385071527395}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecbb838f96f8a794eadbaeff5729cafa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
