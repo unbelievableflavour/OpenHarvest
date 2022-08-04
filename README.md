@@ -6,7 +6,7 @@
 3. Open it in unity.
 4. Install all packages below from the "Required Packages" section.
 
-# Required packages
+## Required packages
 
 This repository contains a lot of packages that could not be included. You will have to install them manually to get the project working.
 
@@ -15,6 +15,16 @@ This repository contains a lot of packages that could not be included. You will 
 | VR Interaction Framework | ??? | https://assetstore.unity.com/publishers/46302 |
 | Cartoon Water Shader | ??? | ??? |
 | Pixel Font | ??? | https://assetstore.unity.com/publishers/39602 |
+
+# Running on Windows
+The game DOES NOT RUN WITH APPLICATION SPACEWARP ENABLED. Make sure to disable it during development.
+`Edit > Project Settings > XR Plug-in Management > Oculus > Android > Experimental > Application Spacewarp >` uncheck the box. (Dont forget to recheck it before commiting)
+
+# Building for Android
+When you build for android it's gonna give an error about a missing keystore. You will have to readd it manually in the settings.
+`Edit > Project Settings > Player > Publishing Settings > Project keystore > select` (It's located under `Assets > keystore > harvest_vr.keystore`)
+`Edit > Project Settings > Player > Publishing Settings > Project keystore > password` (It's located under `Assets > keystore > keystore_password`)
+`Edit > Project Settings > Player > Publishing Settings > Project key > password `(It's located under `Assets > keystore > keystore_password`)
 
 # Credits
 
