@@ -10,11 +10,16 @@
 
 This repository contains a lot of packages that could not be included. You will have to install them manually to get the project working.
 
-| Package | Version  | #2  |
+| Package | Folder Name | Version  | #2  |
 | :---:   | :-: | :-: |
-| VR Interaction Framework | ??? | https://assetstore.unity.com/publishers/46302 |
-| Cartoon Water Shader | ??? | ??? |
-| Pixel Font | ??? | https://assetstore.unity.com/publishers/39602 |
+| VR Interaction Framework | BNG Framework | 1.81 | https://assetstore.unity.com/packages/templates/systems/vr-interaction-framework-161066 |
+| Shader Pack : Cartoon Water | ZerinLabs_shaderPack_CartoonWater | 1.1 | https://assetstore.unity.com/packages/vfx/shaders/shader-pack-cartoon-water-178978 |
+| Free Pixel Font - Thaleah | Thaleah_PixelFont | 1.1 | https://assetstore.unity.com/packages/2d/fonts/free-pixel-font-thaleah-140059 |
+| Oculus Integration | Oculus | 38.0 | https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022 |
+| Hierarchy Folders | Sisus| 1.2.6 | https://assetstore.unity.com/packages/tools/utilities/hierarchy-folders-157716 |
+| SUPER Character Controller | FirstPerson AIO Pack | 2022.6.4f | https://assetstore.unity.com/packages/tools/game-toolkits/super-character-controller-135316 |
+
+Put these in the "Assets/External” Folder.
 
 # Custom URP
 
