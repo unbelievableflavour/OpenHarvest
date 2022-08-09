@@ -16,8 +16,17 @@ This repository contains a lot of packages that could not be included. You will 
 | Cartoon Water Shader | ??? | ??? |
 | Pixel Font | ??? | https://assetstore.unity.com/publishers/39602 |
 
+# Custom URP
+
+This application runs on a custom version of the Universal Rendering Pipeline specifically to run Application Spacewarp. When upgrading unity to a new major release, the custom URP should also be updated.
+Current pipeline can be found here:
+https://github.com/Oculus-VR/Unity-Graphics/tree/2020.3/oculus-app-spacewarp
+
+2021 branch can be found here:
+https://github.com/Oculus-VR/Unity-Graphics/tree/2021.2/oculus-app-spacewarp
+
 # Running on Windows
-The game DOES NOT RUN WITH APPLICATION SPACEWARP ENABLED. Make sure to disable it during development.
+The game DOES NOT RUN ON WINDOWS WITH APPLICATION SPACEWARP ENABLED. Make sure to disable it during development.
 `Edit > Project Settings > XR Plug-in Management > Oculus > Android > Experimental > Application Spacewarp >` uncheck the box. (Dont forget to recheck it before commiting)
 
 # Building for Android
