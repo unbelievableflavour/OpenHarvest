@@ -11,7 +11,7 @@
 This repository contains a lot of packages that could not be included. You will have to install them manually to get the project working.
 
 | Package | Folder Name | Version  | #2  |
-| :---:   | :-: | :-: |
+| :---:   | :-: | :-: | :-: |
 | VR Interaction Framework | BNG Framework | 1.81 | https://assetstore.unity.com/packages/templates/systems/vr-interaction-framework-161066 |
 | Shader Pack : Cartoon Water | ZerinLabs_shaderPack_CartoonWater | 1.1 | https://assetstore.unity.com/packages/vfx/shaders/shader-pack-cartoon-water-178978 |
 | Free Pixel Font - Thaleah | Thaleah_PixelFont | 1.1 | https://assetstore.unity.com/packages/2d/fonts/free-pixel-font-thaleah-140059 |
