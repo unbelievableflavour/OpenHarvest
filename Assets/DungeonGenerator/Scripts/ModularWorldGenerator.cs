@@ -29,7 +29,7 @@ public class ModularWorldGenerator : MonoBehaviour
 
     void Start()
     {
-        currentModule = null;
+        Reset();
         startModule = (Module)Instantiate(StartModule, transform.position, transform.rotation);
         foreach (var newModuleCollider in startModule.Colliders)
         {
@@ -140,8 +140,6 @@ public class ModularWorldGenerator : MonoBehaviour
         {
             return;
         }
-
-        // currentModule = null;
 
         // //Disable all modules except the first + connected.
         // foreach (Module module in allModulesExceptStart)
@@ -300,5 +298,10 @@ public class ModularWorldGenerator : MonoBehaviour
         threshold.transform.rotation = pendingExit.transform.rotation;
         threshold.transform.position = pendingExit.transform.position;
         threshold.transform.parent = pendingExit.transform;
+    }
+
+    private void Reset() {
+        currentModule = null;
+        Module.lastModule = null;
     }
 }

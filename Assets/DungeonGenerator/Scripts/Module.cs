@@ -4,7 +4,7 @@ public class Module : MonoBehaviour
 {
 	public string[] Tags;
 	public Collider[] Colliders;
-    static Module lastModule = null;
+    public static Module lastModule = null;
 
 	public ModuleConnector[] GetExits()
 	{
