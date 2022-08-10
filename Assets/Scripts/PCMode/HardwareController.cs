@@ -1,18 +1,24 @@
-﻿using UnityEngine;
+using UnityEngine;
+
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 
 public class HardwareController : MonoBehaviour
-{
-    public bool enablePCMode = false;
+{    
+    public HarvestSettings HarvestSettings;
     public GameObject VRPlayerObject;
     public GameObject PCPlayerObject;
 
+#if UNITY_EDITOR
     void Start()
     {
-        if (enablePCMode)
+        if (HarvestSettings.isPCMode)
         {
             GetComponent<HeadsetDetector>().enabled = false;
             VRPlayerObject.SetActive(false);
             PCPlayerObject.SetActive(true);
-        }
+        }        
     }
+#endif
 }

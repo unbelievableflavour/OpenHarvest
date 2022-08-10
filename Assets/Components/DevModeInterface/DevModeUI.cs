@@ -2,10 +2,11 @@
 
 public class DevModeUI : MonoBehaviour
 {
-    public bool devMode = false;
+    public HarvestSettings HarvestSettings;
+
     void Start()
     {
-        if (!devMode)
+        if (!HarvestSettings.enableSandbox)
         {
             gameObject.SetActive(false);
         }

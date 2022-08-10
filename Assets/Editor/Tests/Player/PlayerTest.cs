@@ -103,12 +103,6 @@ namespace Player
         }
 
         [Test]
-        public void ItChecksIfPCModeIsDisabled()
-        {
-            Assert.AreEqual(false, player.GetComponent<HardwareController>().enablePCMode);
-        }
-
-        [Test]
         public void ItChecksIfAllPlayerCollidersAreIgnored()
         {
             var headCollisionFade = xrRigAdvanced.GetComponentInChildren<HeadCollisionFade>();
