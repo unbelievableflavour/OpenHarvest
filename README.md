@@ -39,6 +39,15 @@ When you build for android it's gonna give an error about a missing keystore. Yo
 `Edit > Project Settings > Player > Publishing Settings > Project keystore > password` (It's located under `Assets > keystore > keystore_password`)
 `Edit > Project Settings > Player > Publishing Settings > Project key > password `(It's located under `Assets > keystore > keystore_password`)
 
+# Harvest Settings
+
+Harvest specific settings can be found in a scriptable object under `Assets/ScriptableObjects/HarvestSettings`.
+
+| Setting | Description |
+| :---: | :-: |
+| Is PC Mode | Plays harvest in Pancake mode.|
+| Enable Sandbox | Makes the Sandbox scene accessible through main menu.|
+
 # Credits
 
 ## Packages
