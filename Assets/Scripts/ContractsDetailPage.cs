@@ -32,11 +32,6 @@ public class ContractsDetailPage : MonoBehaviour
             rewardsString += "Gold: " + contract.rewardGold + "\n";
         }
 
-        foreach (HarvestDataTypes.Item rewardItem in contract.rewardItems)
-        {
-            rewardsString += rewardItem.name + "\n";
-        }
-
         rewards.text = rewardsString;
 
         slotsController.SetNumberOfSlotsEnabled(contract.requirements.Count);

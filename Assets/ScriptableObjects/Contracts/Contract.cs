@@ -22,9 +22,6 @@ namespace HarvestDataTypes
 
         [Header("Rewards")]
         public int rewardGold;
-
-        [Header("SUPPORTED SOON")]
-        public List<Item> rewardItems;
     }
 
 }
