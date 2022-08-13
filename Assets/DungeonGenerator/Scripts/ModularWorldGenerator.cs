@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class ModularWorldGenerator : MonoBehaviour
 {
+    public HarvestSettings HarvestSettings;
     public Module StartModule;
     public Module BlockModule;
     public GameObject Threshold;
@@ -16,7 +17,7 @@ public class ModularWorldGenerator : MonoBehaviour
     public bool showRemovedOverlapColliders = false;
     public Material previewMaterial;
 
-    [Header("Filled on start")]
+    [Header("Filled on start (dont edit)")]
 
     [ReadOnly]
     public List<Module> allModulesExceptStart;
@@ -140,6 +141,13 @@ public class ModularWorldGenerator : MonoBehaviour
         {
             return;
         }
+        
+#if UNITY_EDITOR
+        if (HarvestSettings.isPCMode)
+        {
+            return;
+        }
+#endif
 
         // //Disable all modules except the first + connected.
         // foreach (Module module in allModulesExceptStart)
