@@ -16,7 +16,6 @@ This repository contains a lot of packages that could not be included. You will 
 | Shader Pack : Cartoon Water | ZerinLabs_shaderPack_CartoonWater | 1.1 | https://assetstore.unity.com/packages/vfx/shaders/shader-pack-cartoon-water-178978 |
 | Oculus Integration | Oculus | 38.0 | https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022 |
 | Hierarchy Folders | Sisus| 1.2.6 | https://assetstore.unity.com/packages/tools/utilities/hierarchy-folders-157716 |
-| SUPER Character Controller | FirstPerson AIO Pack | 2022.6.4f | https://assetstore.unity.com/packages/tools/game-toolkits/super-character-controller-135316 |
 
 Put these in the "Assets/External” Folder.
 
@@ -57,6 +56,7 @@ Thank you devs for offering these awesome packages and letting us include them i
 | Package | Folder Name | Author | Version  | Url  |
 | :---:   | :---: | :---: | :---: | :---: |
 | Free Pixel Font - Thaleah | Thaleah_PixelFont | TinyWorlds | 1.1 | https://assetstore.unity.com/packages/2d/fonts/free-pixel-font-thaleah-140059 |
+| Modular First Person Controller | ModularFirstPersonController | JeCase | 1.0.1 | https://assetstore.unity.com/packages/3d/characters/modular-first-person-controller-189884 |
 
 ## Other credits
 
