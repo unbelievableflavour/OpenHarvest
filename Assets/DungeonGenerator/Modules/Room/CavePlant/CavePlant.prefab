@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8838424945082967754}
-  - component: {fileID: 8838424945082967755}
+  - component: {fileID: 4053948445594134114}
   m_Layer: 0
-  m_Name: marker
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 8838424945454859010}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &8838424945082967755
+--- !u!114 &4053948445594134114
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,16 +40,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 8838424945082967765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 8838424945454859011}
-  CanReceive: []
+  CanReceive:
+  - plant
   CanSpawn: []
   IsDefault: 1
-  needsBlockade: 0
-  spawnRate: 100
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
 --- !u!1 &8838424945454859021
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,14 +1,32 @@
-﻿using UnityEngine;
+using System.Linq;
+using UnityEngine;
+using System.Collections.Generic;
 
 public class Module : MonoBehaviour
 {
-	public string[] Tags;
 	public Collider[] Colliders;
     public static Module lastModule = null;
 
 	public ModuleConnector[] GetExits()
 	{
 		return GetComponentsInChildren<ModuleConnector>();
+	}
+    
+    public bool ModuleConnectorHasTag(string tagToMatch)
+	{
+        var moduleConnectors = GetExits();
+		var matchingModuleConnectors = moduleConnectors.Where(moduleConnector => moduleConnector.CanReceive.Contains(tagToMatch)).ToArray();
+        return matchingModuleConnectors.Length > 0;
+	}
+
+    public PropModuleConnector[] GetPropExits()
+	{
+		return GetComponentsInChildren<PropModuleConnector>();
+	}
+
+    public MapModuleConnector[] GetMapExits()
+	{
+		return GetComponentsInChildren<MapModuleConnector>();
 	}
 
     private void ToggleConnectedModules(bool isOn)
