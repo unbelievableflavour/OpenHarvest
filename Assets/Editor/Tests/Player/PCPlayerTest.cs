@@ -19,8 +19,8 @@ namespace Player
         [Test]
         public void ItChecksMatchesTheFieldOfViewOfTheQuest()
         {
-            var fpsController = player.GetComponentInChildren<FirstPersonAIO>(true);
-            Assert.AreEqual(98, fpsController.GetComponentInChildren<Camera>(true).fieldOfView);
+            var fpsController = player.GetComponentInChildren<FirstPersonController>(true);
+            Assert.AreEqual(98, fpsController.GetComponentInChildren<FirstPersonController>(true).fov);
         }
 
         [TearDown]
