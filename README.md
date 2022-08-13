@@ -54,9 +54,9 @@ Harvest specific settings can be found in a scriptable object under `Assets/Scri
 
 Thank you devs for offering these awesome packages and letting us include them in our project.
 
-| Package | Folder Name | Version  | Url  |
+| Package | Folder Name | Author | Version  | Url  |
 | :---:   | :-: | :-: | :-: |
-| Free Pixel Font - Thaleah | Thaleah_PixelFont | 1.1 | https://assetstore.unity.com/packages/2d/fonts/free-pixel-font-thaleah-140059 |
+| Free Pixel Font - Thaleah | Thaleah_PixelFont | TinyWorlds | 1.1 | https://assetstore.unity.com/packages/2d/fonts/free-pixel-font-thaleah-140059 |
 
 ## Other credits
 
