@@ -38,9 +38,9 @@ public class ModularGenerator : MonoBehaviour
         return GetRandom(moduleConnector.CanSpawn);
     }
   
-    protected Module GetRandomModuleWithTag(IEnumerable<Module> modules, string tagToMatch)
+    protected Module GetRandomModuleWithTag(Module[] modules, string tagToMatch)
     {
-        var matchingModules = modules.Where(m => m.Tags.Contains(tagToMatch)).ToArray();
+        var matchingModules = modules.Where(module => module.ModuleConnectorHasTag(tagToMatch)).ToArray();
         if (matchingModules.Length == 0)
         {
             throw new System.Exception("No modules found with tag: " + tagToMatch);
@@ -50,7 +50,7 @@ public class ModularGenerator : MonoBehaviour
 
     protected ModuleConnector GetModuleConnectorWithTag(ModuleConnector[] moduleConnectors, string tagToMatch)
     {
-        var matchingModuleConnectors = moduleConnectors.Where(m => m.CanReceive.Contains(tagToMatch)).ToArray();
+        var matchingModuleConnectors = moduleConnectors.Where(moduleConnector => moduleConnector.CanReceive.Contains(tagToMatch)).ToArray();
         if (matchingModuleConnectors.Length == 0)
         {
             throw new System.Exception("No module connectors found with tag: " + tagToMatch);
