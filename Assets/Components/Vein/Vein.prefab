@@ -426,9 +426,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2617675817335456469}
-  - component: {fileID: 2617675817335456470}
+  - component: {fileID: 2932866774045188854}
   m_Layer: 0
-  m_Name: moduleConnector
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -448,7 +448,7 @@ Transform:
   m_Father: {fileID: 2617675815847300969}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2617675817335456470
+--- !u!114 &2932866774045188854
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -457,16 +457,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 2617675817335456468}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 2617675815847300970}
-  CanReceive: []
+  CanReceive:
+  - vein
+  - veinBronze
   CanSpawn: []
-  IsDefault: 1
-  needsBlockade: 0
-  spawnRate: 100
+  IsDefault: 0
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
 --- !u!1 &2965399507462505988
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,7 +1102,6 @@ MonoBehaviour:
   secondHitSounds: []
   breakSounds: []
   useOnCollisionEnter: 1
-  useOnTriggerEnter: 0
   dontDestroyOnBreak: 0
   useCooldownCollisionZone: 1
   afterBreakFunctions:

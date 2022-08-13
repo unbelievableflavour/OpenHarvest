@@ -2,126 +2,93 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ModularWorldGenerator : MonoBehaviour
+public class ModularWorldGenerator : ModularGenerator
 {
-    public HarvestSettings HarvestSettings;
+    public HarvestSettings harvestSettings;
+    public ModularRoomGenerator modularRoomGenerator;
+    public int Iterations = 5;
+
+    [Header("Module types")]
     public Module StartModule;
     public Module BlockModule;
     public GameObject Threshold;
     public Module[] Modules;
-    public int Iterations = 5;
 
     [Header("Debug Tools")]
-    public bool showAllModulesOnStart = false;
-    public bool showOverlapColliders = false;
-    public bool showRemovedOverlapColliders = false;
     public Material previewMaterial;
 
-    [Header("Filled on start (dont edit)")]
-
+    [Header("Filled on start")]
     [ReadOnly]
-    public List<Module> allModulesExceptStart;
+    public List<Module> allSpawnedModulesExceptStart;
 
     //Use for player location determination
     public static Module currentModule;
     int maxShowDistance = 30;
 
-    Module startModule;
+    Module spawnedStartModule;
 
-    void Start()
+    void Start() 
     {
         Reset();
-        startModule = (Module)Instantiate(StartModule, transform.position, transform.rotation);
-        foreach (var newModuleCollider in startModule.Colliders)
+        spawnedStartModule = (Module)Instantiate(StartModule, transform.position, transform.rotation);
+        foreach (var newModuleCollider in spawnedStartModule.Colliders)
         {
             newModuleCollider.gameObject.layer = 18;
         }
 
-        var pendingExits = new List<ModuleConnector>(startModule.GetExits());
-        //var pendingTag = startModule.Tags;
+        var currentIterationModuleConnectors = new List<MapModuleConnector>(spawnedStartModule.GetMapExits());
+
         for (int iteration = 0; iteration < Iterations; iteration++)
         {
-            var newExits = new List<ModuleConnector>();
+            var nextIterationModuleConnectors = new List<MapModuleConnector>();
 
-            foreach (var pendingExit in pendingExits)
+            foreach (var currentModule in currentIterationModuleConnectors)
             {
-                if (Random.Range(1, 100) > pendingExit.spawnRate)
-                {
-                    continue;
-                }
-                string newTag = "";
-
-                try
-                {
-                    newTag = GetRandom(pendingExit.CanSpawn);
-                }
-                catch
-                {
-                    throw new System.Exception("index error occured for module: " + pendingExit.GetModule().transform.name);
-                }
-
-                var newModulePrefab = GetRandomWithTag(Modules, newTag);
+                string newTag = GetRandomTagToSpawn(currentModule);
+                var newModulePrefab = GetRandomModuleWithTag(Modules, newTag);
                 var newModule = (Module)Instantiate(newModulePrefab);
                 var newModuleColliders = newModule.Colliders;
 
-                //Collider collision = newModule.GetComponent<Module>().Colliders[0];
+                var newModuleExits = newModule.GetMapExits();
+                var exitToMatch = newModuleExits.FirstOrDefault(x => x.IsDefault) ?? GetModuleConnectorWithTag(newModuleExits, newTag);
+                ConnectModules(currentModule, exitToMatch);
 
-                var newModuleExits = newModule.GetExits();
-                var exitToMatch = newModuleExits.FirstOrDefault(x => x.IsDefault) ?? GetRandomExitWithTag(newModuleExits, newTag);
-                ConnectExits(pendingExit, exitToMatch);
+                if (moduleOverlapsOtherModule(newModuleColliders)) {
+                    Destroy(newModule.gameObject);
+                    SpawnBlockade(currentModule);
+                    continue;
+                }
 
-                bool shouldKeep = true;
                 foreach (var newModuleCollider in newModuleColliders)
                 {
-                    if (colliderOverlapsOtherModule(newModuleCollider))
-                    {
-                        shouldKeep = false;
-                        break;
-                    }
-
-                    //This collider checks out!
                     // prepare the unprepared module collider
                     newModuleCollider.gameObject.layer = 18;
                 }
 
-                if (!shouldKeep)
-                {
-                    Destroy(newModule.gameObject);
-                    SpawnBlockade(pendingExit);
-                    continue;
-                }
+                SpawnThreshold(currentModule);
 
-                if (pendingExit.needsBlockade)
-                {
-                    SpawnThreshold(pendingExit);
-                }
+                modularRoomGenerator.SpawnModulesInRoom(newModule);
 
-                pendingExit.connectedModuleConnector = exitToMatch;
-                exitToMatch.connectedModuleConnector = pendingExit;
-
-                allModulesExceptStart.Add(newModule);
-                newExits.AddRange(newModuleExits.Where(e => e != exitToMatch));
+                allSpawnedModulesExceptStart.Add(newModule);
+                nextIterationModuleConnectors.AddRange(newModuleExits.Where(e => e != exitToMatch));
             }
 
-            pendingExits = newExits;
+            currentIterationModuleConnectors = nextIterationModuleConnectors;
         }
 
-        //lockUpOpenExits
-        foreach (var pendingExit in pendingExits)
-        {
-            if (pendingExit.needsBlockade)
-            {
-                SpawnBlockade(pendingExit);
-            }
-        }
+        lockExitsOfFinalIteration(currentIterationModuleConnectors);
 
-        //Disable all modules except the first + connected.
-        foreach (Module module in allModulesExceptStart)
+        //Disable all modules
+        foreach (Module module in allSpawnedModulesExceptStart)
         {
-            if (showAllModulesOnStart)
+            
+#if UNITY_EDITOR
+            if (harvestSettings.showAllModulesOnStart)
             {
-                return;
+                break;
             }
+#endif
+
             module.gameObject.SetActive(false);
         }
     }
@@ -133,6 +100,14 @@ public class ModularWorldGenerator : MonoBehaviour
             return;
         }
 
+#if UNITY_EDITOR
+        if (harvestSettings.isPCMode)
+        {
+            return;
+        }
+#endif
+
+        // If player somehow manages to fall of the map, go to farm entrance.
         var moduleCenter = currentModule.Colliders[0].bounds.center;
         float currentDistance = Vector3.Distance(moduleCenter, GameState.currentPlayerPosition.position);
         bool tooFarAway = currentDistance > maxShowDistance;
@@ -141,97 +116,47 @@ public class ModularWorldGenerator : MonoBehaviour
         {
             return;
         }
-        
-#if UNITY_EDITOR
-        if (HarvestSettings.isPCMode)
-        {
-            return;
-        }
-#endif
-
-        // //Disable all modules except the first + connected.
-        // foreach (Module module in allModulesExceptStart)
-        // {
-        //     module.gameObject.SetActive(false);
-        // }
-
-        // startModule.ToggleModule();
+              
         GameState.currentSceneSwitcher.SwitchToScene(1, "Cave");
     }
 
-    private void ConnectExits(ModuleConnector oldExit, ModuleConnector newExit)
-    {
-        var newModule = newExit.transform.parent;
-        var forwardVectorToMatch = -oldExit.transform.forward;
-        var correctiveRotation = Azimuth(forwardVectorToMatch) - Azimuth(newExit.transform.forward);
-        newModule.RotateAround(newExit.transform.position, Vector3.up, correctiveRotation);
-        var correctiveTranslation = oldExit.transform.position - newExit.transform.position;
-        newModule.transform.position += correctiveTranslation;
-    }
-
-
-    private static TItem GetRandom<TItem>(TItem[] array)
-    {
-        int randomIndex = Random.Range(0, array.Length);
-        return array[randomIndex];
-    }
-
-    private static ModuleConnector GetRandomExitWithTag(ModuleConnector[] moduleConnectors, string tagToMatch)
-    {
-        var matchingModuleConnectors = moduleConnectors.Where(m => m.CanReceive.Contains(tagToMatch)).ToArray();
-        if (matchingModuleConnectors.Length == 0)
-        {
-            throw new System.Exception("No module connectors found with tag: " + tagToMatch);
+    private bool moduleOverlapsOtherModule(Collider[] newModuleColliders) {
+        foreach (Collider newModuleCollider in newModuleColliders) {
+            if (colliderOverlapsOtherModule(newModuleCollider)) {
+                return true;
+            }
         }
-        return GetRandom(matchingModuleConnectors);
+
+        return false;
     }
 
-
-    private static Module GetRandomWithTag(IEnumerable<Module> modules, string tagToMatch)
-    {
-        var matchingModules = modules.Where(m => m.Tags.Contains(tagToMatch)).ToArray();
-        if (matchingModules.Length == 0)
-        {
-            throw new System.Exception("No modules found with tag: " + tagToMatch);
-        }
-        return GetRandom(matchingModules);
-    }
-
-
-    private static float Azimuth(Vector3 vector)
-    {
-        return Vector3.Angle(Vector3.forward, vector) * Mathf.Sign(vector.x);
-    }
-
-    void generateDebugCube(BoxCollider boxCollider, bool isRemoved = false)
-    {
-        Vector3 worldCenter = boxCollider.transform.TransformPoint(boxCollider.center);
-
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.name = "BoxCollider";
-        cube.transform.position = worldCenter;
-        cube.transform.localScale = boxCollider.size;
-        cube.transform.rotation = boxCollider.transform.rotation;
-
-        if (isRemoved)
-        {
-            var cubeRenderer = cube.GetComponent<Renderer>();
-            cubeRenderer.material = previewMaterial;
+    private void lockExitsOfFinalIteration(List<MapModuleConnector> moduleConnectors){
+        foreach (MapModuleConnector moduleConnector in moduleConnectors) {
+            SpawnBlockade(moduleConnector);
         }
     }
 
-    void generateDebugSphere(SphereCollider sphereCollider, bool isRemoved = false)
+    private void SpawnBlockade(ModuleConnector moduleConnector)
     {
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        cube.transform.name = "SphereCollider";
-        cube.transform.position = sphereCollider.bounds.center;
-        cube.transform.localScale = new Vector3(sphereCollider.radius, sphereCollider.radius, sphereCollider.radius) * 2;
+        var blockModule = (Module)Instantiate(BlockModule);
+        var newModuleExits = blockModule.GetExits();
+        var exitToMatch = newModuleExits.FirstOrDefault(x => x.IsDefault) ?? GetRandom(newModuleExits);
+        ConnectModules(moduleConnector, exitToMatch);
+        allSpawnedModulesExceptStart.Add(blockModule);
+    }
 
-        if (isRemoved)
-        {
-            var cubeRenderer = cube.GetComponent<Renderer>();
-            cubeRenderer.material = previewMaterial;
-        }
+    //This is a WIP fix for the players falling through the map it places a small collider between every doorway so people dont fall.
+    private void SpawnThreshold(ModuleConnector moduleConnector)
+    {
+        var threshold = (GameObject)Instantiate(Threshold);
+        threshold.transform.rotation = moduleConnector.transform.rotation;
+        threshold.transform.position = moduleConnector.transform.position;
+        threshold.transform.parent = moduleConnector.transform;
+    }
+
+    private void Reset() {
+        currentModule = null;
+        Module.lastModule = null;
     }
 
     bool colliderOverlapsOtherModule(Collider newModuleCollider)
@@ -242,10 +167,12 @@ public class ModularWorldGenerator : MonoBehaviour
 
             Vector3 worldCenter = boxCollider.transform.TransformPoint(boxCollider.center);
 
-            if (showOverlapColliders)
+#if UNITY_EDITOR
+            if (harvestSettings.showOverlapColliders)
             {
-                generateDebugCube(boxCollider);
+                generateDebugCube(boxCollider, false, "OVERLAP_COLLIDER");
             }
+#endif
 
             Collider[] hitColliders = Physics.OverlapBox(worldCenter, boxCollider.size * 0.5f, boxCollider.transform.rotation);
             foreach (var hitCollider in hitColliders)
@@ -253,11 +180,16 @@ public class ModularWorldGenerator : MonoBehaviour
                 //If collision is of preparedModuleColliders
                 if (hitCollider.gameObject.layer == 18)
                 {
-                    if (showRemovedOverlapColliders)
+#if UNITY_EDITOR
+                    if (harvestSettings.showRemovedOverlapColliders)
                     {
-                        generateDebugCube(boxCollider, true);
+                        generateDebugCube(
+                            boxCollider,
+                            true,
+                            "REMOVED_OVERLAP_COLLIDER - " + newModuleCollider.name + " against " + hitCollider.name
+                        );
                     }
-                    //Debug.Log(newModule.name + " against " + hitCollider.transform.parent.parent.name);
+#endif
                     return true;
                 }
             }
@@ -268,21 +200,29 @@ public class ModularWorldGenerator : MonoBehaviour
             SphereCollider sphereCollider = newModuleCollider.GetComponent<SphereCollider>();
             Collider[] hitColliders = Physics.OverlapSphere(sphereCollider.bounds.center, sphereCollider.radius);
 
-            if (showOverlapColliders)
+#if UNITY_EDITOR
+            if (harvestSettings.showOverlapColliders)
             {
-                generateDebugSphere(sphereCollider);
+                generateDebugSphere(sphereCollider, false, "OVERLAP_COLLIDER");
             }
+#endif
 
             foreach (var hitCollider in hitColliders)
             {
 
                 if (hitCollider.gameObject.layer == 18)
                 {
-                    if (showRemovedOverlapColliders)
+#if UNITY_EDITOR
+                    if (harvestSettings.showRemovedOverlapColliders)
                     {
-                        generateDebugSphere(sphereCollider, true);
+                        generateDebugSphere(
+                            sphereCollider,
+                            true,
+                            "REMOVED_OVERLAP_COLLIDER - " + newModuleCollider.name + " against " + hitCollider.name
+                        );
                     }
-                    //Debug.Log(newModule.name + " against " + hitCollider.name);
+#endif
+
                     return true;
                 }
             }
@@ -291,25 +231,34 @@ public class ModularWorldGenerator : MonoBehaviour
         return false;
     }
 
-    private void SpawnBlockade(ModuleConnector pendingExit)
+    private void generateDebugCube(BoxCollider boxCollider, bool isRemoved = false, string name = null)
     {
-        var blockModule = (Module)Instantiate(BlockModule);
-        var newModuleExits = blockModule.GetExits();
-        var exitToMatch = newModuleExits.FirstOrDefault(x => x.IsDefault) ?? GetRandom(newModuleExits);
-        ConnectExits(pendingExit, exitToMatch);
+        Vector3 worldCenter = boxCollider.transform.TransformPoint(boxCollider.center);
+
+        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.name = string.IsNullOrEmpty(name) ? "DEBUG - BoxCollider" : name;
+        cube.transform.position = worldCenter;
+        cube.transform.localScale = boxCollider.size;
+        cube.transform.rotation = boxCollider.transform.rotation;
+
+        if (isRemoved)
+        {
+            var renderer = cube.GetComponent<Renderer>();
+            renderer.material = previewMaterial;
+        }
     }
 
-    //This is a WIP fix for the players falling through the map it places a small collider between every doorway so people dont fall.
-    private void SpawnThreshold(ModuleConnector pendingExit)
+    private void generateDebugSphere(SphereCollider sphereCollider, bool isRemoved = false, string name = null)
     {
-        var threshold = (GameObject)Instantiate(Threshold);
-        threshold.transform.rotation = pendingExit.transform.rotation;
-        threshold.transform.position = pendingExit.transform.position;
-        threshold.transform.parent = pendingExit.transform;
-    }
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.name = string.IsNullOrEmpty(name) ? "DEBUG - SphereCollider" : name;
+        sphere.transform.position = sphereCollider.bounds.center;
+        sphere.transform.localScale = new Vector3(sphereCollider.radius, sphereCollider.radius, sphereCollider.radius) * 2;
 
-    private void Reset() {
-        currentModule = null;
-        Module.lastModule = null;
+        if (isRemoved)
+        {
+            var renderer = sphere.GetComponent<Renderer>();
+            renderer.material = previewMaterial;
+        }
     }
 }

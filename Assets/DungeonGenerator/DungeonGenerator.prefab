@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 88836712380382469}
   - component: {fileID: 88836712380382468}
+  - component: {fileID: 97213765345590981}
   m_Layer: 0
   m_Name: DungeonGenerator
   m_TagString: Untagged
@@ -43,19 +44,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b86b9f24bd3c07d4094a349cb6330ad7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HarvestSettings: {fileID: 11400000, guid: 0137c9bfd66c6684488e5d50f42814d6, type: 2}
+  harvestSettings: {fileID: 11400000, guid: 0137c9bfd66c6684488e5d50f42814d6, type: 2}
+  modularRoomGenerator: {fileID: 97213765345590981}
+  Iterations: 10
   StartModule: {fileID: 0}
   BlockModule: {fileID: 0}
-  Threshold: {fileID: 0}
+  Threshold: {fileID: 3342088425268330289, guid: 0622848a963fbe849b435f9ff5527771,
+    type: 3}
   Modules:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  previewMaterial: {fileID: 2100000, guid: 100aeebd5c7738044b850b10fa9b46bc, type: 2}
+  allSpawnedModulesExceptStart: []
+--- !u!114 &97213765345590981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 88836712380382471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e89a3bef5e5982348a551229c02c32d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   Iterations: 5
-  showAllModulesOnStart: 0
-  showOverlapColliders: 0
-  showRemovedOverlapColliders: 0
-  previewMaterial: {fileID: 0}
-  allModulesExceptStart: []
+  Modules:
+  - {fileID: 3825671156410792728, guid: 80956a80b27896847b63c9db3500e2d5, type: 3}
+  - {fileID: 8838424945454859011, guid: a04ef74e5d93bbc4e9ce991e21220f12, type: 3}
+  - {fileID: 3825671156410792728, guid: 73d691c7509df2b48833692ebf25bdbd, type: 3}
+  - {fileID: 3825671156410792728, guid: 00c5f58cdb4f44549b657008ee925926, type: 3}
+  - {fileID: 3825671156410792728, guid: b5b7efe2bc8e2d547941e023befa1a30, type: 3}
+  allSpawnedModulesExceptStart: []

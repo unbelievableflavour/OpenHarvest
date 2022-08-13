@@ -5,9 +5,12 @@ public class HarvestSettings : ScriptableObject
 {
     public const string k_MyCustomSettingsPath = "Assets/Editor/MyCustomSettings.asset";
 
-    [SerializeField]
     public bool isPCMode;
-
-    [SerializeField]
     public bool enableSandbox;
+
+    [Header("Random World Generator")]
+
+    public bool showAllModulesOnStart = false;
+    public bool showOverlapColliders = false;
+    public bool showRemovedOverlapColliders = false;
 }

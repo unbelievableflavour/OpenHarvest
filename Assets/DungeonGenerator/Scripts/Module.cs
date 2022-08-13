@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class Module : MonoBehaviour
 {
@@ -9,6 +9,16 @@ public class Module : MonoBehaviour
 	public ModuleConnector[] GetExits()
 	{
 		return GetComponentsInChildren<ModuleConnector>();
+	}
+
+    public PropModuleConnector[] GetPropExits()
+	{
+		return GetComponentsInChildren<PropModuleConnector>();
+	}
+
+    public MapModuleConnector[] GetMapExits()
+	{
+		return GetComponentsInChildren<MapModuleConnector>();
 	}
 
     private void ToggleConnectedModules(bool isOn)

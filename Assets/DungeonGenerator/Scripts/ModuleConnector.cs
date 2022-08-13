@@ -8,10 +8,6 @@ public class ModuleConnector : MonoBehaviour
 	public string[] CanSpawn;
 	public bool IsDefault;
 
-	[Header("RoomConnector-only options")]
-	public bool needsBlockade = false;
-	public int spawnRate = 100;
-
 	[ReadOnly]
 	public ModuleConnector connectedModuleConnector = null;
 
