@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace HarvestDataTypes
 {
-
     [CreateAssetMenu(fileName = "New Item Database", menuName = "Harvest/Databases/Items")]
     public class ItemDatabase : ScriptableObject
     {
