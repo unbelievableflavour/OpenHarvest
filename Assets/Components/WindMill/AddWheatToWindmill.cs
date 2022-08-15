@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using static Definitions;
 
 public class AddWheatToWindmill : MonoBehaviour
 {
@@ -18,13 +17,13 @@ public class AddWheatToWindmill : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        var itemInformation = other.GetComponent<ItemInformation>();
-        if (!itemInformation)
+        var item = Definitions.GetItemFromObject(other);
+        if (!item)
         {
             return;
         }
 
-        if (itemInformation.getItemId() != WheatId)
+        if (item.itemId != WheatId)
         {
             return;
         }

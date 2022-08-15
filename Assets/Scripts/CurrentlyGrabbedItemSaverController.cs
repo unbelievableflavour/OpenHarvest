@@ -22,9 +22,13 @@ public class CurrentlyGrabbedItemSaverController : MonoBehaviour
             return;
         }
 
-        foreach (SaveableItem item in storedItems)
+        foreach (SaveableItem saveableItem in storedItems)
         {
-            var newItem = InstantiateItem(item.prefabFileName);
+            var itemInfo = DatabaseManager.Instance.items.FindById(saveableItem.id);
+            if(!itemInfo){
+                continue;
+            }
+            var newItem = InstantiateItemNew(itemInfo.prefab);
 
             var grabbableIsNotParent = newItem.GetComponent<GrabbableInDifferentLocation>();
             var newItemGrabbable = newItem.GetComponent<Grabbable>();
@@ -36,8 +40,8 @@ public class CurrentlyGrabbedItemSaverController : MonoBehaviour
 
             if (newItemGrabbable)
             {
-                var itemInformation = newItem.GetComponent<ItemInformation>();
-                if (itemInformation && GameState.isUnlockable(itemInformation.getItemId()) && !GameState.isUnlocked(itemInformation.getItemId()))
+                var item = Definitions.GetItemFromObject(newItem);
+                if (item && item.isUnlockable && !GameState.isUnlocked(item.itemId))
                 {
                     Destroy(newItem);
                     continue;
@@ -47,13 +51,13 @@ public class CurrentlyGrabbedItemSaverController : MonoBehaviour
             var itemStack = newItemGrabbable.GetComponent<ItemStack>();
             if (itemStack)
             {
-                itemStack.SetStackSize(item.currentStackSize);
+                itemStack.SetStackSize(saveableItem.currentStackSize);
             }
 
             var waterAmountStack = newItemGrabbable.GetComponent<WateringCanController>();
             if (waterAmountStack)
             {
-                waterAmountStack.waterAmount = item.currentStackSize;
+                waterAmountStack.waterAmount = saveableItem.currentStackSize;
             }
 
             newItem.transform.position = GameState.currentPlayerPosition.position;
@@ -75,21 +79,21 @@ public class CurrentlyGrabbedItemSaverController : MonoBehaviour
             return;
         }
 
-        Item itemInfo = grabber.HeldGrabbable.GetComponent<ItemInformation>().getItemInfo();
-        if (itemInfo == null)
+        var item = Definitions.GetItemFromObject(grabber.HeldGrabbable);
+        if (item == null)
         {
             return;
         }
 
-        string itemId = grabber.HeldGrabbable.GetComponent<ItemInformation>().getItemId();
+        string itemId = item.itemId;
         if (itemId == "Wallet" || itemId == "Backpack" || itemId == "BackpackBig")
         {
             return;
         }
 
         var saveableItem = new SaveableItem();
-        saveableItem.name = itemInfo.name;
-        saveableItem.prefabFileName = itemInfo.prefabFileName;
+        saveableItem.name = item.name;
+        saveableItem.prefabFileName = item.prefab.transform.name;
 
         var itemStack = grabber.HeldGrabbable.GetComponent<ItemStack>();
         if (itemStack)

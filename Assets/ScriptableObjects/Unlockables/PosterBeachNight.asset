@@ -12,16 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 203841854d50391449710d7925005506, type: 3}
   m_Name: PosterBeachNight
   m_EditorClassIdentifier: 
-  itemId: PosterGoldfinder - Copy
+  itemId: PosterBeachNight
   prefab: {fileID: 0}
   name: Poster Beach Night
   description: Some art to show in your portraits.
+  tags: []
   isSellable: 0
   sellPrice: 0
   buyPrice: 1000
   stores:
   - storeArtTabDecorational
-  DependsOnBeforeBuying: Portrait
+  DependsOnBeforeBuying: 
+  DependsOnBeforeBuyingItem: {fileID: 11400000, guid: 9a966c77b89d1de40bae661b3c529f0a,
+    type: 2}
   isUnlockable: 1
   maximumTimesOwned: 3
   type: 

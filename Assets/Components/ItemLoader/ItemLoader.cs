@@ -8,12 +8,13 @@ public class ItemLoader : MonoBehaviour
 {
     public void Start()
     {
-        if(Definitions.ItemsWithInformation.Count != 0)
+        if(Definitions.ItemsAreLoaded)
         {
-            Debug.Log("item list is already filled");
+            Debug.Log("items are already loaded");
             return;
         }
         LoadAllItems();
+        Definitions.ItemsAreLoaded = true;
     }
 
     public void LoadAllItems()
@@ -26,55 +27,24 @@ public class ItemLoader : MonoBehaviour
 
     private void LoadItem(HarvestDataTypes.Item item)
     {
-        string itemId = item.itemId;
-
-        Item newItem = new Item();
-        newItem.itemId = itemId;
-        newItem.name = item.name;
-
-        if (item.prefab != null)
+        if (item.isUnlockable && !GameState.unlockables.ContainsKey(item.itemId))
         {
-            newItem.prefabFileName = item.prefab.transform.name;
+            GameState.unlockables[item.itemId] = 0;
         }
-        
-        newItem.description = item.description;
-        newItem.DependsOnBeforeBuying = item.DependsOnBeforeBuying;
-        newItem.sellPrice = item.sellPrice;
-        newItem.buyPrice = item.buyPrice;
-
-        if (item.maximumTimesOwned != 0)
-        {
-            newItem.maximumTimesOwned = item.maximumTimesOwned;
-        }
-
-        if (item.isUnlockable)
-        {
-            GameState.unlockables[itemId] = 0;
-        }
-
-        ItemsWithInformation.Add(itemId, newItem);
 
         if (!string.IsNullOrEmpty(item.type))
         {
-            Definitions.itemsWithTypes[item.type].Add(itemId);
+            Definitions.itemsWithTypes[item.type].Add(item.itemId);
         }
 
         foreach (string storeId in item.stores)
         {
             try
             {
-                Definitions.itemStores[storeId].Add(itemId);
+                Definitions.itemStores[storeId].Add(item);
             } catch(Exception e) {
-                throw new Exception("Item store with ID: " + storeId + " does not exist, change the store ID for item: " + itemId);
+                throw new Exception("Item store with ID: " + storeId + " does not exist, change the store ID for item: " + item.itemId);
             }
-        }
-    }
-
-    public void LoadItemInStores(JSONArray stores, string itemId)
-    {
-        foreach (JSONNode store in stores)
-        {
-            Definitions.itemStores[store["name"]].Add(itemId);
         }
     }
 }

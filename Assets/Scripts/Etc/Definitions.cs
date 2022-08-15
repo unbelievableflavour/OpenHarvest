@@ -4,7 +4,6 @@ using UnityEngine;
 public static class Definitions
 {
     public static string ResourcesFolder = "Items/";
-    public static string fallbackItemId = "BuyItemFallback";
 
     public static int maxIntValue = 2147483647; // maximum value that an integer can possibly hold
 
@@ -87,31 +86,30 @@ public static class Definitions
         ShellFinder
     };
 
-    public static Dictionary<string, Item> ItemsWithInformation = new Dictionary<string, Item>();
+    public static bool ItemsAreLoaded = false;
 
     public static Dictionary<string, List<string>> itemsWithTypes = new Dictionary<string, List<string>> {
         {"fish", new List<string>()},
         {"plant", new List<string>()},
     };
 
-    public static Dictionary<string, List<string>> itemStores = new Dictionary<string, List<string>> {
-        {"vendingMachine", new List<string>()},
-        {"storeAnimals", new List<string>()},
-        {"storeFishingTabFunctional", new List<string>()},
-        {"storeFishingTabDecorational", new List<string>()},
-        {"storeToolsTabFunctional", new List<string>()},
-        {"storeToolsTabDecorational", new List<string>()},
-        {"storeArtTabFunctional", new List<string>()},
-        {"storeArtTabDecorational", new List<string>()},
-        {"storeSeedsTabFunctional", new List<string>()},
-        {"storeSeedsTabDecorational", new List<string>()},
-        {"storeArtisanTabFunctional", new List<string>()},
-        {"storeArtisanTabDecorational", new List<string>()},
-        {"storeDecorationsTabFunctional", new List<string>()},
-        {"storeDecorationsTabDecorational", new List<string>()},
-        {"storeChristmasDecorationsTabDecorational", new List<string>()},
-        {"storeCookingTabDecorational", new List<string>()},
-        {"storeCookingTabFunctional", new List<string>()}
+    public static Dictionary<string, List<HarvestDataTypes.Item>> itemStores = new Dictionary<string, List<HarvestDataTypes.Item>> {
+        {"storeAnimals", new List<HarvestDataTypes.Item>()},
+        {"storeFishingTabFunctional", new List<HarvestDataTypes.Item>()},
+        {"storeFishingTabDecorational", new List<HarvestDataTypes.Item>()},
+        {"storeToolsTabFunctional", new List<HarvestDataTypes.Item>()},
+        {"storeToolsTabDecorational", new List<HarvestDataTypes.Item>()},
+        {"storeArtTabFunctional", new List<HarvestDataTypes.Item>()},
+        {"storeArtTabDecorational", new List<HarvestDataTypes.Item>()},
+        {"storeSeedsTabFunctional", new List<HarvestDataTypes.Item>()},
+        {"storeSeedsTabDecorational", new List<HarvestDataTypes.Item>()},
+        {"storeArtisanTabFunctional", new List<HarvestDataTypes.Item>()},
+        {"storeArtisanTabDecorational", new List<HarvestDataTypes.Item>()},
+        {"storeDecorationsTabFunctional", new List<HarvestDataTypes.Item>()},
+        {"storeDecorationsTabDecorational", new List<HarvestDataTypes.Item>()},
+        {"storeChristmasDecorationsTabDecorational", new List<HarvestDataTypes.Item>()},
+        {"storeCookingTabDecorational", new List<HarvestDataTypes.Item>()},
+        {"storeCookingTabFunctional", new List<HarvestDataTypes.Item>()}
     };
 
     static Definitions()
@@ -167,33 +165,12 @@ public static class Definitions
         }   
     }
 
-    public static Item GetItemInformation(string itemId)
-    {
-        try
-        {
-            return ItemsWithInformation[itemId];
-        } catch (System.Exception e) {
-            throw new System.Exception("Item with id: " + itemId + " was not found in item dictionary.");
+    public static HarvestDataTypes.Item GetItemFromObject(dynamic itemObject){
+        var itemInformation = itemObject.GetComponent<ItemInformation>();
+        if (!itemInformation) {
+            return null;
         }
-    }
-
-    public static GameObject InstantiateItem(string resourceName, Transform spawnLocation = null)
-    {
-        var objectToInstantiate = Resources.Load(ResourcesFolder + resourceName + "/" + resourceName, typeof(GameObject));
-
-        if(objectToInstantiate == null)
-        {
-            throw new System.Exception("Error trying to instantiate prefab: " + resourceName);
-        }
-
-        GameObject spawnedObject = Object.Instantiate(objectToInstantiate) as GameObject;
-        spawnedObject.name = resourceName;
-
-        if (spawnLocation)
-        {
-            spawnedObject.transform.position = spawnLocation.position;
-        }
-        return spawnedObject;
+        return itemInformation.getItem();
     }
 
     public static GameObject InstantiateItemNew(GameObject prefab, Transform spawnLocation = null)

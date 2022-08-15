@@ -10,7 +10,7 @@ public class StoreItemInformation : MonoBehaviour
     private string backupHeading;
     private string backupDescription;
 
-    private static Item currentItem;
+    private static HarvestDataTypes.Item currentItem;
     private static bool informationHasBeenUpdated = false;
 
     private void Start()
@@ -47,7 +47,7 @@ public class StoreItemInformation : MonoBehaviour
         }
     }
 
-    public static void SetItem(Item item)
+    public static void SetItem(HarvestDataTypes.Item item)
     {
         currentItem = item;
         informationHasBeenUpdated = false;

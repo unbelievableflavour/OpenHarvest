@@ -147,7 +147,8 @@ public class FishingPondController : MonoBehaviour
 
         if (itemIsLure(slot.HeldItem))
         {
-            fishingLureId = slot.HeldItem.GetComponent<ItemInformation>().getItemId().ToString();
+            var item = Definitions.GetItemFromObject(slot.HeldItem);
+            fishingLureId = item.itemId;
         }
 
         fishingHook = other.transform;

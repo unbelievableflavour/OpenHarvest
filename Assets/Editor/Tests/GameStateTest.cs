@@ -50,27 +50,6 @@ namespace Tests
             Assert.AreEqual(true, GameState.isUnlocked(itemId));
         }
 
-        // THIS IS FOR THE OLD UNLOCKING SOLUTION
-//        [Test]
-//        public void ItChecksIfAnItemIsUnlockable()
-//        {
-//            Assert.AreEqual(false, GameState.isUnlockable("NewItem"));
-//
-//            GameState.unlockables.Add("NewItem", 0);
-//
-//            Assert.AreEqual(true, GameState.isUnlockable("NewItem"));
-//        }
-
-        [Test]
-        public void ItWillKeepUnlockablesOnGameStateReset()
-        {
-            Assert.AreEqual(true, GameState.isUnlockable("Windmill"));
-
-            GameState.Reset();
-
-            Assert.AreEqual(true, GameState.isUnlockable("Windmill"));
-        }
-
         [Test]
         public void ItWillResetUnlockablesOnGameStateReset()
         {
@@ -106,7 +85,6 @@ namespace Tests
         [TearDown]
         public void Cleanup()
         {
-            Definitions.ItemsWithInformation = new Dictionary<string, Item>();
             GameState.unlockables = new Dictionary<string, int> { };
             Object.DestroyImmediate(databaseManager);
         }

@@ -11,11 +11,11 @@ public class NPCController : MonoBehaviour
     public event EventHandler<Grabbable> grabbedItem;
     public event EventHandler<GameObject> talks;
 
-    public void SpawnQuestReward(string rewardPrefabName)
+    public void SpawnQuestReward(HarvestDataTypes.Item rewardItem)
     {
         HoldOutHand();
-        GameObject rewardItem = InstantiateItem(rewardPrefabName);
-        handSlot.GetComponent<SnapZone>().GrabGrabbable(rewardItem.GetComponent<Grabbable>());
+        GameObject spawnedRewardItem = InstantiateItemNew(rewardItem.prefab);
+        handSlot.GetComponent<SnapZone>().GrabGrabbable(spawnedRewardItem.GetComponent<Grabbable>());
     }
 
     public void BackToIdle()
@@ -30,7 +30,7 @@ public class NPCController : MonoBehaviour
         handSlot.SetActive(true);
     }
 
-    public void GiveItem(string rewardPrefabName)
+    public void GiveItem(HarvestDataTypes.Item item)
     {
         var snapZone = handSlot.GetComponent<SnapZone>();
 
@@ -41,16 +41,17 @@ public class NPCController : MonoBehaviour
         }
 
         HoldOutHand();
-        GameObject rewardItem = InstantiateItem(rewardPrefabName);
-        snapZone.GrabGrabbable(rewardItem.GetComponent<Grabbable>());
+        GameObject spawnedRewardItem = InstantiateItemNew(item.prefab);
+        snapZone.GrabGrabbable(spawnedRewardItem.GetComponent<Grabbable>());
     }
 
-    public void GiveUnlockable(Item unlockableItem)
+    public void GiveUnlockable(HarvestDataTypes.Item unlockableItem)
     {
+        var fallbackItem = DatabaseManager.Instance.items.fallbackItem;
+
         HoldOutHand();
-        Item itemInfo = GetItemInformation(fallbackItemId);
-        GameObject rewardItem = InstantiateItem(itemInfo.prefabFileName);
-        rewardItem.GetComponent<ShowUnlockMessageOnGrab>().setItemId(unlockableItem.itemId);
+        GameObject rewardItem = InstantiateItemNew(fallbackItem.prefab);
+        rewardItem.GetComponent<ShowUnlockMessageOnGrab>().setItem(unlockableItem);
         handSlot.GetComponent<SnapZone>().GrabGrabbable(rewardItem.GetComponent<Grabbable>());
     }
 

@@ -14,6 +14,7 @@ namespace HarvestDataTypes {
 
         [TextArea]
         public string description = "";
+        public List<string> tags;
 
         [Header("Selling")]
         public bool isSellable;
@@ -22,7 +23,7 @@ namespace HarvestDataTypes {
         [Header("Buying")]
         public int buyPrice = 0;
         public List<string> stores;
-        public string DependsOnBeforeBuying;
+        public Item DependsOnBeforeBuyingItem;
 
         [Header("Unlockable")]
         public bool isUnlockable;

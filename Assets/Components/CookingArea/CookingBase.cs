@@ -40,7 +40,9 @@ public class CookingBase : MonoBehaviour
                 tooltipText.text = "Dont use item stacks while cooking";
                 return null;
             }
-            ingredientsInPan.Add(snapZone.HeldItem.GetComponent<ItemInformation>().getItemId());
+            
+            var item = Definitions.GetItemFromObject(snapZone.HeldItem);
+            ingredientsInPan.Add(item.itemId);
         }
 
         if (ingredientsInPan.Count == 0)

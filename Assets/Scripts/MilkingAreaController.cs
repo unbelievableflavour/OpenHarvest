@@ -122,9 +122,8 @@ public class MilkingAreaController : MonoBehaviour
             return;
         }
 
-        var currentItem = bucketSnapZone.HeldItem.GetComponent<ItemInformation>();
-
-        if (currentItem.getItemId() == BucketWithMilkId)
+        var currentItem = Definitions.GetItemFromObject(bucketSnapZone.HeldItem);
+        if (currentItem.itemId == BucketWithMilkId)
         {
             tooltip.SetActive(true);
             tooltipText.text = "Bucket is already full";

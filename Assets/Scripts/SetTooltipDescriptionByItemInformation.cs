@@ -6,10 +6,8 @@ public class SetTooltipDescriptionByItemInformation : MonoBehaviour
 
     void Awake()
     {
-        var itemInformation = GetComponent<ItemInformation>();
-        Item itemInfo = itemInformation.getItemInfo();
-
-        if (itemInfo == null)
+        var item = Definitions.GetItemFromObject(this);
+        if (item == null)
         {
             return;
         }
@@ -19,6 +17,6 @@ public class SetTooltipDescriptionByItemInformation : MonoBehaviour
             return;
         }
 
-        tooltip.textComponent.text = itemInfo.name + "\n" + "\n" + itemInfo.description;
+        tooltip.textComponent.text = item.name + "\n" + "\n" + item.description;
     }
 }

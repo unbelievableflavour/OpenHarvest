@@ -39,22 +39,14 @@ public class InventoryController : ItemStashController
         LoadInventory();
     }
 
-
-    //This function is not yet finished. It will recreate the item instead of adding the actual item to the backpack. This means that if you put your backing tray in your backpack, it will forget ingredients which where on the plate.
     public void AddToFirstOpenSlot(Grabbable grabbable)
     {
         if (grabbable.gameObject.name == "Backpack" || grabbable.gameObject.name == "BackpackBig")
         {
             return;
         }
-        var item = grabbable.GetComponent<ItemInformation>();
-        if (!item)
-        {
-            return;
-        }
-
-        var itemInfo = item.getItemInfo();
-        if (itemInfo == null)
+        var item = Definitions.GetItemFromObject(grabbable);
+        if (item == null)
         {
             return;
         }
@@ -73,12 +65,13 @@ public class InventoryController : ItemStashController
                     continue;
                 }
 
-                if (!slot.HeldItem.GetComponent<ItemInformation>())
+                var itemInSlot = Definitions.GetItemFromObject(slot.HeldItem);
+                if (!itemInSlot)
                 {
                     continue;
                 }
 
-                if (slot.HeldItem.GetComponent<ItemInformation>().getItemId() != item.getItemId())
+                if (itemInSlot.itemId != item.itemId)
                 {
                     continue;
                 }
@@ -113,19 +106,19 @@ public class InventoryController : ItemStashController
             grabbable.DropItem(null, true, true);
             Destroy(grabbable.gameObject);
 
-            InstantiateAndGrab(slot, itemInfo, stackSize, waterAmount);
+            InstantiateAndGrab(slot, item, stackSize, waterAmount);
             return;
         }
 
         grabbable.DropItem(null, true, true);
         Destroy(grabbable.gameObject);
 
-        InstantiateItem(itemInfo.prefabFileName, spawnIfDoesntFitSlot);
+        Definitions.InstantiateItemNew(item.prefab, spawnIfDoesntFitSlot);
     }
 
-    private void InstantiateAndGrab(SnapZone snapZone, Item item, int stackSize, int waterAmount)
+    private void InstantiateAndGrab(SnapZone snapZone, HarvestDataTypes.Item item, int stackSize, int waterAmount)
     {
-        var newItem = InstantiateItem(item.prefabFileName);
+        var newItem = Definitions.InstantiateItemNew(item.prefab);
         var grabbableIsNotParent = newItem.GetComponent<GrabbableInDifferentLocation>();
         var newItemGrabbable = newItem.GetComponent<Grabbable>();
 

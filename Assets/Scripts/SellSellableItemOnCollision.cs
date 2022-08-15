@@ -17,8 +17,8 @@ public class SellSellableItemOnCollision : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        var itemInfo = other.GetComponent<ItemInformation>();
-        if (!itemInfo || !itemInfo.getItem().isSellable) {
+        var item = Definitions.GetItemFromObject(other);
+        if(!item || item.isSellable) {
             return;
         }
 
@@ -29,7 +29,7 @@ public class SellSellableItemOnCollision : MonoBehaviour
         soldGameObjects.Add(other.gameObject);
 
         var itemStack = other.GetComponent<ItemStack>();
-        var sellingPrice = itemStack ? GetSellingPrice(itemInfo) * itemStack.GetStackSize() : GetSellingPrice(itemInfo);
+        var sellingPrice = itemStack ? GetSellingPrice(item) * itemStack.GetStackSize() : GetSellingPrice(item);
  
         GameState.IncreaseMoneyByAmount(sellingPrice);
         text.GetComponent<Text>().text = "+" + sellingPrice;       
@@ -41,13 +41,13 @@ public class SellSellableItemOnCollision : MonoBehaviour
         StartCoroutine(DisableMoneyGainedText());
     }
 
-    public int GetSellingPrice(ItemInformation itemInfo)
+    public int GetSellingPrice(HarvestDataTypes.Item item)
     {
-        int sellPrice = itemInfo.getItem().sellPrice;
+        int sellPrice = item.sellPrice;
 
         foreach (var itemOfTheWeek in GameState.itemsOfTheWeek)
         {
-            if (itemInfo.getItemId() == itemOfTheWeek.Value.currentItemId)
+            if (item.itemId == itemOfTheWeek.Value.currentItemId)
             {
                 return sellPrice * 2;
             }

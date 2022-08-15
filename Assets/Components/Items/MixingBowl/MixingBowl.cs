@@ -62,8 +62,7 @@ public class MixingBowl : CookingBase
     private void SpawnDoneItem()
     {
         isSpawningItem = true;
-        var item = GetItemInformation(activeRecipe.itemId);
-        var spawnedFood = InstantiateItem(item.prefabFileName);
+        var spawnedFood = InstantiateItemNew(activeRecipe.item.prefab);
         RemoveOldItems(cookingTool);
         cookingTool.snapZones[0].GrabGrabbable(spawnedFood.GetComponent<Grabbable>());
         isSpawningItem = false;

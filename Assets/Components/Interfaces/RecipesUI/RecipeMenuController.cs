@@ -68,7 +68,7 @@ public class RecipeMenuController : MonoBehaviour
             GameObject row = Instantiate(recipeRow);
             row.SetActive(true);
             var text = row.GetComponentInChildren<Text>();
-            text.text = Definitions.GetItemInformation(recipe.itemId).name;
+            text.text = recipe.item.name;
             row.transform.SetParent(recipeList, false);
 
             row.GetComponent<RecipeRow>().initialiseRecipeRow(this, index);

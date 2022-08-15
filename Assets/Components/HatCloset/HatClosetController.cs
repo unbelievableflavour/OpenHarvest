@@ -3,45 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static Definitions;
+using HarvestDataTypes;
 
 public class HatClosetController : MonoBehaviour
 {
     public Transform inventorySlots;
 
-    List<string> hatIds = new List<string>()
-    {
-        "HatStraw",
-        "HatFarmer",
-        "HatBaret",
-        "HatCrown",
-        "HatChicken",
-        "HatCloud",
-        "HatFish",
-        "HatFishing",
-        "HatFlatCap",
-        "HatFlying",
-        "HatSanta",
-        //"HatHelmet",
-        "HatSombrero",
-        //"HatTop",
-        //"HatViking",
-        "HatWinter",
-        "HatPlain",
-        "HatMiner",
-        //"HatHeadphone",
-        "HatSea",
-        "HatRecycle"
-    };
-
-    List<Item> unlockableHats = new List<Item>();
+    List<HarvestDataTypes.Item> unlockableHats = new List<HarvestDataTypes.Item>();
 
     void Start()
     {
-        foreach(string hatId in hatIds)
-        {
-            unlockableHats.Add(GetItemInformation(hatId));
-        }
+        var itemDatabase = DatabaseManager.Instance.items;
+        unlockableHats = itemDatabase.FindAllByTag("hatCloset");
 
         LoadUnlockedHats();
     }
@@ -63,19 +36,19 @@ public class HatClosetController : MonoBehaviour
                 continue;
             }
 
-            var hat = unlockableHats[index];
-            if (hat == null)
+            var item = unlockableHats[index];
+            if (item == null)
             {
                 index++;
                 continue;
             }
 
-            if (!GameState.isUnlocked(hat.itemId)){
+            if (!GameState.isUnlocked(item.itemId)){
                 index++;
                 continue;
             }
 
-            var instantiatedItem = InstantiateItem(hat.prefabFileName);
+            var instantiatedItem = Definitions.InstantiateItemNew(item.prefab);
             var instantiatedItemGrabbable = instantiatedItem.GetComponent<Grabbable>();
             if (!instantiatedItemGrabbable)
             {
@@ -86,10 +59,5 @@ public class HatClosetController : MonoBehaviour
             slot.GrabGrabbable(instantiatedItemGrabbable);
             index++;
         }
-    }
-
-    public List<string> GetHatIds()
-    {
-        return hatIds;
     }
 }

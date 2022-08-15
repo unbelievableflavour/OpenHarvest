@@ -3,13 +3,12 @@ using UnityEngine;
 
 public class SpawnItemInSlot : MonoBehaviour
 {
-    public string itemId = "";
+    public HarvestDataTypes.Item item;
 
     // Start is called before the first frame update
     void Start()
     {
-        var itemInfo = Definitions.GetItemInformation(itemId);
-        var instantiatedItem = Definitions.InstantiateItem(itemInfo.prefabFileName);
+        var instantiatedItem = Definitions.InstantiateItemNew(item.prefab);
         var instantiatedItemGrabbable = instantiatedItem.GetComponent<Grabbable>();
         GetComponent<SnapZone>().GrabGrabbable(instantiatedItemGrabbable);
     }

@@ -168,11 +168,6 @@ public static class GameState
         return totalAmount;
     }
 
-    public static bool isUnlockable(string itemId)
-    {
-        return DatabaseManager.Instance.items.FindById(itemId).isUnlockable;
-    }
-
     public static bool isUnlocked(string itemId)
     {
         return unlockables.ContainsKey(itemId) && unlockables[itemId] > 0;
@@ -187,7 +182,7 @@ public static class GameState
         unlockables[itemId] += amount;
     }
 
-    public static bool ownsMaximumNumber(Item item)
+    public static bool ownsMaximumNumber(HarvestDataTypes.Item item)
     {
         if (item.maximumTimesOwned == null)
         {

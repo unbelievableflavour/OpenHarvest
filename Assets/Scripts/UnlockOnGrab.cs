@@ -23,21 +23,14 @@ namespace BNG
                 return;
             }
             alreadyTriggered = true;
-
-            itemInformation = GetComponent<ItemInformation>();
-
-            if (itemInformation == null)
+            
+            var item = Definitions.GetItemFromObject(this);
+            if (item == null)
             {
                 return;
             }
 
-            Item itemInfo = itemInformation.getItemInfo();
-            if (itemInfo == null)
-            {
-                return;
-            }
-
-            if (GameState.ownsMaximumNumber(itemInfo))
+            if (GameState.ownsMaximumNumber(item))
             {
                 return;
             }
@@ -47,8 +40,8 @@ namespace BNG
                 VRUtils.Instance.PlaySpatialClipAt(unlockSound, transform.position, 1f, 1f);
             }
 
-            GameState.unlock(itemInformation.getItemId(), 1);
-            unlockMessage.GetComponentInChildren<Text>().text = "Unlocked " + itemInfo.name + "!";
+            GameState.unlock(item.itemId, 1);
+            unlockMessage.GetComponentInChildren<Text>().text = "Unlocked " + item.name + "!";
 
             CancelInvoke("HideUnlockedMessage");
             ShowUnlockedMessage();
