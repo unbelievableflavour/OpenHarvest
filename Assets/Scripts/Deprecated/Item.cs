@@ -11,6 +11,7 @@ public class Item
     public int buyPrice = 0;
     public int sellPrice = 0;
     public string description = "";
+    public string DependsOnBeforeBuying;
     public int? maximumTimesOwned;
 
     // Deprecated
