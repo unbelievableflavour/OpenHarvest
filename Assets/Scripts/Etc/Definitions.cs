@@ -167,7 +167,7 @@ public static class Definitions
 
     public static HarvestDataTypes.Item GetItemFromObject(dynamic itemObject){
         var itemInformation = itemObject.GetComponent<ItemInformation>();
-        if (!itemInformation) {
+        if (itemInformation == null) {
             return null;
         }
         return itemInformation.getItem();
