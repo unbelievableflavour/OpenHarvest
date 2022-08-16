@@ -3,8 +3,6 @@ using UnityEngine;
 
 public static class Definitions
 {
-    public static string ResourcesFolder = "Items/";
-
     public static int maxIntValue = 2147483647; // maximum value that an integer can possibly hold
 
     public enum TutorialStates
