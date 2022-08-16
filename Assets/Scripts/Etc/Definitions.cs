@@ -55,6 +55,7 @@ public static class Definitions
 
     public enum Items { Axe }; // Definitions
 
+    // Dont remove itesm from this list. Item locations will break if you do.
     public enum ItemLocations
     {
         FireplaceDecoration,
@@ -75,7 +76,7 @@ public static class Definitions
         ChairDecoration3,
         ChairDecoration4,
         BedDecoration1,
-        CornerDecoration, //Old enum. Readded for backwards compatibility. Stijn you cannot just remove enums. Discuss that shit with me.
+        CornerDecoration,
     };
 
     public enum Quests
