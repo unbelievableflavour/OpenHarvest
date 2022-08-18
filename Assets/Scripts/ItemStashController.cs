@@ -16,12 +16,19 @@ public class ItemStashController : MonoBehaviour
 
     void Start()
     {
-        itemDatabase = DatabaseManager.Instance.items;
+        LoadItemDatabase();
         LoadInventory();
+    }
+
+    private void LoadItemDatabase() {
+        if (itemDatabase == null){
+            itemDatabase = DatabaseManager.Instance.items;
+        }
     }
 
     protected void LoadInventory()
     {
+        LoadItemDatabase();
         storedItems = GetFromGameState();
 
         if (storedItems.Count == 0)
@@ -52,6 +59,7 @@ public class ItemStashController : MonoBehaviour
                 continue;
             }
 
+            Debug.Log(itemDatabase);
             var item = itemDatabase.FindById(stashedItem.id);
 
             if (itemsThatShouldNotBeSaved.Contains(item.itemId))
