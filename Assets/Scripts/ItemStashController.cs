@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static Definitions;
+using HarvestDataTypes;
 
 public class ItemStashController : MonoBehaviour
 {
@@ -12,14 +12,23 @@ public class ItemStashController : MonoBehaviour
     public string itemStashName;
 
     string[] itemsThatShouldNotBeSaved = new string[] { "Wallet", "Backpack", "BackpackBig", "Basket" };
+    ItemDatabase itemDatabase;
 
     void Start()
     {
+        LoadItemDatabase();
         LoadInventory();
+    }
+
+    private void LoadItemDatabase() {
+        if (itemDatabase == null){
+            itemDatabase = DatabaseManager.Instance.items;
+        }
     }
 
     protected void LoadInventory()
     {
+        LoadItemDatabase();
         storedItems = GetFromGameState();
 
         if (storedItems.Count == 0)
@@ -43,25 +52,25 @@ public class ItemStashController : MonoBehaviour
                 continue;
             }
 
-            var backpackItem = storedItems[index];
-            if (backpackItem == null)
+            var stashedItem = storedItems[index];
+            if (stashedItem == null)
             {
                 index++;
                 continue;
             }
 
-            var itemInfo = GetItemInformation(backpackItem.id);
-            string itemId = itemInfo.itemId;
+            Debug.Log(itemDatabase);
+            var item = itemDatabase.FindById(stashedItem.id);
 
-            if (itemsThatShouldNotBeSaved.Contains(itemId))
+            if (itemsThatShouldNotBeSaved.Contains(item.itemId))
             {
                 index++;
                 continue;
             }
 
-            var newItem = InstantiateItem(itemInfo.prefabFileName);
-            var grabbableIsNotParent = newItem.GetComponent<GrabbableInDifferentLocation>();
-            var newItemGrabbable = newItem.GetComponent<Grabbable>();
+            var spawnedItem = Definitions.InstantiateItemNew(item.prefab);
+            var grabbableIsNotParent = spawnedItem.GetComponent<GrabbableInDifferentLocation>();
+            var newItemGrabbable = spawnedItem.GetComponent<Grabbable>();
 
             if (grabbableIsNotParent)
             {
@@ -70,10 +79,9 @@ public class ItemStashController : MonoBehaviour
 
             if (newItemGrabbable)
             {
-                var itemInformation = newItem.GetComponent<ItemInformation>();
-                if (itemInformation && GameState.isUnlockable(itemInformation.getItemId()) && !GameState.isUnlocked(itemInformation.getItemId()))
+                if (item.isUnlockable && !GameState.isUnlocked(item.itemId))
                 {
-                    Destroy(newItem);
+                    Destroy(spawnedItem);
                     index++;
                     continue;
                 }
@@ -82,13 +90,13 @@ public class ItemStashController : MonoBehaviour
             var itemStack = newItemGrabbable.GetComponent<ItemStack>();
             if (itemStack)
             {
-                itemStack.SetStackSize(backpackItem.currentStackSize);
+                itemStack.SetStackSize(stashedItem.currentStackSize);
             }
 
             var waterAmountStack = newItemGrabbable.GetComponent<WateringCanController>();
             if (waterAmountStack)
             {
-                waterAmountStack.waterAmount = backpackItem.currentStackSize;
+                waterAmountStack.waterAmount = stashedItem.currentStackSize;
             }
 
             slot.GrabGrabbable(newItemGrabbable);
@@ -110,14 +118,14 @@ public class ItemStashController : MonoBehaviour
                 continue;
             }
 
-            Item itemInfo = slot.HeldItem.GetComponent<ItemInformation>().getItemInfo();
-            if (itemInfo == null)
+            var item = Definitions.GetItemFromObject(slot.HeldItem);
+            if (item == null)
             {
                 storedItems.Add(null);
                 continue;
             }
 
-            string itemId = itemInfo.itemId;
+            string itemId = item.itemId;
             if (itemsThatShouldNotBeSaved.Contains(itemId))
             {
                 storedItems.Add(null);

@@ -17,12 +17,15 @@ MonoBehaviour:
   name: Sprinkler
   description: A sprinkler which you can access only via the greenhouse configuration
     menu.
+  tags: []
   isSellable: 0
   sellPrice: 0
   buyPrice: 1500
   stores:
   - storeToolsTabFunctional
-  DependsOnBeforeBuying: Greenhouse
+  DependsOnBeforeBuying: 
+  DependsOnBeforeBuyingItem: {fileID: 11400000, guid: b15383044e54eee4592f95e898ec58a5,
+    type: 2}
   isUnlockable: 1
   maximumTimesOwned: 6
   type: 

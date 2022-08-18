@@ -5,6 +5,7 @@ using static Definitions;
 
 public class WindmillController : MonoBehaviour
 {
+    public HarvestDataTypes.Item flour;
     public SpawnManager spawnManager;
     public WheatHeightController wheatHeightController;
     public Text updateWheatCountLabel;
@@ -56,7 +57,7 @@ public class WindmillController : MonoBehaviour
             return;
         }
 
-        GameObject item = InstantiateItem("Flour");
+        GameObject item = Definitions.InstantiateItemNew(flour.prefab);
         flourSnapZone.SetActive(true);
         snapZone.GrabGrabbable(item.GetComponent<Grabbable>());
         snapZone.HeldItem.GetComponent<ItemStack>().SetStackSize(currentWheatCount);
@@ -90,7 +91,7 @@ public class WindmillController : MonoBehaviour
         if (windmill.currentFlourCount != 0)
         {
             var snapZone = flourSnapZone.GetComponent<SnapZone>();
-            GameObject item = InstantiateItem("Flour");
+            GameObject item = InstantiateItemNew(flour.prefab);
             flourSnapZone.SetActive(true);
             snapZone.GrabGrabbable(item.GetComponent<Grabbable>());
             snapZone.HeldItem.GetComponent<ItemStack>().SetStackSize(windmill.currentFlourCount);

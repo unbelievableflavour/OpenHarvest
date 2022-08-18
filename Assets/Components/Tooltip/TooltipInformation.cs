@@ -7,19 +7,17 @@ public class TooltipInformation : MonoBehaviour
 
     void Start()
     {
-        var itemInformation = transform.parent.GetComponent<ItemInformation>();
-        Item itemInfo = itemInformation.getItemInfo();
-
-        if (itemInfo == null)
-        {
-            return;
-        }
-
         if (!textComponent)
         {
             return;
         }
 
-        textComponent.text = itemInfo.name + "\n" + "\n" + itemInfo.description;
+        var item = Definitions.GetItemFromObject(transform.parent);
+        if (item == null)
+        {
+            return;
+        }
+
+        textComponent.text = item.name + "\n" + "\n" + item.description;
     }
 }

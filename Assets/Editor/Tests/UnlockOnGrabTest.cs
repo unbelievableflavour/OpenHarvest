@@ -26,7 +26,7 @@ namespace Tests
             var itemLoader = new ItemLoader();
             itemLoader.Start();
 
-            Definitions.ItemsWithInformation[itemId].maximumTimesOwned = 2;
+            //Definitions.ItemsWithInformation[itemId].maximumTimesOwned = 2;
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace Tests
         [TearDown]
         public void Cleanup()
         {
-            Definitions.ItemsWithInformation = new Dictionary<string, Item>();
+            //Definitions.ItemsWithInformation = new Dictionary<string, HarvestDataTypes.Item>();
             GameState.unlockables = new Dictionary<string, int> { }; 
             Object.DestroyImmediate(databaseManager);
 

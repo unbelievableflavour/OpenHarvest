@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
-using static Definitions;
 
 public class BuyController : MonoBehaviour
 {
@@ -10,7 +9,7 @@ public class BuyController : MonoBehaviour
     public Button backButton;
     public StoreItemsLister storeItemsLister;
 
-    private Item item;
+    private HarvestDataTypes.Item item;
     private NPCController npc;
     public void SetNPC(NPCController newNPC)
     {
@@ -18,7 +17,7 @@ public class BuyController : MonoBehaviour
         npc.gaveItem += handleNPCGaveItem;
     }
 
-    public void SetItem(Item newItem)
+    public void SetItem(HarvestDataTypes.Item newItem)
     {
         item = newItem;
         RefreshButton();
@@ -39,7 +38,7 @@ public class BuyController : MonoBehaviour
             SpawnInNPCHand(item);
         }
 
-        if (GameState.isUnlockable(item.itemId)) {
+        if (item.isUnlockable) {
             GameState.unlock(item.itemId, 1);
             return;
         }
@@ -51,9 +50,9 @@ public class BuyController : MonoBehaviour
     {
         button.interactable = true;
 
-        if (item.DependsOnBeforeBuying != "" && !GameState.isUnlocked(item.DependsOnBeforeBuying))
+        if (item.DependsOnBeforeBuyingItem != null && !GameState.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
         {
-            setButtonToDependsOnOtherItem(item.DependsOnBeforeBuying);
+            setButtonToDependsOnOtherItem(item.DependsOnBeforeBuyingItem);
             return;
         }
 
@@ -72,12 +71,10 @@ public class BuyController : MonoBehaviour
         setButtonPrice();
     }
 
-    private void setButtonToDependsOnOtherItem(string itemId)
+    private void setButtonToDependsOnOtherItem(HarvestDataTypes.Item item)
     {
-        Item itemInfo = GetItemInformation(itemId);
-
         button.interactable = false;
-        buttonLabel.text = "Buy " + itemInfo.name + " first!";
+        buttonLabel.text = "Buy " + item.name + " first!";
     }
 
     private void setButtonToAlreadyBought()
@@ -112,7 +109,7 @@ public class BuyController : MonoBehaviour
         storeItemsLister = newStoreItemsLister;
     }
 
-    public void LockStoreItem(Item currentBoughtItem)
+    public void LockStoreItem(HarvestDataTypes.Item currentBoughtItem)
     {
         if (item == currentBoughtItem)
         {
@@ -128,32 +125,32 @@ public class BuyController : MonoBehaviour
         Refresh();
     }
 
-    public void LockStore(Item currentBoughtItem)
+    public void LockStore(HarvestDataTypes.Item currentBoughtItem)
     {
         LockStoreItem(currentBoughtItem);
     }
 
-    public void SpawnInNPCHand(Item item)
+    public void SpawnInNPCHand(HarvestDataTypes.Item item)
     {
         backButton.interactable = false;
         var itemId = item.itemId;
-        int currentlyOwnedCount = (GameState.isUnlockable(itemId) && GameState.isUnlocked(itemId)) ? GameState.unlockables[itemId] : 0;
-        if (item.maximumTimesOwned == currentlyOwnedCount + 1 || String.IsNullOrEmpty(item.prefabFileName))
+        int currentlyOwnedCount = (item.isUnlockable && GameState.isUnlocked(itemId)) ? GameState.unlockables[itemId] : 0;
+        if (item.maximumTimesOwned == currentlyOwnedCount + 1 || item.prefab == null)
         {
-            LockStore(new Item());
+            LockStore(new HarvestDataTypes.Item());
         }
         else
         {
             LockStore(item);
         }
 
-        if (String.IsNullOrEmpty(item.prefabFileName) || itemId == "BackpackBig")
+        if (item.prefab == null || itemId == "BackpackBig")
         {
             npc.GiveUnlockable(item);
             return;
         }
 
-        npc.GiveItem(item.prefabFileName);
+        npc.GiveItem(item);
     }
 
     private void handleNPCGaveItem(object sender, BNG.Grabbable grabbable)

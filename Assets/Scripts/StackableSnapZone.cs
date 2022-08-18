@@ -34,7 +34,7 @@ public class StackableSnapZone : MonoBehaviour
         OnStackUpdateEvent.Invoke();
     }
 
-    public bool itemIsStackable(Grabbable item)
+    public bool itemIsStackable(Grabbable itemGrabbable)
     {
         //if snapzone has never been active yet
         if(snapZone == null)
@@ -42,13 +42,16 @@ public class StackableSnapZone : MonoBehaviour
             snapZone = GetComponent<SnapZone>();
         }
 
-        var itemStack = item.GetComponent<ItemStack>();
+        var itemStack = itemGrabbable.GetComponent<ItemStack>();
         if (!itemStack)
         {
             return false;
         }
 
-        if (snapZone.HeldItem.GetComponent<ItemInformation>().getItemId().ToString() != item.GetComponent<ItemInformation>().getItemId().ToString())
+        var itemInSnapZone = Definitions.GetItemFromObject(snapZone.HeldItem);
+        var item = Definitions.GetItemFromObject(itemGrabbable);
+
+        if (itemInSnapZone.itemId != item.itemId)
         {
             return false;
         }
@@ -76,8 +79,8 @@ public class StackableSnapZone : MonoBehaviour
             var currentItemStackSize = itemStack.GetStackSize() - 1;
             itemStack.SetStackSize(1);
 
-            Item itemInfo = item.GetComponent<ItemInformation>().getItemInfo();
-            var newItem = Definitions.InstantiateItem(itemInfo.prefabFileName);
+            var itemInfo = Definitions.GetItemFromObject(item);
+            var newItem = Definitions.InstantiateItemNew(itemInfo.prefab);
             newItem.GetComponent<ItemStack>().SetStackSize(currentItemStackSize);
             newItem.GetComponent<ItemStack>().stackindicator.gameObject.SetActive(false);
 

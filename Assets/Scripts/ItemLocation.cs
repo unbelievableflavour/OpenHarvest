@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using static Definitions;
 
-
 public class ItemLocation : MonoBehaviour
 {
     public ItemLocations itemLocation;
@@ -55,9 +54,8 @@ public class ItemLocation : MonoBehaviour
                 currentItemFakeIndex = totalItemsNumber + 1;
             }
 
-            var currentItem = option.GetComponent<ItemInformation>();
-
-            if (currentItem != null && !GameState.isUnlocked(currentItem.getItemId()))
+            var currentItem = Definitions.GetItemFromObject(option);
+            if (currentItem != null && !GameState.isUnlocked(currentItem.itemId))
             {
                 currentItemActualIndex++;
                 continue;
@@ -82,8 +80,8 @@ public class ItemLocation : MonoBehaviour
                     continue;
                 }
 
-                var currentItem = option.GetComponent<ItemInformation>();
-                if (currentItem != null && !GameState.isUnlocked(currentItem.getItemId()))
+                var currentItem = Definitions.GetItemFromObject(option);
+                if (currentItem != null && !GameState.isUnlocked(currentItem.itemId))
                 {
                     i++;
                     continue;
@@ -107,8 +105,9 @@ public class ItemLocation : MonoBehaviour
                     i--;
                     continue;
                 }
-                var currentItem = options.GetChild(i).GetComponent<ItemInformation>();
-                if (currentItem != null && !GameState.isUnlocked(currentItem.getItemId()))
+
+                var currentItem = Definitions.GetItemFromObject(options.GetChild(i));
+                if (currentItem != null && !GameState.isUnlocked(currentItem.itemId))
                 {
                     i--;
                     continue;
@@ -121,8 +120,8 @@ public class ItemLocation : MonoBehaviour
 
         for (int i = options.childCount - 1; i >= 0;)
         {
-            var currentItem = options.GetChild(i).GetComponent<ItemInformation>();
-            if (currentItem != null && !GameState.isUnlocked(currentItem.getItemId()))
+            var currentItem = Definitions.GetItemFromObject(options.GetChild(i));
+            if (currentItem != null && !GameState.isUnlocked(currentItem.itemId))
             {
                 i--;
                 continue;
@@ -146,8 +145,8 @@ public class ItemLocation : MonoBehaviour
         int i = 0;
         foreach (Transform option in options)
         {
-            var currentItem = option.GetComponent<ItemInformation>();
-            if (currentItem != null && currentSavedItem == currentItem.getItemId())
+            var currentItem = Definitions.GetItemFromObject(option);
+            if (currentItem != null && currentSavedItem == currentItem.itemId)
             {
                 SetActiveIndex(i);
                 return;
@@ -158,7 +157,7 @@ public class ItemLocation : MonoBehaviour
 
     public void Save()
     {
-        var currentItem = options.GetChild(activeIndex).GetComponent<ItemInformation>();
+        var currentItem = Definitions.GetItemFromObject(options.GetChild(activeIndex));
         if (currentItem == null) {
             savedItemLabel.text = "Saved: none";
             GameState.locationConfigurations[itemLocation.ToString()] = null;
@@ -166,7 +165,7 @@ public class ItemLocation : MonoBehaviour
         }
 
         savedItemLabel.text = "Saved: " + currentItem.name;
-        GameState.locationConfigurations[itemLocation.ToString()] = currentItem.getItemId();
+        GameState.locationConfigurations[itemLocation.ToString()] = currentItem.itemId;
         configurationModeToggler.RefreshItems();
     }
 
@@ -193,31 +192,24 @@ public class ItemLocation : MonoBehaviour
         ownedLabel.text = "Owned: ∞";
         usedLabel.text = "Used: 0";
 
-        var currentItem = options.GetChild(activeIndex).GetComponent<ItemInformation>();
-        if (currentItem == null)
-        {
-            selectedItemLabel.text = "Current: None";
-            SetTotalItemsNumber();
-            return;
-        }
-        Item itemInfo = currentItem.getItemInfo();
-        if (itemInfo == null)
+        var item = Definitions.GetItemFromObject(options.GetChild(activeIndex));
+        if (item == null)
         {
             selectedItemLabel.text = "Current: None";
             SetTotalItemsNumber();
             return;
         }
 
-        selectedItemLabel.text = "Current: " + itemInfo.name;
+        selectedItemLabel.text = "Current: " + item.name;
         SetTotalItemsNumber();
 
-        int currentlyOwnedCount = GameState.unlockables[currentItem.getItemId()];
-        int currentlyUsedCount = GetCurrentlyUsedItemCount(currentItem.getItemId());
+        int currentlyOwnedCount = GameState.unlockables[item.itemId];
+        int currentlyUsedCount = GetCurrentlyUsedItemCount(item.itemId);
 
         ownedLabel.text = "Owned: " + currentlyOwnedCount.ToString();
         usedLabel.text = "Used: " + currentlyUsedCount.ToString();
 
-        if (itemInfo.itemId == GameState.locationConfigurations[itemLocation.ToString()])
+        if (item.itemId == GameState.locationConfigurations[itemLocation.ToString()])
         {
             saveButton.interactable = false;
             saveButtonLabel.fontSize = 20;

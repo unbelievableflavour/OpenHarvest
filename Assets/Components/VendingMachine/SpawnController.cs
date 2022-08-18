@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static Definitions;
 
 public class SpawnController : MonoBehaviour
 {
@@ -13,13 +12,13 @@ public class SpawnController : MonoBehaviour
     public AudioClip leverSound;
 
     private bool canSpawn = false;
-    private string currentlySelectedItem = "";
+    private HarvestDataTypes.Item currentlySelectedItem = null;
     private List<string> alreadySpawnedItems = new List<string>();
 
-    public void SetSelectedItem(string itemId)
+    public void SetSelectedItem(HarvestDataTypes.Item item)
     {
-        currentlySelectedItem = itemId;
-        selectedItemLabel.text = GetItemInformation(itemId).name;
+        currentlySelectedItem = item;
+        selectedItemLabel.text = item.name;
     }
 
     public void SetAlreadySpawnedError()
@@ -45,20 +44,14 @@ public class SpawnController : MonoBehaviour
             return;
         }
 
-        Item itemInfo = GetItemInformation(currentlySelectedItem);
-        if (itemInfo == null)
-        {
-            return;
-        }
-
-        if(alreadySpawnedItems.Contains(currentlySelectedItem)){
+        if(alreadySpawnedItems.Contains(currentlySelectedItem.itemId)){
             SetAlreadySpawnedError();
             return;
         }
 
         VRUtils.Instance.PlaySpatialClipAt(leverSound, transform.position, 1f, 1f);
-        InstantiateItem(itemInfo.prefabFileName, spawnLocation);
-        alreadySpawnedItems.Add(currentlySelectedItem);
+        Definitions.InstantiateItemNew(currentlySelectedItem.prefab, spawnLocation);
+        alreadySpawnedItems.Add(currentlySelectedItem.itemId);
 
         if (spawnEffect)
         {

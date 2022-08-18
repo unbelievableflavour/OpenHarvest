@@ -12,7 +12,7 @@ public class DatabaseManager : MonoBehaviour
 	// Initialize the singleton instance.
 	private void Awake()
 	{
-		// If there is not already an instance of SoundManager, set it to this.
+		// If there is not already an instance of DatabaseManager, set it to this.
 		if (Instance == null)
 		{
 			Instance = this;
@@ -23,7 +23,7 @@ public class DatabaseManager : MonoBehaviour
 			Destroy(gameObject);
 		}
 
-		//Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
+		//Set DatabaseManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
 		DontDestroyOnLoad(gameObject);
 	}
 }

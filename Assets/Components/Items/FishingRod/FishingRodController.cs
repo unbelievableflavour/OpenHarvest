@@ -7,7 +7,7 @@ public class FishingRodController : MonoBehaviour
     public GameObject connectPosition;
     public SphereCollider hookCollider;
     private GameObject hook;
-    private Item savedItem;
+    private HarvestDataTypes.Item savedItem;
     private int savedItemStack;
     void Start()
     {
@@ -27,7 +27,7 @@ public class FishingRodController : MonoBehaviour
         {
             var slot = hook.GetComponent<Hook>().snapZone;
             
-            var hookedItem = savedItem.prefabFileName != null ? Definitions.InstantiateItem(savedItem.prefabFileName) : Definitions.InstantiateItem(savedItem.name);
+            var hookedItem = Definitions.InstantiateItemNew(savedItem.prefab);
             var hookedItemGrabbable = hookedItem.GetComponent<Grabbable>();
             if (!hookedItemGrabbable)
             {
@@ -54,7 +54,7 @@ public class FishingRodController : MonoBehaviour
 
         if (heldItem)
         {
-            savedItem = heldItem.GetComponent<ItemInformation>().getItemInfo();
+            savedItem = Definitions.GetItemFromObject(heldItem);
             var itemStack = heldItem.GetComponent<ItemStack>();
             savedItemStack = itemStack ? itemStack.GetStackSize() : 1;
         }

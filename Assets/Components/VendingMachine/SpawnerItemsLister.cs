@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using static Definitions;
+using HarvestDataTypes;
+using System.Collections.Generic;
 
 public class SpawnerItemsLister : MonoBehaviour
 {
@@ -8,22 +9,25 @@ public class SpawnerItemsLister : MonoBehaviour
     public Transform functionalScrollViewContent;
     public SpawnController spawnController;
 
+    List<HarvestDataTypes.Item> itemsInVendingMachine = new List<HarvestDataTypes.Item>();
+
     void Start()
     {
+        var itemDatabase = DatabaseManager.Instance.items;
+        itemsInVendingMachine = itemDatabase.FindAllByTag("vendingMachine");
         fillSpawnerList();
     }
 
     private void fillSpawnerList()
     {
-        foreach (string itemId in Definitions.itemStores["vendingMachine"])
+        foreach (HarvestDataTypes.Item item in itemsInVendingMachine)
         {
-            if (GameState.isUnlockable(itemId) && !GameState.isUnlocked(itemId))
+            if (item == null)
             {
                 continue;
             }
 
-            Item itemInfo = GetItemInformation(itemId);
-            if (itemInfo == null)
+            if (item.isUnlockable && !GameState.isUnlocked(item.itemId))
             {
                 continue;
             }
@@ -31,10 +35,10 @@ public class SpawnerItemsLister : MonoBehaviour
             GameObject row = Instantiate(itemRowPrefab);
             row.SetActive(true);
             var text = row.GetComponentInChildren<Text>();
-            text.text = itemInfo.name;
+            text.text = item.name;
 
             var spawnSelector = row.GetComponentInChildren<SpawnerSelector>();
-            spawnSelector.SetItem(itemId);
+            spawnSelector.SetItem(item);
             spawnSelector.SetSpawnController(spawnController);
             row.transform.SetParent(functionalScrollViewContent, false);
         }

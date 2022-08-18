@@ -6,7 +6,13 @@ public class ItemPreviewer : MonoBehaviour
 {
     public SnapZone snapZone;
 
-    public void Spawn(Item item)
+    private HarvestDataTypes.Item fallbackItem;
+    
+    public void Start(){
+        fallbackItem = DatabaseManager.Instance.items.fallbackItem;
+    }
+
+    public void Spawn(HarvestDataTypes.Item item)
     {
         if (!snapZone)
         {
@@ -28,9 +34,9 @@ public class ItemPreviewer : MonoBehaviour
         InstantiateAndGrab(snapZone, item);
     }
 
-    private void InstantiateAndGrab(SnapZone snapZone, Item item)
+    private void InstantiateAndGrab(SnapZone snapZone, HarvestDataTypes.Item item)
     {
-        var newItem = Definitions.InstantiateItem(String.IsNullOrEmpty(item.prefabFileName) ? "BuyItemFallBack" : item.prefabFileName);
+        var newItem = Definitions.InstantiateItemNew(item.prefab == null ? fallbackItem.prefab : item.prefab);
         var grabbableIsNotParent = newItem.GetComponent<GrabbableInDifferentLocation>();
         var newItemGrabbable = newItem.GetComponent<Grabbable>();
 

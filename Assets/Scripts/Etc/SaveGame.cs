@@ -52,7 +52,7 @@ public class SaveGame
     public List<Animal> cows = new List<Animal>();
     public List<Animal> sheep = new List<Animal>();
     public List<Animal> pigs = new List<Animal>();
-    public Item currentHat;
+    public Item currentHat; // is now in ItemStashes
     public bool useHandsOnly;
     public bool useSmoothLocomotion;
     public bool useSmoothTurning;

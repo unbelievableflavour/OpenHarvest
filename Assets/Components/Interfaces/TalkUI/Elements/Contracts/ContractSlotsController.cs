@@ -76,7 +76,7 @@ public class ContractSlotsController : MonoBehaviour
             }
 
             Requirement requirementInSlot = new Requirement();
-            requirementInSlot.item = snapZone.HeldItem.GetComponent<ItemInformation>().getItem();
+            requirementInSlot.item = Definitions.GetItemFromObject(snapZone.HeldItem);
 
             requirementInSlot.amount = 1;
             if (heldItem.GetComponent<ItemStack>() && heldItem.GetComponent<ItemStack>().GetStackSize() > 1)

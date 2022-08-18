@@ -11,6 +11,7 @@ public class MilkingAreaController : MonoBehaviour
     public Text tooltipText;
     public SnapZone bucketSnapZone;
     public GameObject doneVersion;
+    public HarvestDataTypes.Item bucketWithMilk;
 
     private int loaderState = 0;
     private bool bucketIsSnapped = false;
@@ -19,8 +20,6 @@ public class MilkingAreaController : MonoBehaviour
     private string uid;
 
     bool hasMilk = false;
-
-    private string BucketWithMilkId = "BucketWithMilk";
 
     private void Start()
     {
@@ -122,9 +121,8 @@ public class MilkingAreaController : MonoBehaviour
             return;
         }
 
-        var currentItem = bucketSnapZone.HeldItem.GetComponent<ItemInformation>();
-
-        if (currentItem.getItemId() == BucketWithMilkId)
+        var currentItem = Definitions.GetItemFromObject(bucketSnapZone.HeldItem);
+        if (currentItem == bucketWithMilk)
         {
             tooltip.SetActive(true);
             tooltipText.text = "Bucket is already full";

@@ -10,7 +10,7 @@ namespace BNG
         public AudioClip unlockSound;
 
         private bool alreadyTriggered = false;
-        private string itemId;
+        private HarvestDataTypes.Item newItem;
 
         void Start()
         {
@@ -26,13 +26,7 @@ namespace BNG
 
             alreadyTriggered = true;
 
-            if(String.IsNullOrEmpty(itemId))
-            {
-                return;
-            }
-
-            Item itemInfo = Definitions.GetItemInformation(itemId);
-            if (itemInfo == null)
+            if(newItem == null)
             {
                 return;
             }
@@ -42,7 +36,7 @@ namespace BNG
                 VRUtils.Instance.PlaySpatialClipAt(unlockSound, transform.position, 1f, 1f);
             }
 
-            unlockMessage.GetComponentInChildren<Text>().text = "Unlocked " + itemInfo.name + "!";
+            unlockMessage.GetComponentInChildren<Text>().text = "Unlocked " + newItem.name + "!";
 
             CancelInvoke("HideUnlockedMessage");
             ShowUnlockedMessage();
@@ -65,9 +59,9 @@ namespace BNG
             Destroy(gameObject);
         }
 
-        public void setItemId(string newItemId)
+        public void setItem(HarvestDataTypes.Item newItem)
         {
-            itemId = newItemId;
+            newItem = newItem;
         }
     }
 }

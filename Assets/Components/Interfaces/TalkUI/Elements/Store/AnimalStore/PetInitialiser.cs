@@ -6,12 +6,12 @@ using static Definitions;
 public class PetInitialiser : MonoBehaviour
 {
     public AudioClip buySound;
-    private Item item;
+    private HarvestDataTypes.Item item;
     public Text nameLabel;
     public StoreItemsLister storeItemsLister;
     public GameObject boughtPetMessage;
 
-    public void SetItem(Item item)
+    public void SetItem(HarvestDataTypes.Item item)
     {
         this.item = item;
     }

@@ -2,7 +2,7 @@
 
 public class SpawnerSelector : MonoBehaviour
 {
-    private string itemId;
+    private HarvestDataTypes.Item item;
     private SpawnController spawnController;
 
     public void SetSpawnController(SpawnController newSpawnController)
@@ -10,13 +10,13 @@ public class SpawnerSelector : MonoBehaviour
         spawnController = newSpawnController;
     }
 
-    public void SetItem(string itemId)
+    public void SetItem(HarvestDataTypes.Item item)
     {
-        this.itemId = itemId;
+        this.item = item;
     }
 
     public void SetSpawnerItemToCurrent()
     {
-        spawnController.SetSelectedItem(itemId);
+        spawnController.SetSelectedItem(item);
     }
 }
