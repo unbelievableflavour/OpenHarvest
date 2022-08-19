@@ -18,7 +18,7 @@ public class AssistObjectToggler : MonoBehaviour
 
     private void ToggleObject()
     {
-        objectToToggle.SetActive(bool.Parse(GameState.settings["useAssistMode"]) ? true : false);    
+        objectToToggle.SetActive(bool.Parse(GameState.Instance.settings["useAssistMode"]) ? true : false);    
     }
 
     void OnDestroy()

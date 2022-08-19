@@ -28,7 +28,7 @@ public class GameInformation : MonoBehaviour
 
     void OnClickNewGame()
     {
-        GameState.saveNumber = saveNumber;
+        GameState.Instance.saveNumber = saveNumber;
         mainMenuController.NewGame();
     }
 

@@ -21,7 +21,7 @@ public class BreakableDeadTree : MonoBehaviour
         {
             if (TimeController.getCurrentTime().Date >= respawningObject.respawnDateTimestamp)
             {
-                GameState.respawningObjects.Remove(uid);
+                GameState.Instance.respawningObjects.Remove(uid);
                 ResetTree();
                 return;
             }
@@ -45,7 +45,7 @@ public class BreakableDeadTree : MonoBehaviour
 
         if (TimeController.getCurrentTime().Date >= respawningObject.respawnDateTimestamp)
         {
-            GameState.respawningObjects.Remove(uid);
+            GameState.Instance.respawningObjects.Remove(uid);
             tree.SetActive(true);
             spawnEffect.Play();
             return;
@@ -54,13 +54,13 @@ public class BreakableDeadTree : MonoBehaviour
 
     public RespawningObject findRespawningObjectByUid(string uid)
     {
-        bool keyExists = GameState.respawningObjects.ContainsKey(uid);
+        bool keyExists = GameState.Instance.respawningObjects.ContainsKey(uid);
         if (!keyExists)
         {
             return null;
         }
 
-        return GameState.respawningObjects[uid];
+        return GameState.Instance.respawningObjects[uid];
     }
 
     //Copy of the one in hasRespawner
@@ -75,6 +75,6 @@ public class BreakableDeadTree : MonoBehaviour
             respawnDateTimestamp = tomorrow,
         };
 
-        GameState.respawningObjects.Add(respawningObject.uid, respawningObject);
+        GameState.Instance.respawningObjects.Add(respawningObject.uid, respawningObject);
     }
 }

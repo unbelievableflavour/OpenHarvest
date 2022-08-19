@@ -24,12 +24,12 @@ public class hasRespawner : MonoBehaviour
             respawnDateTimestamp = tomorrow,
         };
 
-        if (GameState.respawningObjects.ContainsKey(respawningObject.uid))
+        if (GameState.Instance.respawningObjects.ContainsKey(respawningObject.uid))
         {
             Debug.Log("updated instead of added");
-            GameState.respawningObjects[respawningObject.uid] = respawningObject;
+            GameState.Instance.respawningObjects[respawningObject.uid] = respawningObject;
         } else {
-            GameState.respawningObjects.Add(respawningObject.uid, respawningObject);
+            GameState.Instance.respawningObjects.Add(respawningObject.uid, respawningObject);
         }
 
         objectRespawner = null;

@@ -12,6 +12,6 @@ public class UpdateWalletLabel : MonoBehaviour
 
     public void UpdateMoneyLabel()
     {
-        text.text = GameState.getTotalAmount().ToString();
+        text.text = GameState.Instance.getTotalAmount().ToString();
     }
 }

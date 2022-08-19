@@ -8,13 +8,13 @@ public class HideIfUnlockedCountIsBelow : MonoBehaviour
 
     void Start()
     {
-        if (GameState.unlockables.ContainsKey(itemType) == false) 
+        if (GameState.Instance.unlockables.ContainsKey(itemType) == false) 
         {
             this.gameObject.SetActive(false);
             return;
         }
 
-        if (GameState.unlockables[itemType] < unlockedCount)
+        if (GameState.Instance.unlockables[itemType] < unlockedCount)
         {
             this.gameObject.SetActive(false);
             return;

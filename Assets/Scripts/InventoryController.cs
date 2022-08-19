@@ -28,7 +28,7 @@ public class InventoryController : ItemStashController
         inventorySlots = backpackInventorySlots;
 
         //Enable big backpack if unlocked
-        if (GameState.isUnlocked(backpackBigId))
+        if (GameState.Instance.isUnlocked(backpackBigId))
         {
             inventorySlots = backpackBiginventorySlots;
             backpack.SetActive(false);

@@ -28,7 +28,7 @@ public class ChickenInformation : MonoBehaviour
 
     void Start()
     {
-        saveLocation = GameState.animals["chickens"];
+        saveLocation = GameState.Instance.animals["chickens"];
         if (saveLocation.Count > index && saveLocation[index] != null)
         {
             TimeController.Instance.ListenToDayChange(handleNewDayStarted);
@@ -113,7 +113,7 @@ public class ChickenInformation : MonoBehaviour
     {
         TimeController.Instance.RemoveFromDayChange(handleNewDayStarted);
         saveLocation[index] = null;
-        GameState.unlockables["Chicken"]--;
+        GameState.Instance.unlockables["Chicken"]--;
         gameObject.SetActive(false);
     }
 

@@ -20,7 +20,7 @@ public class OnlyLookAtTransformOnCollision : MonoBehaviour
             return;
         }
 
-        component.LookAt = GameState.currentPlayerPosition;
+        component.LookAt = GameState.Instance.currentPlayerPosition;
         component.isLookingAtPlayer = true;
     }
 

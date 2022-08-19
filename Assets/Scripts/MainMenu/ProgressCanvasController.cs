@@ -38,6 +38,6 @@ public class ProgressCanvasController : MonoBehaviour
         settingsButton.GetComponent<Button>().interactable = false;
         loadButton.GetComponent<Button>().interactable = false;
 
-        GameState.currentSceneSwitcher.SwitchToScene(1, "DefaultSpawnPoint");
+        SceneSwitcher.Instance.SwitchToScene(1, "DefaultSpawnPoint");
     }
 }

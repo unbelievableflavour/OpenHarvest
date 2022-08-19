@@ -17,7 +17,7 @@ public class QuestSantasLittleHelper : QuestOption
 
     public void CheckStatus( )
     {
-        if (GameState.questList[questId].currentProgress != Progress.InProgress)
+        if (GameState.Instance.questList[questId].currentProgress != Progress.InProgress)
         {
             return;
         }

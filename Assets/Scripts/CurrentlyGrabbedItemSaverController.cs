@@ -43,7 +43,7 @@ public class CurrentlyGrabbedItemSaverController : MonoBehaviour
             if (newItemGrabbable)
             {
                 var item = Definitions.GetItemFromObject(newItem);
-                if (item && item.isUnlockable && !GameState.isUnlocked(item.itemId))
+                if (item && item.isUnlockable && !GameState.Instance.isUnlocked(item.itemId))
                 {
                     Destroy(newItem);
                     continue;
@@ -62,7 +62,7 @@ public class CurrentlyGrabbedItemSaverController : MonoBehaviour
                 waterAmountStack.waterAmount = saveableItem.currentStackSize;
             }
 
-            newItem.transform.position = GameState.currentPlayerPosition.position;
+            newItem.transform.position = GameState.Instance.currentPlayerPosition.position;
         }
     }
 

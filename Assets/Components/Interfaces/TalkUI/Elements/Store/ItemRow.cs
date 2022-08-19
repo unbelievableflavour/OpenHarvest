@@ -19,13 +19,13 @@ public class ItemRow : MonoBehaviour
     {
         button.interactable = true;
 
-        if (item.DependsOnBeforeBuyingItem != null && !GameState.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
+        if (item.DependsOnBeforeBuyingItem != null && !GameState.Instance.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
         {
             setButtonToDependsOnOtherItem(item.DependsOnBeforeBuyingItem);
             return;
         }
 
-        if (GameState.isUnlocked(item.itemId) && GameState.ownsMaximumNumber(item))
+        if (GameState.Instance.isUnlocked(item.itemId) && GameState.Instance.ownsMaximumNumber(item))
         {
             buttonLabel.text = "Maximum owned amount of item reached";
             return;
@@ -47,7 +47,7 @@ public class ItemRow : MonoBehaviour
 
     private bool hasEnoughMoney()
     {
-        return (GameState.getTotalAmount() - item.buyPrice) >= 0;
+        return (GameState.Instance.getTotalAmount() - item.buyPrice) >= 0;
     }
 
     public void GoToDetailPage()

@@ -58,7 +58,7 @@ public class SwitchSceneOnDoorOpen : MonoBehaviour
 
     private void SwitchScene()
     {
-        GameState.currentSceneSwitcher.SwitchToScene(sceneIndex, sceneEnterLocationName);
+        SceneSwitcher.Instance.SwitchToScene(sceneIndex, sceneEnterLocationName);
         doorIsEnabled = false;
     }
 }

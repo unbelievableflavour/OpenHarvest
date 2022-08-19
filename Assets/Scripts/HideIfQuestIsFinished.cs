@@ -14,7 +14,7 @@ public class HideIfQuestIsFinished : MonoBehaviour
 
     public void CheckQuestStatus()
     {
-        gameObject.SetActive(GameState.questList[questId].currentProgress != Progress.Done);
+        gameObject.SetActive(GameState.Instance.questList[questId].currentProgress != Progress.Done);
     }
 
     private void handleQuestsChanged(object sender, EventArgs e)

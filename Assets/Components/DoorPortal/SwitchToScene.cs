@@ -8,11 +8,11 @@ public class SwitchToScene : MonoBehaviour
 
     public void Switch()
     {
-        GameState.currentSceneSwitcher.SwitchToScene(sceneIndex, sceneEnterLocationName);
+        SceneSwitcher.Instance.SwitchToScene(sceneIndex, sceneEnterLocationName);
     }
 
     public void SwitchWithPreviousSceneNumber()
     {
-        GameState.currentSceneSwitcher.SwitchToScene(sceneIndex, SceneManager.GetActiveScene().buildIndex.ToString());
+        SceneSwitcher.Instance.SwitchToScene(sceneIndex, SceneManager.GetActiveScene().buildIndex.ToString());
     }
 }

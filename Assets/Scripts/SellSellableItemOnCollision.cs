@@ -31,7 +31,7 @@ public class SellSellableItemOnCollision : MonoBehaviour
         var itemStack = other.GetComponent<ItemStack>();
         var sellingPrice = itemStack ? GetSellingPrice(item) * itemStack.GetStackSize() : GetSellingPrice(item);
  
-        GameState.IncreaseMoneyByAmount(sellingPrice);
+        GameState.Instance.IncreaseMoneyByAmount(sellingPrice);
         text.GetComponent<Text>().text = "+" + sellingPrice;       
 
         gainMoneySound.Play();
@@ -45,7 +45,7 @@ public class SellSellableItemOnCollision : MonoBehaviour
     {
         int sellPrice = item.sellPrice;
 
-        foreach (var itemOfTheWeek in GameState.itemsOfTheWeek)
+        foreach (var itemOfTheWeek in GameState.Instance.itemsOfTheWeek)
         {
             if (item.itemId == itemOfTheWeek.Value.currentItemId)
             {

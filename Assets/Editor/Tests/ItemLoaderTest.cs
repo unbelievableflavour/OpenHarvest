@@ -35,7 +35,7 @@ namespace Tests
         //     {
         //         if (item.Value.maximumTimesOwned != null)
         //         {
-        //             Assert.AreEqual(GameState.unlockables.ContainsKey(item.Value.itemId), true, "item: \"" + item.Value.itemId + "\" is invalid. Property \"isUnlockable\" is required to use property \"maximumTimesOwned\"");
+        //             Assert.AreEqual(GameState.Instance.unlockables.ContainsKey(item.Value.itemId), true, "item: \"" + item.Value.itemId + "\" is invalid. Property \"isUnlockable\" is required to use property \"maximumTimesOwned\"");
         //         }
 
         //         Assert.AreEqual(false, string.IsNullOrEmpty(item.Value.name), "item: \"" + item.Value.itemId + "\" is invalid. Title value is empty");
@@ -206,7 +206,7 @@ namespace Tests
         // public void Cleanup()
         // {
         //     Definitions.ItemsWithInformation.Clear();
-        //     GameState.unlockables.Clear();
+        //     GameState.Instance.unlockables.Clear();
 
         //     foreach (var store in Definitions.itemStores)
         //     {

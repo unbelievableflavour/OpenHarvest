@@ -1,4 +1,3 @@
-using BNG;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -7,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneSwitcher : MonoBehaviour
 {
     public Transform playerStartPositions;
-    public BNGPlayerController playerController;
+    public BNG.BNGPlayerController playerController;
 
     public PlayerInvokes playerInvokes;
     public EventHandler beforeSceneSwitch;
@@ -31,14 +30,13 @@ public class SceneSwitcher : MonoBehaviour
     void Start()
     {
         defaultPosition = GetDefaultSpawnPosition();
-        GameState.currentSceneSwitcher = this;
-        GameState.currentPlayerPosition = playerController.transform;
-        SetPlayerStartPosition(GameState.enteredSceneThrough != null ? GameState.enteredSceneThrough : "Default");
+        GameState.Instance.currentPlayerPosition = playerController.transform;
+        SetPlayerStartPosition(GameState.Instance.enteredSceneThrough != null ? GameState.Instance.enteredSceneThrough : "Default");
     }
 
     public void SwitchToScene(int sceneIndex, string sceneEnterLocation)
     {
-        GameState.enteredSceneThrough = sceneEnterLocation;
+        GameState.Instance.enteredSceneThrough = sceneEnterLocation;
 
         FadeToBlack();
         
@@ -80,7 +78,7 @@ public class SceneSwitcher : MonoBehaviour
 
     public void Respawn()
     {
-        SetPlayerStartPosition(GameState.enteredSceneThrough != null ? GameState.enteredSceneThrough : "Default");
+        SetPlayerStartPosition(GameState.Instance.enteredSceneThrough != null ? GameState.Instance.enteredSceneThrough : "Default");
     }
 
     private Transform GetDefaultSpawnPosition()
@@ -98,7 +96,7 @@ public class SceneSwitcher : MonoBehaviour
 
     private void SetPlayerStartPosition(string enterLocation)
     {
-        var playerTeleport = GameState.currentPlayerPosition.GetComponent<PlayerTeleport>();
+        var playerTeleport = GameState.Instance.currentPlayerPosition.GetComponent<BNG.PlayerTeleport>();
         if (!playerTeleport)
         {
             return;

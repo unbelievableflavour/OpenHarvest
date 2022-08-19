@@ -125,9 +125,9 @@ public static class Definitions
             title = "Santa's Little Helper",
             description = "Hang the christmas baubles in the tree!",
         };
-        if (!GameState.questList.ContainsKey(newQuest.id))
+        if (!GameState.Instance.questList.ContainsKey(newQuest.id))
         {
-            GameState.questList.Add(newQuest.id, newQuest);
+            GameState.Instance.questList.Add(newQuest.id, newQuest);
         }
 
         newQuest = new Quest()
@@ -136,9 +136,9 @@ public static class Definitions
             title = "Getting Bronze For The Oldy",
             description = "Hang the christmas baubles in the tree!",
         };
-        if (!GameState.questList.ContainsKey(newQuest.id))
+        if (!GameState.Instance.questList.ContainsKey(newQuest.id))
         {
-            GameState.questList.Add(newQuest.id, newQuest);
+            GameState.Instance.questList.Add(newQuest.id, newQuest);
         }
 
         newQuest = new Quest()
@@ -147,9 +147,9 @@ public static class Definitions
             title = "Cleanup Crew",
             description = "Clean that dirty beach.",
         };
-        if (!GameState.questList.ContainsKey(newQuest.id))
+        if (!GameState.Instance.questList.ContainsKey(newQuest.id))
         {
-            GameState.questList.Add(newQuest.id, newQuest);
+            GameState.Instance.questList.Add(newQuest.id, newQuest);
         }
 
         newQuest = new Quest()
@@ -158,9 +158,9 @@ public static class Definitions
             title = "Shell Finder",
             description = "Collect some awesome shells.",
         };
-        if (!GameState.questList.ContainsKey(newQuest.id))
+        if (!GameState.Instance.questList.ContainsKey(newQuest.id))
         {
-            GameState.questList.Add(newQuest.id, newQuest);
+            GameState.Instance.questList.Add(newQuest.id, newQuest);
         }   
     }
 

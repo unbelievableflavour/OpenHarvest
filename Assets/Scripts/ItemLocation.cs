@@ -55,7 +55,7 @@ public class ItemLocation : MonoBehaviour
             }
 
             var currentItem = Definitions.GetItemFromObject(option);
-            if (currentItem != null && !GameState.isUnlocked(currentItem.itemId))
+            if (currentItem != null && !GameState.Instance.isUnlocked(currentItem.itemId))
             {
                 currentItemActualIndex++;
                 continue;
@@ -81,7 +81,7 @@ public class ItemLocation : MonoBehaviour
                 }
 
                 var currentItem = Definitions.GetItemFromObject(option);
-                if (currentItem != null && !GameState.isUnlocked(currentItem.itemId))
+                if (currentItem != null && !GameState.Instance.isUnlocked(currentItem.itemId))
                 {
                     i++;
                     continue;
@@ -107,7 +107,7 @@ public class ItemLocation : MonoBehaviour
                 }
 
                 var currentItem = Definitions.GetItemFromObject(options.GetChild(i));
-                if (currentItem != null && !GameState.isUnlocked(currentItem.itemId))
+                if (currentItem != null && !GameState.Instance.isUnlocked(currentItem.itemId))
                 {
                     i--;
                     continue;
@@ -121,7 +121,7 @@ public class ItemLocation : MonoBehaviour
         for (int i = options.childCount - 1; i >= 0;)
         {
             var currentItem = Definitions.GetItemFromObject(options.GetChild(i));
-            if (currentItem != null && !GameState.isUnlocked(currentItem.itemId))
+            if (currentItem != null && !GameState.Instance.isUnlocked(currentItem.itemId))
             {
                 i--;
                 continue;
@@ -134,7 +134,7 @@ public class ItemLocation : MonoBehaviour
 
     public void Load()
     {
-        string currentSavedItem = GameState.locationConfigurations[itemLocation.ToString()];
+        string currentSavedItem = GameState.Instance.locationConfigurations[itemLocation.ToString()];
 
         if(string.IsNullOrEmpty(currentSavedItem))
         {
@@ -160,12 +160,12 @@ public class ItemLocation : MonoBehaviour
         var currentItem = Definitions.GetItemFromObject(options.GetChild(activeIndex));
         if (currentItem == null) {
             savedItemLabel.text = "Saved: none";
-            GameState.locationConfigurations[itemLocation.ToString()] = null;
+            GameState.Instance.locationConfigurations[itemLocation.ToString()] = null;
             return;
         }
 
         savedItemLabel.text = "Saved: " + currentItem.name;
-        GameState.locationConfigurations[itemLocation.ToString()] = currentItem.itemId;
+        GameState.Instance.locationConfigurations[itemLocation.ToString()] = currentItem.itemId;
         configurationModeToggler.RefreshItems();
     }
 
@@ -173,7 +173,7 @@ public class ItemLocation : MonoBehaviour
     {
         int currentlyUsedCount = 0;
 
-        foreach (var location in GameState.locationConfigurations)
+        foreach (var location in GameState.Instance.locationConfigurations)
         {
             if (location.Value == itemId)
             {
@@ -203,13 +203,13 @@ public class ItemLocation : MonoBehaviour
         selectedItemLabel.text = "Current: " + item.name;
         SetTotalItemsNumber();
 
-        int currentlyOwnedCount = GameState.unlockables[item.itemId];
+        int currentlyOwnedCount = GameState.Instance.unlockables[item.itemId];
         int currentlyUsedCount = GetCurrentlyUsedItemCount(item.itemId);
 
         ownedLabel.text = "Owned: " + currentlyOwnedCount.ToString();
         usedLabel.text = "Used: " + currentlyUsedCount.ToString();
 
-        if (item.itemId == GameState.locationConfigurations[itemLocation.ToString()])
+        if (item.itemId == GameState.Instance.locationConfigurations[itemLocation.ToString()])
         {
             saveButton.interactable = false;
             saveButtonLabel.fontSize = 20;
@@ -234,16 +234,16 @@ public class ItemLocation : MonoBehaviour
     {
         if (itemLocation == ItemLocations.GreenHouseSprinkler1)
         {
-            if (GameState.enteredSceneThrough == "greenhouse1"){
+            if (GameState.Instance.enteredSceneThrough == "greenhouse1"){
                 itemLocation = ItemLocations.GreenHouseSprinkler1;
                 return;
             }
-            if (GameState.enteredSceneThrough == "greenhouse2")
+            if (GameState.Instance.enteredSceneThrough == "greenhouse2")
             {
                 itemLocation = ItemLocations.GreenHouseSprinkler3;
                 return;
             }
-            if (GameState.enteredSceneThrough == "greenhouse3")
+            if (GameState.Instance.enteredSceneThrough == "greenhouse3")
             {
                 itemLocation = ItemLocations.GreenHouseSprinkler5;
                 return;
@@ -253,17 +253,17 @@ public class ItemLocation : MonoBehaviour
 
         if (itemLocation == ItemLocations.GreenHouseSprinkler2)
         {
-            if (GameState.enteredSceneThrough == "greenhouse1")
+            if (GameState.Instance.enteredSceneThrough == "greenhouse1")
             {
                 itemLocation = ItemLocations.GreenHouseSprinkler2;
                 return;
             }
-            if (GameState.enteredSceneThrough == "greenhouse2")
+            if (GameState.Instance.enteredSceneThrough == "greenhouse2")
             {
                 itemLocation = ItemLocations.GreenHouseSprinkler4;
                 return;
             }
-            if (GameState.enteredSceneThrough == "greenhouse3")
+            if (GameState.Instance.enteredSceneThrough == "greenhouse3")
             {
                 itemLocation = ItemLocations.GreenHouseSprinkler6;
                 return;

@@ -32,7 +32,7 @@ public class QuestDialogueController : MonoBehaviour
 
     void Start()
     {
-        currentDialogue = GameState.questList[questId].currentDialogue;
+        currentDialogue = GameState.Instance.questList[questId].currentDialogue;
         UpdateDialogue();
     }
 
@@ -40,7 +40,7 @@ public class QuestDialogueController : MonoBehaviour
     {
         currentDialogue = newCurrentDialogue;
 
-        GameState.questList[questId].currentDialogue = currentDialogue;
+        GameState.Instance.questList[questId].currentDialogue = currentDialogue;
         UpdateDialogue();
     }
 

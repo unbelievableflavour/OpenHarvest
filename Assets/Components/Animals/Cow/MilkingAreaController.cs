@@ -32,7 +32,7 @@ public class MilkingAreaController : MonoBehaviour
         {
             if (TimeController.getCurrentTime().Date >= respawningObject.respawnDateTimestamp)
             {
-                GameState.respawningObjects.Remove(uid);
+                GameState.Instance.respawningObjects.Remove(uid);
                 hasMilk = true;
                 return;
             }
@@ -50,13 +50,13 @@ public class MilkingAreaController : MonoBehaviour
 
     public RespawningObject findRespawningObjectByUid(string uid)
     {
-        bool keyExists = GameState.respawningObjects.ContainsKey(uid);
+        bool keyExists = GameState.Instance.respawningObjects.ContainsKey(uid);
         if (!keyExists)
         {
             return null;
         }
 
-        return GameState.respawningObjects[uid];
+        return GameState.Instance.respawningObjects[uid];
     }
 
     void SetLoader()
@@ -184,6 +184,6 @@ public class MilkingAreaController : MonoBehaviour
             respawnDateTimestamp = tomorrow,
         };
 
-        GameState.respawningObjects.Add(respawningObject.uid, respawningObject);
+        GameState.Instance.respawningObjects.Add(respawningObject.uid, respawningObject);
     }
 }

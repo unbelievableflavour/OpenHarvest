@@ -9,7 +9,7 @@ public class HouseController : MonoBehaviour
 
     void Start()
     {
-        if (GameState.isUnlocked(houseExpansionFirstFloorId))
+        if (GameState.Instance.isUnlocked(houseExpansionFirstFloorId))
         {
             house.SetActive(false);
             houseExpansionFirstFloor.SetActive(true);

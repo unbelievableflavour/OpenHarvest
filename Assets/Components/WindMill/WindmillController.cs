@@ -83,7 +83,7 @@ public class WindmillController : MonoBehaviour
 
     void LoadWindmill()
     {
-        SaveableWindmill windmill = GameState.windmill;
+        SaveableWindmill windmill = GameState.Instance.windmill;
 
         if (windmill == null)
         {
@@ -124,7 +124,7 @@ public class WindmillController : MonoBehaviour
         saveableWindmill.currentWheatCount = currentWheatCount;
         saveableWindmill.currentFlourCount = getCurrentFlourCount();
 
-        GameState.windmill = saveableWindmill;
+        GameState.Instance.windmill = saveableWindmill;
     }
 
     int getCurrentFlourCount()

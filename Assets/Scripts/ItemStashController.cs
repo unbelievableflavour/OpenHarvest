@@ -61,7 +61,6 @@ public class ItemStashController : MonoBehaviour
                 continue;
             }
 
-            Debug.Log(itemDatabase);
             var item = itemDatabase.FindById(stashedItem.id);
 
             if (itemsThatShouldNotBeSaved.Contains(item.itemId))
@@ -81,7 +80,7 @@ public class ItemStashController : MonoBehaviour
 
             if (newItemGrabbable)
             {
-                if (item.isUnlockable && !GameState.isUnlocked(item.itemId))
+                if (item.isUnlockable && !GameState.Instance.isUnlocked(item.itemId))
                 {
                     Destroy(spawnedItem);
                     index++;
@@ -157,12 +156,12 @@ public class ItemStashController : MonoBehaviour
 
     private List<SaveableItem> GetFromGameState()
     {
-        return GameState.itemStashes[itemStashName];
+        return GameState.Instance.itemStashes[itemStashName];
     }
 
     protected void SetInGameState()
     {
-        GameState.itemStashes[itemStashName] = storedItems;
+        GameState.Instance.itemStashes[itemStashName] = storedItems;
     }
 
     protected void beforeSceneSwitch(object sender, EventArgs e)

@@ -6,7 +6,7 @@ public class DeleteIfNotUnlocked : MonoBehaviour
     
     void Start()
     {
-        if (GameState.isUnlocked(itemId))
+        if (GameState.Instance.isUnlocked(itemId))
         {
             return;
         }

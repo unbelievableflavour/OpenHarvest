@@ -49,7 +49,7 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
-        if (GameState.name == "")
+        if (GameState.Instance.name == "")
         {
             ShowErrorCanvas("Name cannot be empty.", chooseNameCanvas);
             return;
@@ -63,7 +63,7 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
-        if (GameState.farmName == "")
+        if (GameState.Instance.farmName == "")
         {
             ShowErrorCanvas("Farm name cannot be empty.", chooseFarmNameCanvas);
             return;
@@ -80,13 +80,13 @@ public class MainMenuController : MonoBehaviour
         GameState.Reset();
         AddSomeStartingEquipmentToPlayer();
         SavingController.SaveGame();
-        GameState.currentSceneSwitcher.SwitchToScene(1, "DefaultSpawnPoint");
+        SceneSwitcher.Instance.SwitchToScene(1, "DefaultSpawnPoint");
     }
 
     private void AddSomeStartingEquipmentToPlayer()
     {
-        GameState.itemStashes["backpack"] = new List<SaveableItem>();
-        GameState.itemStashes["backpack"].Add(new SaveableItem()
+        GameState.Instance.itemStashes["backpack"] = new List<SaveableItem>();
+        GameState.Instance.itemStashes["backpack"].Add(new SaveableItem()
         {
             id = "SeedBagTomato",
             currentStackSize = 10,
@@ -98,7 +98,7 @@ public class MainMenuController : MonoBehaviour
         GameState.Reset();
         AddSomeStartingEquipmentToPlayer();
         SavingController.SaveGame();
-        GameState.currentSceneSwitcher.SwitchToScene(7, "MainMenu");
+        SceneSwitcher.Instance.SwitchToScene(7, "MainMenu");
     }
 
     public void SetPlayInRealTime()
@@ -113,12 +113,12 @@ public class MainMenuController : MonoBehaviour
 
     public void SetName(Text label)
     {
-        GameState.name = label.text;
+        GameState.Instance.name = label.text;
     }
 
     public void SetFarmName(Text label)
     {
-        GameState.farmName = label.text;
+        GameState.Instance.farmName = label.text;
     }
 
     private void DisableAllCanvas()

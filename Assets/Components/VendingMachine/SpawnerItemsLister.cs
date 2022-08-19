@@ -27,7 +27,7 @@ public class SpawnerItemsLister : MonoBehaviour
                 continue;
             }
 
-            if (item.isUnlockable && !GameState.isUnlocked(item.itemId))
+            if (item.isUnlockable && !GameState.Instance.isUnlocked(item.itemId))
             {
                 continue;
             }

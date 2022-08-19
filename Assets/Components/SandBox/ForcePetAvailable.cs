@@ -38,19 +38,19 @@ public class ForcePetAvailable : MonoBehaviour
     {
         if (animalType == AnimalTypes.Cow)
         {
-            return GameState.animals["cows"];
+            return GameState.Instance.animals["cows"];
         }
 
         if (animalType == AnimalTypes.Sheep)
         {
-            return GameState.animals["sheep"];
+            return GameState.Instance.animals["sheep"];
         }
 
         if (animalType == AnimalTypes.Pig)
         {
-            return GameState.animals["pigs"];
+            return GameState.Instance.animals["pigs"];
         }
 
-        return GameState.animals["chickens"];
+        return GameState.Instance.animals["chickens"];
     }
 }

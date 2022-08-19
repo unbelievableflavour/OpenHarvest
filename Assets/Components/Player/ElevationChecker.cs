@@ -36,12 +36,12 @@ public class ElevationChecker : MonoBehaviour
 
     public void Respawn()
     {
-        if (GameState.currentSceneSwitcher == null)
+        if (SceneSwitcher.Instance == null)
         {
             return;
         }
 
         Debug.Log("Player out of bounds; Returning to initial position.");
-        GameState.currentSceneSwitcher.Respawn();
+        SceneSwitcher.Instance.Respawn();
     }
 }

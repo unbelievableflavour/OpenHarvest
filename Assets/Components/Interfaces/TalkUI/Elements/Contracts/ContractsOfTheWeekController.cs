@@ -20,12 +20,12 @@ public class ContractsOfTheWeekController : MonoBehaviour
 
         if (getContractsOfTheWeek().currentContracts.Count == 0)
         {
-            GameState.contractsOfTheWeek.currentContracts = getRandomContracts();
+            GameState.Instance.contractsOfTheWeek.currentContracts = getRandomContracts();
         }
 
         if (getContractsOfTheWeek().nextContracts.Count == 0)
         {
-            GameState.contractsOfTheWeek.nextContracts = getRandomContracts();
+            GameState.Instance.contractsOfTheWeek.nextContracts = getRandomContracts();
         }
 
         Refresh();
@@ -72,7 +72,7 @@ public class ContractsOfTheWeekController : MonoBehaviour
             List<Contract> newNextItemOfTheWeek = getRandomContracts();
             if (getContractsOfTheWeek().nextContracts != newNextItemOfTheWeek)
             {
-                GameState.contractsOfTheWeek.nextContracts = newNextItemOfTheWeek;
+                GameState.Instance.contractsOfTheWeek.nextContracts = newNextItemOfTheWeek;
                 break;
             }
         }
@@ -80,7 +80,7 @@ public class ContractsOfTheWeekController : MonoBehaviour
 
     private ContractsOfTheWeek getContractsOfTheWeek()
     {
-        return GameState.contractsOfTheWeek;
+        return GameState.Instance.contractsOfTheWeek;
     }
 
     private List<Contract> getRandomContracts() 

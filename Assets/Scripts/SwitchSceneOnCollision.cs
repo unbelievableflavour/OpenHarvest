@@ -19,7 +19,7 @@ public class SwitchSceneOnCollision : MonoBehaviour
             return;
         }
 
-        GameState.currentSceneSwitcher.SwitchToScene(sceneIndex, sceneEnterLocationName);
+        SceneSwitcher.Instance.SwitchToScene(sceneIndex, sceneEnterLocationName);
         canCollide = false;
     }
 }

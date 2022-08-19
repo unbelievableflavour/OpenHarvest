@@ -62,9 +62,9 @@ public class TimeController : MonoBehaviour
     public void CheckIfNewDay()
     {
         int currentDay = (int)GetTotalSimulatedGameSeconds() / 86400;
-        if (currentDay != GameState.currentDay)
+        if (currentDay != GameState.Instance.currentDay)
         {
-            GameState.currentDay = currentDay;
+            GameState.Instance.currentDay = currentDay;
             newDayStarted?.Invoke(this, null);
         }
     }

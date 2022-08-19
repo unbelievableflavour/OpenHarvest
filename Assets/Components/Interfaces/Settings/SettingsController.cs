@@ -24,7 +24,7 @@ public class SettingsController : MonoBehaviour
     public Toggle useApplicationSpaceWarp;
 
     public void UpdateSettingsWithPrefs() {
-        UpdateSettingsInCanvas(GameState.settings);
+        UpdateSettingsInCanvas(GameState.Instance.settings);
     }
 
     public void UpdateSettingsInCanvas(Dictionary<string,string> settings)
@@ -45,19 +45,19 @@ public class SettingsController : MonoBehaviour
 
     public void UpdateHandSettings()
     {
-        GameState.settings["useHandsOnly"] = useHandsOnly.isOn.ToString();
+        GameState.Instance.settings["useHandsOnly"] = useHandsOnly.isOn.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
     }
 
     public void UpdateLocomotionSettings()
     {
-        GameState.settings["useSmoothLocomotion"] = useSmoothLocomotion.isOn.ToString();
+        GameState.Instance.settings["useSmoothLocomotion"] = useSmoothLocomotion.isOn.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
     }
 
     public void UpdateSmoothRotationSettings()
     {
-        GameState.settings["useSmoothTurning"] = useSmoothTurning.isOn.ToString();
+        GameState.Instance.settings["useSmoothTurning"] = useSmoothTurning.isOn.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
 
         smoothTurningSensitivitySlider.interactable = useSmoothTurning.isOn;
@@ -65,7 +65,7 @@ public class SettingsController : MonoBehaviour
 
     public void UpdateSmoothRotationSensitivitySettings()
     {
-        GameState.settings["smoothTurningSensitivity"] = smoothTurningSensitivitySlider.value.ToString();
+        GameState.Instance.settings["smoothTurningSensitivity"] = smoothTurningSensitivitySlider.value.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
 
         smoothTurningSensitivityLabel.text = smoothTurningSensitivitySlider.value.ToString();        
@@ -73,7 +73,7 @@ public class SettingsController : MonoBehaviour
 
     public void UpdateBackgroundMusicVolumeSettings()
     {
-        GameState.settings["backgroundMusicVolume"] = backgroundMusicVolumeSlider.value.ToString();
+        GameState.Instance.settings["backgroundMusicVolume"] = backgroundMusicVolumeSlider.value.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
 
         backgroundMusicVolumeLabel.text = (backgroundMusicVolumeSlider.value / 10).ToString();
@@ -81,7 +81,7 @@ public class SettingsController : MonoBehaviour
 
     public void UpdatePlayerHeightOffsetSlider()
     {
-        GameState.settings["playerHeightOffset"] = playerHeightOffsetSlider.value.ToString();
+        GameState.Instance.settings["playerHeightOffset"] = playerHeightOffsetSlider.value.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
 
         playerHeightOffsetSliderLabel.text = (playerHeightOffsetSlider.value / 10).ToString();
@@ -89,31 +89,31 @@ public class SettingsController : MonoBehaviour
 
     public void UpdateUseAssistMode()
     {
-        GameState.settings["useAssistMode"] = useAssistMode.isOn.ToString();
+        GameState.Instance.settings["useAssistMode"] = useAssistMode.isOn.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
     }
 
     public void UpdateSkinColor(string color)
     {
-        GameState.settings["skinColor"] = color;
+        GameState.Instance.settings["skinColor"] = color;
         PlayerCustomSettings.Instance.RefreshSettings();
     }
 
     public void UpdateResolutionScale()
     {
-        GameState.settings["resolutionScale"] = resolutionScaleDropdown.value.ToString();
+        GameState.Instance.settings["resolutionScale"] = resolutionScaleDropdown.value.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
     }
 
     public void UpdateShadowSettings()
     {
-        GameState.settings["useShadows"] = useShadows.isOn.ToString();
+        GameState.Instance.settings["useShadows"] = useShadows.isOn.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
     }
 
     public void UpdateApplicationSpaceWarp()
     {
-        GameState.settings["useApplicationSpaceWarp"] = useApplicationSpaceWarp.isOn.ToString();
+        GameState.Instance.settings["useApplicationSpaceWarp"] = useApplicationSpaceWarp.isOn.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
     }
 }

@@ -23,7 +23,7 @@ public class ShavingController : MonoBehaviour
         {
             if (TimeController.getCurrentTime().Date >= respawningObject.respawnDateTimestamp)
             {
-                GameState.respawningObjects.Remove(uid);
+                GameState.Instance.respawningObjects.Remove(uid);
                 SetWoolActive();
                 return;
             }
@@ -40,18 +40,18 @@ public class ShavingController : MonoBehaviour
 
     public RespawningObject findRespawningObjectByUid(string uid)
     {
-        bool keyExists = GameState.respawningObjects.ContainsKey(uid);
+        bool keyExists = GameState.Instance.respawningObjects.ContainsKey(uid);
         if (!keyExists)
         {
             return null;
         }
 
-        return GameState.respawningObjects[uid];
+        return GameState.Instance.respawningObjects[uid];
     }
 
     public void addToRespawningObjects()
     {
-        if (GameState.respawningObjects.ContainsKey(uid))
+        if (GameState.Instance.respawningObjects.ContainsKey(uid))
         {
             Debug.Log("already respawning");
             return;
@@ -66,7 +66,7 @@ public class ShavingController : MonoBehaviour
             respawnDateTimestamp = tomorrow,
         };
 
-        GameState.respawningObjects.Add(respawningObject.uid, respawningObject);
+        GameState.Instance.respawningObjects.Add(respawningObject.uid, respawningObject);
     }
 
     void SetWoolActive()

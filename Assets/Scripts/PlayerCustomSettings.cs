@@ -40,13 +40,13 @@ public class PlayerCustomSettings : MonoBehaviour
 
     public void RefreshSettings()
     {
-        handModelSelector.ChangeHandsModel(bool.Parse(GameState.settings["useHandsOnly"]) ? 9 : 8, true);
-        locomotionManager.ChangeLocomotion(bool.Parse(GameState.settings["useSmoothLocomotion"]) ? LocomotionType.SmoothLocomotion : LocomotionType.Teleport, true);
-        playerRotation.RotationType = bool.Parse(GameState.settings["useSmoothTurning"]) ? RotationMechanic.Smooth : RotationMechanic.Snap; ;
-        playerRotation.SmoothTurnSpeed = float.Parse(GameState.settings["smoothTurningSensitivity"]) * 20;
-        BNGPlayerOffset.CharacterControllerYOffset = float.Parse(GameState.settings["playerHeightOffset"]) / 10;
+        handModelSelector.ChangeHandsModel(bool.Parse(GameState.Instance.settings["useHandsOnly"]) ? 9 : 8, true);
+        locomotionManager.ChangeLocomotion(bool.Parse(GameState.Instance.settings["useSmoothLocomotion"]) ? LocomotionType.SmoothLocomotion : LocomotionType.Teleport, true);
+        playerRotation.RotationType = bool.Parse(GameState.Instance.settings["useSmoothTurning"]) ? RotationMechanic.Smooth : RotationMechanic.Snap; ;
+        playerRotation.SmoothTurnSpeed = float.Parse(GameState.Instance.settings["smoothTurningSensitivity"]) * 20;
+        BNGPlayerOffset.CharacterControllerYOffset = float.Parse(GameState.Instance.settings["playerHeightOffset"]) / 10;
         SetUseAssistMode();
-        AudioManager.Instance.ChangeMusicVolume(float.Parse(GameState.settings["backgroundMusicVolume"]) / 10);
+        AudioManager.Instance.ChangeMusicVolume(float.Parse(GameState.Instance.settings["backgroundMusicVolume"]) / 10);
         playerColours.Refresh();
 
         var pipeline = ((UniversalRenderPipelineAsset)GraphicsSettings.renderPipelineAsset);
@@ -54,12 +54,12 @@ public class PlayerCustomSettings : MonoBehaviour
             pipeline.renderScale = getResolutionScale();
         }
 
-        if (isShadowsActive(pipeline) != bool.Parse(GameState.settings["useShadows"]))
+        if (isShadowsActive(pipeline) != bool.Parse(GameState.Instance.settings["useShadows"]))
         {
-            pipeline.shadowDistance = bool.Parse(GameState.settings["useShadows"]) ? defaultShadowDistanceValue : 0;
+            pipeline.shadowDistance = bool.Parse(GameState.Instance.settings["useShadows"]) ? defaultShadowDistanceValue : 0;
         }
 
-        OVRManager.SetSpaceWarp(bool.Parse(GameState.settings["useApplicationSpaceWarp"]));
+        OVRManager.SetSpaceWarp(bool.Parse(GameState.Instance.settings["useApplicationSpaceWarp"]));
     }
 
     public bool isShadowsActive(UniversalRenderPipelineAsset pipeline)
@@ -69,22 +69,22 @@ public class PlayerCustomSettings : MonoBehaviour
 
     public float getResolutionScale()
     {
-        if(GameState.settings["resolutionScale"] == "0")
+        if(GameState.Instance.settings["resolutionScale"] == "0")
         {
             return 1f;
         }
 
-        if (GameState.settings["resolutionScale"] == "1")
+        if (GameState.Instance.settings["resolutionScale"] == "1")
         {
             return 1.25f;
         }
 
-        if (GameState.settings["resolutionScale"] == "2")
+        if (GameState.Instance.settings["resolutionScale"] == "2")
         {
             return 1.4f;
         }
 
-        if (GameState.settings["resolutionScale"] == "3")
+        if (GameState.Instance.settings["resolutionScale"] == "3")
         {
             return 1.5f;
         }

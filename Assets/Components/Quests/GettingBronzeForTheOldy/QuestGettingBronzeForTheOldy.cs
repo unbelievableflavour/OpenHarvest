@@ -29,7 +29,7 @@ public class QuestGettingBronzeForTheOldy : QuestOption
 
     private void handleNPCGrabbedItem(object sender, Grabbable grabbable)
     {
-        if (GameState.questList[questId].currentDialogue == 1)
+        if (GameState.Instance.questList[questId].currentDialogue == 1)
         {
             var item = Definitions.GetItemFromObject(grabbable);
             if (item.itemId != "OreBronze")
@@ -78,17 +78,17 @@ public class QuestGettingBronzeForTheOldy : QuestOption
 
     public void CheckStatus()
     {
-        if (GameState.questList[questId].currentProgress != Progress.InProgress)
+        if (GameState.Instance.questList[questId].currentProgress != Progress.InProgress)
         {
             return;
         }
 
-        if(GameState.questList[questId].currentDialogue == 1)
+        if(GameState.Instance.questList[questId].currentDialogue == 1)
         {
             npc.HoldOutHand();
         }
 
-        if (GameState.questList[questId].currentDialogue == 2)
+        if (GameState.Instance.questList[questId].currentDialogue == 2)
         {
             npc.HoldOutHand();
             npc.SpawnQuestReward(rewardItem);

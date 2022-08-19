@@ -31,7 +31,7 @@ public class QuestCleanupCrew : QuestOption
 
     private void handleNPCGrabbedItem(object sender, Grabbable grabbable)
     {
-        if (GameState.questList[questId].currentDialogue == 1)
+        if (GameState.Instance.questList[questId].currentDialogue == 1)
         {
             var item = Definitions.GetItemFromObject(grabbable);
             if (item.itemId != "Bottle")
@@ -63,7 +63,7 @@ public class QuestCleanupCrew : QuestOption
             return;
         }
 
-        if (GameState.questList[questId].currentDialogue == 2)
+        if (GameState.Instance.questList[questId].currentDialogue == 2)
         {
             var item = Definitions.GetItemFromObject(grabbable);
             if (item.itemId != "Can")
@@ -112,22 +112,22 @@ public class QuestCleanupCrew : QuestOption
 
     public void CheckStatus()
     {
-        if (GameState.questList[questId].currentProgress != Progress.InProgress)
+        if (GameState.Instance.questList[questId].currentProgress != Progress.InProgress)
         {
             return;
         }
 
-        if (GameState.questList[questId].currentDialogue == 1)
+        if (GameState.Instance.questList[questId].currentDialogue == 1)
         {
             npc.HoldOutHand();
         }
 
-        if (GameState.questList[questId].currentDialogue == 2)
+        if (GameState.Instance.questList[questId].currentDialogue == 2)
         {
             npc.HoldOutHand();
         }
 
-        if (GameState.questList[questId].currentDialogue == 3)
+        if (GameState.Instance.questList[questId].currentDialogue == 3)
         {
             npc.HoldOutHand();
             npc.SpawnQuestReward(rewardItem);

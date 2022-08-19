@@ -109,7 +109,7 @@ public class ModularWorldGenerator : ModularGenerator
 
         // If player somehow manages to fall of the map, go to farm entrance.
         var moduleCenter = currentModule.Colliders[0].bounds.center;
-        float currentDistance = Vector3.Distance(moduleCenter, GameState.currentPlayerPosition.position);
+        float currentDistance = Vector3.Distance(moduleCenter, GameState.Instance.currentPlayerPosition.position);
         bool tooFarAway = currentDistance > maxShowDistance;
 
         if (!tooFarAway)
@@ -117,7 +117,7 @@ public class ModularWorldGenerator : ModularGenerator
             return;
         }
               
-        GameState.currentSceneSwitcher.SwitchToScene(1, "Cave");
+        SceneSwitcher.Instance.SwitchToScene(1, "Cave");
     }
 
     private bool moduleOverlapsOtherModule(Collider[] newModuleColliders) {

@@ -121,7 +121,7 @@ public class AnimalInformation : MonoBehaviour
     {
         TimeController.Instance.RemoveFromDayChange(handleNewDayStarted);
         saveLocation[index] = null;
-        GameState.unlockables[petId]--;
+        GameState.Instance.unlockables[petId]--;
         gameObject.SetActive(false);
     }
 
@@ -129,20 +129,20 @@ public class AnimalInformation : MonoBehaviour
     {
         if (animalType == AnimalTypes.Cow)
         {
-            return GameState.animals["cows"];
+            return GameState.Instance.animals["cows"];
         }
 
         if (animalType == AnimalTypes.Sheep)
         {
-            return GameState.animals["sheep"];
+            return GameState.Instance.animals["sheep"];
         }
 
         if (animalType == AnimalTypes.Pig)
         {
-            return GameState.animals["pigs"];
+            return GameState.Instance.animals["pigs"];
         }
 
-        return GameState.animals["chickens"];
+        return GameState.Instance.animals["chickens"];
     }
 
     private string getPetId()

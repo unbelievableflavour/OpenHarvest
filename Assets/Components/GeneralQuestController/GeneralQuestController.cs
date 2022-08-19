@@ -30,7 +30,7 @@ public class GeneralQuestController : MonoBehaviour
     public void StartQuest(Quests questId)
     {
         playSound(soundOnQuestStarted);
-        GameState.questList[questId].currentProgress = Progress.InProgress;
+        GameState.Instance.questList[questId].currentProgress = Progress.InProgress;
     }
 
     public void UpdateQuest()
@@ -41,7 +41,7 @@ public class GeneralQuestController : MonoBehaviour
     public void FinishQuest(Quests questId)
     {
         playSound(soundOnQuestFinished);
-        GameState.questList[questId].currentProgress = Progress.Done;
+        GameState.Instance.questList[questId].currentProgress = Progress.Done;
         questsChanged?.Invoke(this, null);
     }
 

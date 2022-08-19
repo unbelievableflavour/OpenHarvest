@@ -28,9 +28,9 @@ namespace BNG
                 lookAt();
                 return;
             }
-            if (!cameraPosition && GameState.currentPlayerPosition != null)
+            if (!cameraPosition && GameState.Instance.currentPlayerPosition != null)
             {
-                cameraPosition = GameState.currentPlayerPosition.transform.Find("CameraRig/TrackingSpace/CenterEyeAnchor").transform;
+                cameraPosition = GameState.Instance.currentPlayerPosition.transform.Find("CameraRig/TrackingSpace/CenterEyeAnchor").transform;
             }
         }
 
@@ -46,7 +46,7 @@ namespace BNG
         void lookAt()
         {
 
-            if (GameState.currentPlayerPosition != null)
+            if (GameState.Instance.currentPlayerPosition != null)
             {
                 if (UseLerp)
                 {

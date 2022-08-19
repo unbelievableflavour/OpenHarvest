@@ -31,7 +31,7 @@ public class BuyController : MonoBehaviour
             return;
         }
 
-        GameState.DecreaseMoneyByAmount(item.buyPrice);
+        GameState.Instance.DecreaseMoneyByAmount(item.buyPrice);
         AudioManager.Instance.PlayClip("buy");
         if (storeItemsLister)
         {
@@ -39,7 +39,7 @@ public class BuyController : MonoBehaviour
         }
 
         if (item.isUnlockable) {
-            GameState.unlock(item.itemId, 1);
+            GameState.Instance.unlock(item.itemId, 1);
             return;
         }
 
@@ -50,13 +50,13 @@ public class BuyController : MonoBehaviour
     {
         button.interactable = true;
 
-        if (item.DependsOnBeforeBuyingItem != null && !GameState.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
+        if (item.DependsOnBeforeBuyingItem != null && !GameState.Instance.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
         {
             setButtonToDependsOnOtherItem(item.DependsOnBeforeBuyingItem);
             return;
         }
 
-        if (GameState.isUnlocked(item.itemId) && GameState.ownsMaximumNumber(item))
+        if (GameState.Instance.isUnlocked(item.itemId) && GameState.Instance.ownsMaximumNumber(item))
         {
             setButtonToAlreadyBought();
             return;
@@ -96,7 +96,7 @@ public class BuyController : MonoBehaviour
 
     private bool hasEnoughMoney()
     {
-        return (GameState.getTotalAmount() - item.buyPrice) >= 0;
+        return (GameState.Instance.getTotalAmount() - item.buyPrice) >= 0;
     }
 
     public void Refresh()
@@ -134,7 +134,7 @@ public class BuyController : MonoBehaviour
     {
         backButton.interactable = false;
         var itemId = item.itemId;
-        int currentlyOwnedCount = (item.isUnlockable && GameState.isUnlocked(itemId)) ? GameState.unlockables[itemId] : 0;
+        int currentlyOwnedCount = (item.isUnlockable && GameState.Instance.isUnlocked(itemId)) ? GameState.Instance.unlockables[itemId] : 0;
         if (item.maximumTimesOwned == currentlyOwnedCount + 1 || item.prefab == null)
         {
             LockStore(new HarvestDataTypes.Item());

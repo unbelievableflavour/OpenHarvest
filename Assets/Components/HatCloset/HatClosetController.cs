@@ -43,7 +43,7 @@ public class HatClosetController : MonoBehaviour
                 continue;
             }
 
-            if (!GameState.isUnlocked(item.itemId)){
+            if (!GameState.Instance.isUnlocked(item.itemId)){
                 index++;
                 continue;
             }

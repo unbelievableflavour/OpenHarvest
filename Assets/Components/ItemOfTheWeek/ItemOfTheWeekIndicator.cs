@@ -61,7 +61,7 @@ public class ItemOfTheWeekIndicator : MonoBehaviour
             var newNextItemOfTheWeek = itemList[UnityEngine.Random.Range(0, itemList.Count)];
             if (getItemOfTheWeekByType().nextItemId != newNextItemOfTheWeek)
             {
-                GameState.itemsOfTheWeek[itemOfTheWeekId].nextItemId = newNextItemOfTheWeek;
+                GameState.Instance.itemsOfTheWeek[itemOfTheWeekId].nextItemId = newNextItemOfTheWeek;
                 break;
             }
         }
@@ -69,7 +69,7 @@ public class ItemOfTheWeekIndicator : MonoBehaviour
 
     private ItemOfTheWeek getItemOfTheWeekByType()
     {
-        return GameState.itemsOfTheWeek[itemOfTheWeekId];
+        return GameState.Instance.itemsOfTheWeek[itemOfTheWeekId];
     }
 
     private List<string> getItemListByType()

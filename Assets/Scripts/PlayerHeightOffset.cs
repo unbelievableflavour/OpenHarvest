@@ -10,7 +10,7 @@ namespace BNG
         void Start()
         {
             player = GetComponent<BNGPlayerController>();
-            player.CharacterControllerYOffset = float.Parse(GameState.settings["playerHeightOffset"]);
+            player.CharacterControllerYOffset = float.Parse(GameState.Instance.settings["playerHeightOffset"]);
         }
     }
 }

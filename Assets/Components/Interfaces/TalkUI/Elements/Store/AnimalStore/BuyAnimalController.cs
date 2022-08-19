@@ -14,7 +14,7 @@ public class BuyAnimalController : MonoBehaviour
         button.interactable = true;
         this.item = item;
 
-        if (item.DependsOnBeforeBuyingItem != null && !GameState.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
+        if (item.DependsOnBeforeBuyingItem != null && !GameState.Instance.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
         {
             setButtonToDependsOnOtherItem(item.DependsOnBeforeBuyingItem);
             return;
@@ -59,12 +59,12 @@ public class BuyAnimalController : MonoBehaviour
             return false;
         }
 
-        return GameState.unlockables[item.itemId] >= item.maximumTimesOwned;
+        return GameState.Instance.unlockables[item.itemId] >= item.maximumTimesOwned;
     }
 
     private bool isAlreadyUnlocked()
     {
-        return GameState.isUnlocked(item.itemId);
+        return GameState.Instance.isUnlocked(item.itemId);
     }
 
     private void setButtonToDependsOnOtherItem(HarvestDataTypes.Item item)
@@ -90,7 +90,7 @@ public class BuyAnimalController : MonoBehaviour
 
     private bool hasEnoughMoney()
     {
-        return (GameState.getTotalAmount() - item.buyPrice) >= 0;
+        return (GameState.Instance.getTotalAmount() - item.buyPrice) >= 0;
     }
 
     private void setButtonPrice()

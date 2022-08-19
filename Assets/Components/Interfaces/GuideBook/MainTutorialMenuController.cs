@@ -15,7 +15,7 @@ public class MainTutorialMenuController : MonoBehaviour
 
     void Start()
     {
-        if (GameState.enteredSceneThrough == "MainMenu")
+        if (GameState.Instance.enteredSceneThrough == "MainMenu")
         {
             StartBasicTutorial();
         }
@@ -65,8 +65,8 @@ public class MainTutorialMenuController : MonoBehaviour
     public void ReturnToGame()
     {
         DisableAllButtons();
-        GameState.currentSceneSwitcher.SwitchToScene(
-            GameState.enteredSceneThrough == "MainMenu" ? 1 : (int.TryParse(GameState.enteredSceneThrough, out var i) ? i : 1),
+        SceneSwitcher.Instance.SwitchToScene(
+            GameState.Instance.enteredSceneThrough == "MainMenu" ? 1 : (int.TryParse(GameState.Instance.enteredSceneThrough, out var i) ? i : 1),
             "DefaultSpawnPoint"
         );
     }

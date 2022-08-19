@@ -20,7 +20,7 @@ public class ObjectRespawner : MonoBehaviour
         {
             if (TimeController.getCurrentTime().Date >= respawningObject.respawnDateTimestamp)
             {
-                GameState.respawningObjects.Remove(uid);
+                GameState.Instance.respawningObjects.Remove(uid);
                 objectSpawner.SpawnFruit();
                 return;
             }
@@ -41,7 +41,7 @@ public class ObjectRespawner : MonoBehaviour
 
         if (TimeController.getCurrentTime().Date >= respawningObject.respawnDateTimestamp)
         {
-            GameState.respawningObjects.Remove(uid);
+            GameState.Instance.respawningObjects.Remove(uid);
             objectSpawner.SpawnFruit();
             spawnEffect.Play();
             return;
@@ -50,12 +50,12 @@ public class ObjectRespawner : MonoBehaviour
 
     public RespawningObject findRespawningObjectByUid(string uid)
     {
-        bool keyExists = GameState.respawningObjects.ContainsKey(uid);
+        bool keyExists = GameState.Instance.respawningObjects.ContainsKey(uid);
         if (!keyExists) {
             return null;
         }
 
-        return GameState.respawningObjects[uid];
+        return GameState.Instance.respawningObjects[uid];
     }
 
     private void handleNewDayStarted(object sender, EventArgs e)
@@ -80,6 +80,6 @@ public class ObjectRespawner : MonoBehaviour
             respawnDateTimestamp = tomorrow,
         };
 
-        GameState.respawningObjects.Add(respawningObject.uid, respawningObject);
+        GameState.Instance.respawningObjects.Add(respawningObject.uid, respawningObject);
     }
 }

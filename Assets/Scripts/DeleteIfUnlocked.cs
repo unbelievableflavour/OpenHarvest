@@ -6,7 +6,7 @@ public class DeleteIfUnlocked : MonoBehaviour
 
     void Start()
     {
-        if (GameState.isUnlocked(itemId))
+        if (GameState.Instance.isUnlocked(itemId))
         {
             Destroy(this.gameObject);
         }

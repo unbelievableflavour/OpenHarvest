@@ -12,28 +12,28 @@ public class SavingController : MonoBehaviour
     {
         SaveGame save = new SaveGame();
 
-        save.buildNumber = GameState.buildNumber;
-        save.saveNumber = GameState.saveNumber;
+        save.buildNumber = GameState.Instance.buildNumber;
+        save.saveNumber = GameState.Instance.saveNumber;
 
-        save.settings = GameState.settings;
+        save.settings = GameState.Instance.settings;
 
-        save.currentDay = GameState.currentDay;
-        save.name = GameState.name;
-        save.farmName = GameState.farmName;
-        save.windmill = GameState.windmill;
+        save.currentDay = GameState.Instance.currentDay;
+        save.name = GameState.Instance.name;
+        save.farmName = GameState.Instance.farmName;
+        save.windmill = GameState.Instance.windmill;
 
-        save.respawningObjects = GameState.respawningObjects;
-        save.soilGrids = GameState.soilGrids;
-        save.itemStashes = GameState.itemStashes;
-        save.animals = GameState.animals;
-        save.itemsOfTheWeek = GameState.itemsOfTheWeek;
-        save.contractsOfTheWeek = GameState.contractsOfTheWeek.ToSaveable();
-        save.questList = GameState.questList;
+        save.respawningObjects = GameState.Instance.respawningObjects;
+        save.soilGrids = GameState.Instance.soilGrids;
+        save.itemStashes = GameState.Instance.itemStashes;
+        save.animals = GameState.Instance.animals;
+        save.itemsOfTheWeek = GameState.Instance.itemsOfTheWeek;
+        save.contractsOfTheWeek = GameState.Instance.contractsOfTheWeek.ToSaveable();
+        save.questList = GameState.Instance.questList;
 
-        save.money = GameState.getTotalAmount();
+        save.money = GameState.Instance.getTotalAmount();
 
-        save.unlockables2 = GameState.unlockables;
-        save.locationConfigurations2 = GameState.locationConfigurations;
+        save.unlockables2 = GameState.Instance.unlockables;
+        save.locationConfigurations2 = GameState.Instance.locationConfigurations;
 
         save.totalSecondsSpentIngame = TimeController.GetTotalSecondsSpentIngame();
         save.totalSimulatedGameSeconds = TimeController.GetTotalSimulatedGameSeconds();
@@ -49,7 +49,7 @@ public class SavingController : MonoBehaviour
     {
         SaveGame save = CreateSaveGameObject();
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(getSavePath() + GameState.saveNumber + ".save");
+        FileStream file = File.Create(getSavePath() + GameState.Instance.saveNumber + ".save");
         bf.Serialize(file, save);
         file.Close();
     }
@@ -68,35 +68,35 @@ public class SavingController : MonoBehaviour
         SaveGame save = (SaveGame)bf.Deserialize(file);
         file.Close();
 
-        GameState.saveNumber = save.saveNumber;
+        GameState.Instance.saveNumber = save.saveNumber;
 
-        GameState.IncreaseMoneyByAmount(save.money);
-        GameState.windmill = save.windmill;
+        GameState.Instance.IncreaseMoneyByAmount(save.money);
+        GameState.Instance.windmill = save.windmill;
 
-        GameState.respawningObjects = save.respawningObjects;
-        GameState.soilGrids = save.soilGrids;
-        GameState.itemStashes = save.itemStashes;
-        GameState.animals = save.animals;
+        GameState.Instance.respawningObjects = save.respawningObjects;
+        GameState.Instance.soilGrids = save.soilGrids;
+        GameState.Instance.itemStashes = save.itemStashes;
+        GameState.Instance.animals = save.animals;
 
-        GameState.itemsOfTheWeek = save.itemsOfTheWeek;
+        GameState.Instance.itemsOfTheWeek = save.itemsOfTheWeek;
 
-        GameState.contractsOfTheWeek = new ContractsOfTheWeek();
-        GameState.contractsOfTheWeek.ImportSaveable(save.contractsOfTheWeek);
+        GameState.Instance.contractsOfTheWeek = new ContractsOfTheWeek();
+        GameState.Instance.contractsOfTheWeek.ImportSaveable(save.contractsOfTheWeek);
         
-        GameState.unlockables = save.unlockables2;
+        GameState.Instance.unlockables = save.unlockables2;
 
         //Following is set in reset. So it shouldnt be necessary here.
-//        GameState.questList = new Dictionary<Quests, Quest> { };
+//        GameState.Instance.questList = new Dictionary<Quests, Quest> { };
 //        LoadQuests();
 
         foreach (var quest in save.questList)
-            GameState.questList[quest.Key] = quest.Value;
+            GameState.Instance.questList[quest.Key] = quest.Value;
 
         foreach (var locationConfig in save.locationConfigurations2)
-            GameState.locationConfigurations[locationConfig.Key] = locationConfig.Value;
+            GameState.Instance.locationConfigurations[locationConfig.Key] = locationConfig.Value;
 
-        GameState.name = save.name;
-        GameState.farmName = save.farmName;
+        GameState.Instance.name = save.name;
+        GameState.Instance.farmName = save.farmName;
 
         TimeController.SetTotalSimulatedGameSeconds(save.totalSimulatedGameSeconds);
         TimeController.SetTotalSecondsSpentIngame(save.totalSecondsSpentIngame);
@@ -111,7 +111,7 @@ public class SavingController : MonoBehaviour
         WeatherController.weatherTomorrow = save.weatherTomorrow;
 
         foreach (var setting in save.settings)
-            GameState.settings[setting.Key] = setting.Value;
+            GameState.Instance.settings[setting.Key] = setting.Value;
 
         PlayerCustomSettings.Instance.RefreshSettings();
     }
@@ -134,27 +134,27 @@ public class SavingController : MonoBehaviour
 
     private static SaveGame UpdateGameSaveToLatestVersion(SaveGame save)
     {
-        Debug.Log("Run migration for save: " + save.saveNumber);
+        Debug.Log("Run migrations if needed for save: " + save.saveNumber);
         
         //Migration in build unknown.. (probably old)
         if (save.respawningObjects == null)
         {
-            save.respawningObjects = GameState.respawningObjects;
+            save.respawningObjects = GameState.Instance.respawningObjects;
         }
 
         if (save.itemStashes == null)
         {
-            save.itemStashes = GameState.itemStashes;
+            save.itemStashes = GameState.Instance.itemStashes;
         }
 
         if (save.soilGrids == null)
         {
-            save.soilGrids = GameState.soilGrids;
+            save.soilGrids = GameState.Instance.soilGrids;
         }
 
         if (save.questList == null)
         {
-            save.questList = GameState.questList;
+            save.questList = GameState.Instance.questList;
         }
 
         if (save.name == null)
@@ -394,7 +394,7 @@ public class SavingController : MonoBehaviour
             };
         }
 
-        save.buildNumber = GameState.buildNumber;
+        save.buildNumber = GameState.Instance.buildNumber;
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(getSavePath() + save.saveNumber + ".save");

@@ -14,6 +14,6 @@ public class DevModeUI : MonoBehaviour
 
     public void StartSandbox()
     {
-        GameState.currentSceneSwitcher.SwitchToScene(18, "DefaultSpawnPoint");
+        SceneSwitcher.Instance.SwitchToScene(18, "DefaultSpawnPoint");
     }
 }

@@ -18,9 +18,9 @@ public class PetInitialiser : MonoBehaviour
 
     public void BuyItem()
     {
-        GameState.DecreaseMoneyByAmount(item.buyPrice);
+        GameState.Instance.DecreaseMoneyByAmount(item.buyPrice);
         BNG.VRUtils.Instance.PlaySpatialClipAt(buySound, transform.position, 0.6f, 1f, 0.05f);
-        GameState.unlockables[item.itemId]++;
+        GameState.Instance.unlockables[item.itemId]++;
 
         storeItemsLister.RefreshStoreRows();
         gameObject.SetActive(false);
@@ -56,22 +56,22 @@ public class PetInitialiser : MonoBehaviour
     {
         if (item.itemId == "Chicken")
         {
-            return GameState.animals["chickens"];
+            return GameState.Instance.animals["chickens"];
         }
 
         if (item.itemId == "Cow")
         {
-            return GameState.animals["cows"];
+            return GameState.Instance.animals["cows"];
         }
 
         if (item.itemId == "Sheep")
         {
-            return GameState.animals["sheep"];
+            return GameState.Instance.animals["sheep"];
         }
 
         if (item.itemId == "Pig")
         {
-            return GameState.animals["pigs"];
+            return GameState.Instance.animals["pigs"];
         }
         return null;
     }

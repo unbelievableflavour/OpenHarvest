@@ -27,7 +27,7 @@ public class QuestMenuController : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach (var item in GameState.questList)
+        foreach (var item in GameState.Instance.questList)
         {
             Quest quest = item.Value;
             if(quest.currentProgress == Progress.NotStarted)

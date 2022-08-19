@@ -30,7 +30,7 @@ namespace BNG
                 return;
             }
 
-            if (GameState.ownsMaximumNumber(item))
+            if (GameState.Instance.ownsMaximumNumber(item))
             {
                 return;
             }
@@ -40,7 +40,7 @@ namespace BNG
                 VRUtils.Instance.PlaySpatialClipAt(unlockSound, transform.position, 1f, 1f);
             }
 
-            GameState.unlock(item.itemId, 1);
+            GameState.Instance.unlock(item.itemId, 1);
             unlockMessage.GetComponentInChildren<Text>().text = "Unlocked " + item.name + "!";
 
             CancelInvoke("HideUnlockedMessage");
