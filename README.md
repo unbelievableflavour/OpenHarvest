@@ -28,15 +28,13 @@ https://github.com/Oculus-VR/Unity-Graphics/tree/2020.3/oculus-app-spacewarp
 2021 branch can be found here:
 https://github.com/Oculus-VR/Unity-Graphics/tree/2021.2/oculus-app-spacewarp
 
-# Running on Windows
+# Platforms
+
+Open Harvest can build for Windows & Android.
+
+## Running on Windows
 The game DOES NOT RUN ON WINDOWS WITH APPLICATION SPACEWARP ENABLED. Make sure to disable it during development.
 `Edit > Project Settings > XR Plug-in Management > Oculus > Android > Experimental > Application Spacewarp >` uncheck the box. (Dont forget to recheck it before commiting)
-
-# Building for Android
-When you build for android it's gonna give an error about a missing keystore. You will have to readd it manually in the settings.
-`Edit > Project Settings > Player > Publishing Settings > Project keystore > select` (It's located under `Assets > keystore > harvest_vr.keystore`)
-`Edit > Project Settings > Player > Publishing Settings > Project keystore > password` (It's located under `Assets > keystore > keystore_password`)
-`Edit > Project Settings > Player > Publishing Settings > Project key > password `(It's located under `Assets > keystore > keystore_password`)
 
 # Harvest Settings
 
