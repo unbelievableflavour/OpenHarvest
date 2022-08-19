@@ -1,4 +1,5 @@
-﻿using BNG;
+using BNG;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,9 +10,22 @@ public class SceneSwitcher : MonoBehaviour
     public BNGPlayerController playerController;
 
     public PlayerInvokes playerInvokes;
-    public UnityEngine.Events.UnityEvent beforeLoadNextScene;
+    public EventHandler beforeSceneSwitch;
 
     private Transform defaultPosition;
+
+	public static SceneSwitcher Instance = null;
+
+	// Initialize instance.
+	private void Awake()
+	{
+        if (Instance != null){
+            Destroy(Instance);
+        }
+
+        Instance = this;
+	}
+
     void Start()
     {
         defaultPosition = GetDefaultSpawnPosition();
@@ -25,16 +39,8 @@ public class SceneSwitcher : MonoBehaviour
         GameState.enteredSceneThrough = sceneEnterLocation;
 
         FadeToBlack();
-
-        if (playerInvokes && playerInvokes.beforeLoadNextScene != null)
-        {
-            playerInvokes.beforeLoadNextScene.Invoke();
-        }
-
-        if (beforeLoadNextScene != null)
-        {
-            beforeLoadNextScene.Invoke();
-        }
+        
+        beforeSceneSwitch?.Invoke(this, null);
 
         StartCoroutine(loadScene(sceneIndex));
     }

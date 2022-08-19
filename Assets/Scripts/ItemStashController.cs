@@ -1,6 +1,7 @@
 ﻿using BNG;
-using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using HarvestDataTypes;
 
@@ -16,6 +17,7 @@ public class ItemStashController : MonoBehaviour
 
     void Start()
     {
+        SceneSwitcher.Instance.beforeSceneSwitch += beforeSceneSwitch;
         LoadItemDatabase();
         LoadInventory();
     }
@@ -161,5 +163,12 @@ public class ItemStashController : MonoBehaviour
     protected void SetInGameState()
     {
         GameState.itemStashes[itemStashName] = storedItems;
+    }
+
+    protected void beforeSceneSwitch(object sender, EventArgs e)
+    {
+        SceneSwitcher.Instance.beforeSceneSwitch -= beforeSceneSwitch;
+        // todo, DONT IN TUTORIAL, MAIN MENU
+        UpdateSaveableInventory();
     }
 }

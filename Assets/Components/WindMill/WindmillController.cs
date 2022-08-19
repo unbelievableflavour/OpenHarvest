@@ -1,6 +1,7 @@
 ﻿using BNG;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using static Definitions;
 
 public class WindmillController : MonoBehaviour
@@ -19,6 +20,7 @@ public class WindmillController : MonoBehaviour
 
     void Start()
     {
+        SceneSwitcher.Instance.beforeSceneSwitch += beforeSceneSwitch;
         LoadWindmill();
     }
 
@@ -134,5 +136,11 @@ public class WindmillController : MonoBehaviour
         }
 
         return snapZone.HeldItem.GetComponent<ItemStack>().GetStackSize();
+    }
+
+    protected void beforeSceneSwitch(object sender, EventArgs e)
+    {
+        SceneSwitcher.Instance.beforeSceneSwitch -= beforeSceneSwitch;
+        SaveWindmill();
     }
 }

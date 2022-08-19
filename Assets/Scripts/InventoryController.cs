@@ -1,7 +1,6 @@
 ﻿using BNG;
 using System;
 using UnityEngine;
-using static Definitions;
 
 [Serializable]
 public class SaveableItem
@@ -25,6 +24,7 @@ public class InventoryController : ItemStashController
 
     void Start()
     {
+        SceneSwitcher.Instance.beforeSceneSwitch += beforeSceneSwitch;
         inventorySlots = backpackInventorySlots;
 
         //Enable big backpack if unlocked

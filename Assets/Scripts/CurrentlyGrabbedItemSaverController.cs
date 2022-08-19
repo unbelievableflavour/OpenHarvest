@@ -1,4 +1,5 @@
 ﻿using BNG;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static Definitions;
@@ -12,6 +13,7 @@ public class CurrentlyGrabbedItemSaverController : MonoBehaviour
 
     void Start()
     {
+        SceneSwitcher.Instance.beforeSceneSwitch += beforeSceneSwitch;
         Invoke("SpawnGrabbedItemsFromLastScene", 1);
     }
 
@@ -108,5 +110,11 @@ public class CurrentlyGrabbedItemSaverController : MonoBehaviour
         }
 
         storedItems.Add(saveableItem);
+    }
+
+    protected void beforeSceneSwitch(object sender, EventArgs e)
+    {
+        SceneSwitcher.Instance.beforeSceneSwitch -= beforeSceneSwitch;
+        SaveGrabbedItems();
     }
 }

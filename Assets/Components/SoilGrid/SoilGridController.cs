@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class SoilGridController : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class SoilGridController : MonoBehaviour
 
     void Start()
     {
+        SceneSwitcher.Instance.beforeSceneSwitch += beforeSceneSwitch;
         farmSoilGrid = GetComponent<Transform>();
         if(patchLocation == "greenhouse")
         {
@@ -94,5 +96,11 @@ public class SoilGridController : MonoBehaviour
         }
 
         GameState.soilGrids[patchLocation] = patches;
+    }
+
+    protected void beforeSceneSwitch(object sender, EventArgs e)
+    {
+        SceneSwitcher.Instance.beforeSceneSwitch -= beforeSceneSwitch;
+        UpdateSaveableGrid();
     }
 }

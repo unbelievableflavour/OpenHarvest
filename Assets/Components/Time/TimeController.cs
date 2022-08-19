@@ -18,7 +18,7 @@ public class TimeController : MonoBehaviour
 
     private event EventHandler newDayStarted;
 
-    // Initialize the singleton instance.
+    // Initialize instance.
     private void Awake()
     {
         if (Instance == null)
@@ -29,6 +29,7 @@ public class TimeController : MonoBehaviour
 
     void Start()
     {
+        SceneSwitcher.Instance.beforeSceneSwitch += beforeSceneSwitch;
         if (timeBeforeLastScene != null)
         {
             AddTimeBetweenScenesToCounters();
@@ -160,5 +161,11 @@ public class TimeController : MonoBehaviour
     public void RemoveFromDayChange(EventHandler newFunction)
     {
         Instance.newDayStarted -= newFunction;
+    }
+
+    protected void beforeSceneSwitch(object sender, EventArgs e)
+    {
+        SceneSwitcher.Instance.beforeSceneSwitch -= beforeSceneSwitch;
+        SaveTimeBeforeSceneSwitch();
     }
 }
