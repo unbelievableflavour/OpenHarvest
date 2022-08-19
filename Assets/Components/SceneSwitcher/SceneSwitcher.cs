@@ -11,6 +11,8 @@ public class SceneSwitcher : MonoBehaviour
 
     public PlayerInvokes playerInvokes;
     public EventHandler beforeSceneSwitch;
+    public bool invokeHooksInThisScene = true; 
+    // this is used to stop hooks for instance in main menu and guidebook to block saving items
 
     private Transform defaultPosition;
 
@@ -40,7 +42,9 @@ public class SceneSwitcher : MonoBehaviour
 
         FadeToBlack();
         
-        beforeSceneSwitch?.Invoke(this, null);
+        if (invokeHooksInThisScene) {
+            beforeSceneSwitch?.Invoke(this, null);
+        }
 
         StartCoroutine(loadScene(sceneIndex));
     }

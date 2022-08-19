@@ -168,7 +168,6 @@ public class ItemStashController : MonoBehaviour
     protected void beforeSceneSwitch(object sender, EventArgs e)
     {
         SceneSwitcher.Instance.beforeSceneSwitch -= beforeSceneSwitch;
-        // todo, DONT IN TUTORIAL, MAIN MENU
         UpdateSaveableInventory();
     }
 }
