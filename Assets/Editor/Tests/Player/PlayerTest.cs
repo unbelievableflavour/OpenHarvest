@@ -118,7 +118,16 @@ namespace Player
         }
 
         [Test]
-        public void ItChecksIfTheDebugMenuIsDisabled()
+        public void ItChecksIfTheConsoleComponentIsConfigured()
+        {
+            var consoleComp = xrRigAdvanced.GetComponentInChildren<EnableConsole>();
+
+            Assert.AreNotEqual(null, consoleComp);
+        }
+
+
+        [Test]
+        public void ItChecksIfThePauseMenuIsDisabled()
         {
             var pauseMenu = xrRigAdvanced.GetComponentInChildren<PauseMenuController>();
 
