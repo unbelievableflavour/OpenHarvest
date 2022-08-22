@@ -24,7 +24,8 @@ namespace BNG
             }
             alreadyTriggered = true;
             
-            var item = Definitions.GetItemFromObject(this);
+            
+            var item = Definitions.GetItemFromObject(this.gameObject);
             if (item == null)
             {
                 return;

@@ -17,7 +17,7 @@ public class SellSellableItemOnCollision : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        var item = Definitions.GetItemFromObject(other);
+        var item = Definitions.GetItemFromObject(other.gameObject);
         if(!item || item.isSellable) {
             return;
         }

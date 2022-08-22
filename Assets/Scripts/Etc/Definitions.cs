@@ -161,14 +161,33 @@ public static class Definitions
         if (!GameState.Instance.questList.ContainsKey(newQuest.id))
         {
             GameState.Instance.questList.Add(newQuest.id, newQuest);
-        }   
+        }
     }
 
-    public static HarvestDataTypes.Item GetItemFromObject(dynamic itemObject){
+    public static HarvestDataTypes.Item GetItemFromObject(GameObject itemObject){
         var itemInformation = itemObject.GetComponent<ItemInformation>();
         if (itemInformation == null) {
             return null;
         }
+
+        return itemInformation.getItem();
+    }
+
+    public static HarvestDataTypes.Item GetItemFromObject(Transform itemObject){
+        var itemInformation = itemObject.GetComponent<ItemInformation>();
+        if (itemInformation == null) {
+            return null;
+        }
+
+        return itemInformation.getItem();
+    }
+
+    public static HarvestDataTypes.Item GetItemFromObject(BNG.Grabbable itemObject){
+        var itemInformation = itemObject.GetComponent<ItemInformation>();
+        if (itemInformation == null) {
+            return null;
+        }
+
         return itemInformation.getItem();
     }
 

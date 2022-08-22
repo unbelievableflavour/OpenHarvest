@@ -6,7 +6,7 @@ public class SetTooltipDescriptionByItemInformation : MonoBehaviour
 
     void Awake()
     {
-        var item = Definitions.GetItemFromObject(this);
+        var item = Definitions.GetItemFromObject(this.gameObject);
         if (item == null)
         {
             return;

@@ -17,7 +17,7 @@ public class AddWheatToWindmill : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        var item = Definitions.GetItemFromObject(other);
+        var item = Definitions.GetItemFromObject(other.gameObject);
         if (!item)
         {
             return;

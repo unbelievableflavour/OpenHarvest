@@ -45,7 +45,7 @@ public class InventoryController : ItemStashController
         {
             return;
         }
-        var item = Definitions.GetItemFromObject(grabbable);
+        var item = Definitions.GetItemFromObject(grabbable.gameObject);
         if (item == null)
         {
             return;
