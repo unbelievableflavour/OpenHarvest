@@ -18,17 +18,13 @@ public class SellSellableItemOnCollision : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         var item = Definitions.GetItemFromObject(other.gameObject);
-        Debug.Log(item);
-        Debug.Log(item.isSellable);
         if(!item || !item.isSellable) {
             return;
         }
-        Debug.Log("selling!2");
 
         if (soldGameObjects.Contains(other.gameObject)){ //if another collider of the object already entered the trigger
             return;
         }
-        Debug.Log("selling!3");
 
         soldGameObjects.Add(other.gameObject);
 
