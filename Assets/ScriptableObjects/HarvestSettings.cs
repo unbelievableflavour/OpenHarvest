@@ -4,8 +4,11 @@ using UnityEngine;
 public class HarvestSettings : ScriptableObject
 {
     public bool isPCMode = false;
-    public bool enableSandbox = false;
+
+    [Header("Developer Options")]
+
     public bool enableIngameConsole = false;
+    public bool enableDevMode = false;
 
     [Header("Random World Generator")]
 

@@ -1,4 +1,5 @@
-﻿using HarvestDataTypes;
+using HarvestDataTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -182,5 +183,17 @@ public class CurrentGameState {
         }
 
         return unlockables[item.itemId] >= item.maximumTimesOwned;
+    }
+
+    public event Action OnToggleMode;
+    private string currentMode = "default";
+
+    public string GetMode() {
+        return currentMode;
+    }
+    
+    public void SwitchToMode(string newMode) {
+        currentMode = newMode;
+        GameState.Instance.OnToggleMode?.Invoke();
     }
 }
