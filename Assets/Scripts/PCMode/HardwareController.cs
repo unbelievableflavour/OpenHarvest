@@ -17,8 +17,8 @@ public class HardwareController : MonoBehaviour
         {
             GetComponent<HeadsetDetector>().enabled = false;
             VRPlayerObject.SetActive(false);
-            PCPlayerObject.SetActive(true);
-        }        
+            Instantiate(PCPlayerObject);
+        }
     }
 #endif
 }
