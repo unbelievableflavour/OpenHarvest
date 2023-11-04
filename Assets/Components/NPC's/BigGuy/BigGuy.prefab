@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3617761784368340278}
   - component: {fileID: 479560812046210499}
+  - component: {fileID: 7660326021447994436}
   m_Layer: 0
   m_Name: BigGuy
   m_TagString: Untagged
@@ -48,6 +49,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handSlot: {fileID: 1671588591767153974}
   NPCAnimator: {fileID: 3228361603970566204}
+--- !u!114 &7660326021447994436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319622482050215717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb643de8b7eb36048bb68ba4df70db14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animators:
+  - {fileID: 3228361603970566204}
+  maxShowDistance: 20
 --- !u!1 &911190434302017477
 GameObject:
   m_ObjectHideFlags: 0
@@ -141,12 +157,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HeldItem: {fileID: 0}
+  StartingItem: {fileID: 0}
   CanDropItem: 1
   CanSwapItem: 0
+  CanRemoveItem: 1
   ScaleItem: 0.5
   DisableColliders: 1
   DuplicateItemOnGrab: 0
   MaxDropTime: 0.1
+  LastSnapTime: 0
   OnlyAllowNames: []
   ExcludeTransformNames: []
   SoundOnSnap: {fileID: 0}
@@ -155,6 +174,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 479560812046210499}
+        m_TargetAssemblyTypeName: 
         m_MethodName: NPCGrabbedItem
         m_Mode: 0
         m_Arguments:
@@ -169,6 +189,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 479560812046210499}
+        m_TargetAssemblyTypeName: 
         m_MethodName: NPCGaveItem
         m_Mode: 0
         m_Arguments:
@@ -214,6 +235,7 @@ MonoBehaviour:
   GrabMechanic: 1
   GrabSpeed: 7.5
   RemoteGrabbable: 0
+  RemoteGrabMechanic: 0
   RemoteGrabDistance: 2
   ThrowForceMultiplier: 2
   ThrowForceMultiplierAngular: 1.5
@@ -226,6 +248,9 @@ MonoBehaviour:
   CanBeSnappedToSnapZone: 1
   ForceDisableKinematicOnDrop: 0
   InstantMovement: 0
+  MakeChildCollidersGrabbable: 0
+  handPoseType: 1
+  SelectedHandPose: {fileID: 0}
   CustomHandPose: 0
   SecondaryGrabBehavior: 0
   TwoHandedPosition: 0
@@ -258,6 +283,8 @@ MonoBehaviour:
   LocalOffsetTransform: {fileID: 0}
   GrabPoints: []
   UseCustomInspector: 1
+  lastFlickTime: 0
+  FlickForce: 1
 --- !u!114 &891025318835273267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,6 +301,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8604152036244738728}
+        m_TargetAssemblyTypeName: 
         m_MethodName: GrabEquipped
         m_Mode: 0
         m_Arguments:
@@ -382,6 +410,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.16862746}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -440,6 +469,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 4400
+  m_PresetInfoIsWorld: 0
 --- !u!1001 &3745326922610220001
 PrefabInstance:
   m_ObjectHideFlags: 0
