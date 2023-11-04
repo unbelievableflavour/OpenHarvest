@@ -47,8 +47,6 @@ public class AnimateWhenClose : MonoBehaviour
             return;
         }
 
-        Debug.Log("enable!");
-
         isEnabled = true;
         foreach(Animator animator in animators) {
             animator.enabled = true;
