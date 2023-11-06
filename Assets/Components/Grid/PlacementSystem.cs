@@ -132,7 +132,24 @@ public class PlacementSystem : MonoBehaviour
         lastDetectedPosition = Vector3Int.zero;
     }
 
-    private bool CheckPlacementValidity (Vector3Int gridPosition,  int selectedObjectIndex) {
+    public void PlaceStructureWithoutPreview(Vector3Int gridPosition, int selectedObjectIndex) {
+        GameObject newObject = Instantiate(database.objectsData[selectedObjectIndex].prefab);
+        newObject.transform.position = grid.CellToWorld(gridPosition);
+        placedGameObjects.Add(newObject);
+    
+        GridData selectedData = database.objectsData[selectedObjectIndex].ID == 0 
+        ? floorData 
+        : furnitureData;
+
+        selectedData.addObjectAt(
+            gridPosition, 
+            database.objectsData[selectedObjectIndex].size,
+            database.objectsData[selectedObjectIndex].ID,
+            placedGameObjects.Count - 1
+        );
+    }
+
+    public bool CheckPlacementValidity (Vector3Int gridPosition,  int selectedObjectIndex) {
         // if floor tile?
         GridData selectedData = database.objectsData[selectedObjectIndex].ID == 0 
         ? floorData 
