@@ -64,7 +64,8 @@ public class ObjectSpawner : MonoBehaviour
         {
             foreach (Transform fruit in spawnLocation)
             {
-                if(fruit.GetComponent<SnapZoneRingHelperFader>()) {
+                // this is just the ringhelper
+                if(!fruit.GetComponent<ItemInformation>()) {
                     continue;
                 }
                 Destroy(fruit.gameObject);
