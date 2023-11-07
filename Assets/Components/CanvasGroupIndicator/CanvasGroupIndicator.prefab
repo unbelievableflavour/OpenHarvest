@@ -1,5 +1,66 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &774005936153349894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2861494620976242266}
+  - component: {fileID: 950627425954803396}
+  - component: {fileID: 6590214069806304696}
+  m_Layer: 0
+  m_Name: CanvasGroup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2861494620976242266
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774005936153349894}
+  m_LocalRotation: {x: -0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5410624555615347965}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!225 &950627425954803396
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774005936153349894}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 1
+--- !u!114 &6590214069806304696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774005936153349894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e907dd6d4a28b4c41ace24bb646569fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseLerp: 1
+  Stationary: 1
+  Speed: 20
+  UseUpdate: 0
+  UseLateUpdate: 1
 --- !u!1 &5708533232541002035
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,8 +70,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5410624555615347965}
-  - component: {fileID: 881540978693526166}
-  - component: {fileID: 3457877706133071037}
   - component: {fileID: 684271508051131480}
   m_Layer: 0
   m_Name: CanvasGroupIndicator
@@ -29,39 +88,11 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: -1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 2861494620976242266}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &881540978693526166
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5708533232541002035}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e907dd6d4a28b4c41ace24bb646569fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseLerp: 0
-  Speed: 20
-  UseUpdate: 0
-  UseLateUpdate: 1
-  cameraPosition: {fileID: 0}
---- !u!225 &3457877706133071037
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5708533232541002035}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 0
-  m_BlocksRaycasts: 0
-  m_IgnoreParentGroups: 1
 --- !u!114 &684271508051131480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,3 +107,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RingFadeSpeed: 5
   maxShowDistance: 2
+  canvasGroup: {fileID: 950627425954803396}

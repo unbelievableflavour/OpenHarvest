@@ -505,7 +505,6 @@ MonoBehaviour:
   breakSounds:
   - {fileID: 8300000, guid: 4f49261180b29df4d9066606bb292caa, type: 3}
   useOnCollisionEnter: 1
-  useOnTriggerEnter: 0
   dontDestroyOnBreak: 1
   useCooldownCollisionZone: 0
   afterBreakFunctions:
@@ -1117,9 +1116,6 @@ MonoBehaviour:
   spawnLocations: {fileID: 8572954571971996224}
   dropTable: {fileID: 3711768789529382526}
   spawnChangeInPercentage: 100
-  spawnableFruit: {fileID: 0}
-  spawnableRareFruit: {fileID: 0}
-  spawnRareChanceInPercentage: 0
 --- !u!114 &3711768789529382526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1754,15 +1750,15 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 7da9bcf7cf1428a4d909699694272fc2, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2dccf2cefe357614d8e8b50a3bfa2ede, type: 3}
---- !u!4 &2161027538841350198 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2dccf2cefe357614d8e8b50a3bfa2ede,
-    type: 3}
-  m_PrefabInstance: {fileID: 1907057175579383773}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8399579652977469032 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1232166242516274763, guid: 2dccf2cefe357614d8e8b50a3bfa2ede,
+    type: 3}
+  m_PrefabInstance: {fileID: 1907057175579383773}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2161027538841350198 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2dccf2cefe357614d8e8b50a3bfa2ede,
     type: 3}
   m_PrefabInstance: {fileID: 1907057175579383773}
   m_PrefabAsset: {fileID: 0}
@@ -1900,7 +1896,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 4495311303883224681}
+    m_TransformParent: {fileID: 5963603459575794894}
     m_Modifications:
     - target: {fileID: 874536456660622900, guid: a240206f5e23e0a4ea6f600c1a5a6452,
         type: 3}
@@ -2270,6 +2266,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4851835111967471019}
     m_Modifications:
+    - target: {fileID: 2861494620976242266, guid: 47a2363790de80647802bb9bfe30708b,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5410624555615347965, guid: 47a2363790de80647802bb9bfe30708b,
         type: 3}
       propertyPath: m_RootOrder
@@ -2332,6 +2333,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47a2363790de80647802bb9bfe30708b, type: 3}
+--- !u!4 &5963603459575794894 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2861494620976242266, guid: 47a2363790de80647802bb9bfe30708b,
+    type: 3}
+  m_PrefabInstance: {fileID: 8463648593053782676}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4495311303883224681 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5410624555615347965, guid: 47a2363790de80647802bb9bfe30708b,
@@ -2349,7 +2356,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 4495311303883224681}
+    m_TransformParent: {fileID: 5963603459575794894}
     m_Modifications:
     - target: {fileID: 267981961129309434, guid: 2b66519a6218a254f92db09aebb432f6,
         type: 3}

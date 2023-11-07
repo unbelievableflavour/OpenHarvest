@@ -13,7 +13,7 @@ public class CanvasGroupIndicatorHelper : MonoBehaviour
     public float maxShowDistance = 2f;
 
     //Canvas canvas;
-    CanvasGroup canvasGroup;
+    public CanvasGroup canvasGroup;
 
     // Animate opacity
     private float _minOpacity;
@@ -22,40 +22,50 @@ public class CanvasGroupIndicatorHelper : MonoBehaviour
 
     Transform mainCam;
     Vector3 transformPos;
-
+    bool showCanvasGroup;
     // Start is called before the first frame update
     void Start()
     {
         mainCam = Camera.main.transform;
         transformPos = transform.position; // storing the transform here saves about 10ms in performance;
-        canvasGroup = GetComponent<CanvasGroup>();
 
         _maxOpacity = canvasGroup.alpha;
         _minOpacity = 0;
 
         _currentOpacity = _minOpacity;
         canvasGroup.alpha = _minOpacity;
+
+        canvasGroup.gameObject.SetActive(false);
     }
 
     void Update()
     {
         // Show if within range
         float currentDistance = Vector3.Distance(transformPos, mainCam.position);
-        bool showRings = currentDistance <= maxShowDistance;
+        showCanvasGroup = currentDistance <= maxShowDistance;
 
-        if (!showRings && _currentOpacity == _minOpacity)
+        if (!showCanvasGroup && _currentOpacity == _minOpacity)
         {
             return;
         }
 
-        if (showRings && _currentOpacity == _maxOpacity)
+        if (showCanvasGroup && _currentOpacity == _maxOpacity)
         {
             return;
         }
 
-        // Fade canvas group opacity in / out
-        if (showRings)
+        UpdateCG();
+    }
+
+    void UpdateCG()
+    {
+        if (showCanvasGroup)
         {
+            if(!canvasGroup.gameObject.activeSelf) {
+              canvasGroup.gameObject.SetActive(true);
+            }
+
+            // fade in
             _currentOpacity += Time.deltaTime * RingFadeSpeed;
             if (_currentOpacity > _maxOpacity)
             {
@@ -63,17 +73,19 @@ public class CanvasGroupIndicatorHelper : MonoBehaviour
             }
 
             canvasGroup.alpha = _currentOpacity;
-        } else {
-            _currentOpacity -= Time.deltaTime * RingFadeSpeed;
-            if (_currentOpacity <= _minOpacity)
-            {
-                _currentOpacity = _minOpacity;
-                canvasGroup.alpha = _minOpacity;
-            }
-            else
-            {
-                canvasGroup.alpha = _currentOpacity;
-            }
+            return;
+        }
+
+        // fade out
+        _currentOpacity -= Time.deltaTime * RingFadeSpeed;
+        if (_currentOpacity <= _minOpacity) {
+            _currentOpacity = _minOpacity;
+        }
+        
+        canvasGroup.alpha = _currentOpacity;
+
+        if(_currentOpacity == _minOpacity) {
+            canvasGroup.gameObject.SetActive(false);
         }
     }
 }

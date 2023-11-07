@@ -266,6 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59153711998f9ff48949670066a9dddb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  line: {fileID: 0}
   ConnectTo: {fileID: 0}
 --- !u!1 &1079645996795450681
 GameObject:
@@ -314,6 +315,7 @@ MonoBehaviour:
   TipOffset: {x: 0, y: 0.5, z: 0}
   UseWorldYAxis: 1
   MaxViewDistance: 10
+  lineToTransform: {fileID: 0}
   DrawLineTo: {fileID: 3239798913829716706}
 --- !u!1 &1079645996800750023
 GameObject:
@@ -1285,7 +1287,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 2484928511198260346}
+    m_TransformParent: {fileID: 5682497364795447005}
     m_Modifications:
     - target: {fileID: 874536456660622900, guid: a240206f5e23e0a4ea6f600c1a5a6452,
         type: 3}
@@ -1412,6 +1414,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 874536458055997538, guid: a240206f5e23e0a4ea6f600c1a5a6452,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 874536458055997540, guid: a240206f5e23e0a4ea6f600c1a5a6452,
         type: 3}
@@ -1605,6 +1612,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6932206174574696445}
     m_Modifications:
+    - target: {fileID: 2861494620976242266, guid: 47a2363790de80647802bb9bfe30708b,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5410624555615347965, guid: 47a2363790de80647802bb9bfe30708b,
         type: 3}
       propertyPath: m_RootOrder
@@ -1676,6 +1688,12 @@ GameObject:
 --- !u!4 &2484928511198260346 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5410624555615347965, guid: 47a2363790de80647802bb9bfe30708b,
+    type: 3}
+  m_PrefabInstance: {fileID: 7595983834655688839}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5682497364795447005 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2861494620976242266, guid: 47a2363790de80647802bb9bfe30708b,
     type: 3}
   m_PrefabInstance: {fileID: 7595983834655688839}
   m_PrefabAsset: {fileID: 0}

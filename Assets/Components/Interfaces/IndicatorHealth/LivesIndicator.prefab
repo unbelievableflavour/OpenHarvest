@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.013465881}
+  m_AnchoredPosition: {x: 0, y: -0.0028533936}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7737039571948764219
@@ -135,6 +135,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -295,10 +296,8 @@ GameObject:
   - component: {fileID: 6463747483106723469}
   - component: {fileID: 6463747483106723470}
   - component: {fileID: 6463747483106723471}
-  - component: {fileID: 1623644964824275503}
   - component: {fileID: 927493192604443419}
-  - component: {fileID: 7066386196372012482}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: LivesIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -369,19 +368,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 10
---- !u!114 &1623644964824275503
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6463747483106723465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c67ea2e765d7bd54abf1530f80b4dfe6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxShowDistance: 2
+  m_PresetInfoIsWorld: 0
 --- !u!114 &927493192604443419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,20 +383,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heart: {fileID: 9128251249836418892, guid: 5287706394df3d1498ca3696dfe81d0f, type: 3}
   heartParent: {fileID: 1169750299737042580}
---- !u!114 &7066386196372012482
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6463747483106723465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5378cf27d73b6014d817d7ab561056e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseLerp: 1
-  Speed: 20
-  UseUpdate: 0
-  UseLateUpdate: 1
-  cameraPosition: {fileID: 0}

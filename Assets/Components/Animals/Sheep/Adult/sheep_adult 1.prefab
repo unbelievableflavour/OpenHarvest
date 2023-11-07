@@ -637,7 +637,6 @@ MonoBehaviour:
   secondHitSounds: []
   breakSounds: []
   useOnCollisionEnter: 1
-  useOnTriggerEnter: 0
   dontDestroyOnBreak: 0
   useCooldownCollisionZone: 0
   afterBreakFunctions:
@@ -689,9 +688,6 @@ MonoBehaviour:
   spawnLocations: {fileID: 4097661720906339654}
   dropTable: {fileID: 4833522467192106782}
   spawnChangeInPercentage: 100
-  spawnableFruit: {fileID: 0}
-  spawnableRareFruit: {fileID: 0}
-  spawnRareChanceInPercentage: 0
 --- !u!114 &4833522467192106782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1275,7 +1271,6 @@ MonoBehaviour:
   secondHitSounds: []
   breakSounds: []
   useOnCollisionEnter: 1
-  useOnTriggerEnter: 0
   dontDestroyOnBreak: 0
   useCooldownCollisionZone: 0
   afterBreakFunctions:
@@ -1327,9 +1322,6 @@ MonoBehaviour:
   spawnLocations: {fileID: 4159653547006222189}
   dropTable: {fileID: 4821501987956602180}
   spawnChangeInPercentage: 100
-  spawnableFruit: {fileID: 0}
-  spawnableRareFruit: {fileID: 0}
-  spawnRareChanceInPercentage: 0
 --- !u!114 &4821501987956602180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2109,7 +2101,6 @@ MonoBehaviour:
   secondHitSounds: []
   breakSounds: []
   useOnCollisionEnter: 1
-  useOnTriggerEnter: 0
   dontDestroyOnBreak: 0
   useCooldownCollisionZone: 0
   afterBreakFunctions:
@@ -2161,9 +2152,6 @@ MonoBehaviour:
   spawnLocations: {fileID: 7260823900024967329}
   dropTable: {fileID: 9195745238457426810}
   spawnChangeInPercentage: 100
-  spawnableFruit: {fileID: 0}
-  spawnableRareFruit: {fileID: 0}
-  spawnRareChanceInPercentage: 0
 --- !u!114 &9195745238457426810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2553,7 +2541,6 @@ MonoBehaviour:
   secondHitSounds: []
   breakSounds: []
   useOnCollisionEnter: 1
-  useOnTriggerEnter: 0
   dontDestroyOnBreak: 0
   useCooldownCollisionZone: 0
   afterBreakFunctions:
@@ -2605,9 +2592,6 @@ MonoBehaviour:
   spawnLocations: {fileID: 8844219000766116151}
   dropTable: {fileID: 4327183955248341543}
   spawnChangeInPercentage: 100
-  spawnableFruit: {fileID: 0}
-  spawnableRareFruit: {fileID: 0}
-  spawnRareChanceInPercentage: 0
 --- !u!114 &4327183955248341543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2631,6 +2615,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1345417026792999435}
     m_Modifications:
+    - target: {fileID: 2861494620976242266, guid: 47a2363790de80647802bb9bfe30708b,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5410624555615347965, guid: 47a2363790de80647802bb9bfe30708b,
         type: 3}
       propertyPath: m_RootOrder
@@ -2699,12 +2688,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1120212234660924213}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &2899712491421963631 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2861494620976242266, guid: 47a2363790de80647802bb9bfe30708b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1120212234660924213}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7913343337632721751
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 4944298501316521928}
+    m_TransformParent: {fileID: 2899712491421963631}
     m_Modifications:
     - target: {fileID: 874536456660622900, guid: a240206f5e23e0a4ea6f600c1a5a6452,
         type: 3}
@@ -2760,7 +2755,7 @@ PrefabInstance:
     - target: {fileID: 874536458055997536, guid: a240206f5e23e0a4ea6f600c1a5a6452,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.291198
+      value: 1.2911981
       objectReference: {fileID: 0}
     - target: {fileID: 874536458055997536, guid: a240206f5e23e0a4ea6f600c1a5a6452,
         type: 3}
@@ -2770,7 +2765,7 @@ PrefabInstance:
     - target: {fileID: 874536458055997536, guid: a240206f5e23e0a4ea6f600c1a5a6452,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.291198
+      value: 1.2911981
       objectReference: {fileID: 0}
     - target: {fileID: 874536458055997536, guid: a240206f5e23e0a4ea6f600c1a5a6452,
         type: 3}
