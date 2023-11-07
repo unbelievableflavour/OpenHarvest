@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6683595720599016219}
-  - component: {fileID: 4913472737035653478}
+  - component: {fileID: 5551587415934076529}
   m_Layer: 0
-  m_Name: moduleConnector (4)
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 7954393135695964101}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &4913472737035653478
+--- !u!114 &5551587415934076529
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +40,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1054395761728052565}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 7954393135695964100}
@@ -48,9 +48,8 @@ MonoBehaviour:
   CanSpawn:
   - ceilingLight
   IsDefault: 0
-  needsBlockade: 0
-  spawnRate: 75
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
 --- !u!1 &1676998737412271270
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,9 +59,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9073005558905857131}
-  - component: {fileID: 2264276753987962209}
+  - component: {fileID: 2166095222925028766}
   m_Layer: 0
-  m_Name: moduleConnector (5)
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,7 +81,7 @@ Transform:
   m_Father: {fileID: 7954393135695964101}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 336.61, z: 0}
---- !u!114 &2264276753987962209
+--- !u!114 &2166095222925028766
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,7 +90,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1676998737412271270}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 7954393135695964100}
@@ -99,9 +98,39 @@ MonoBehaviour:
   CanSpawn:
   - vein
   IsDefault: 0
-  needsBlockade: 0
-  spawnRate: 75
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
+--- !u!1 &2089703295852772299
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 77049361361352804}
+  m_Layer: 0
+  m_Name: landscape
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &77049361361352804
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2089703295852772299}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4447283537033013384}
+  m_Father: {fileID: 7954393135695964101}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3189620828248364040
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,9 +140,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4398363919198695448}
-  - component: {fileID: 7364440436170881364}
+  - component: {fileID: 4199800548990033853}
   m_Layer: 0
-  m_Name: moduleConnector (3)
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -133,7 +162,7 @@ Transform:
   m_Father: {fileID: 7954393135695964101}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 127.4, z: -94.7}
---- !u!114 &7364440436170881364
+--- !u!114 &4199800548990033853
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -142,7 +171,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3189620828248364040}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 7954393135695964100}
@@ -150,9 +179,8 @@ MonoBehaviour:
   CanSpawn:
   - veinBronze
   IsDefault: 0
-  needsBlockade: 0
-  spawnRate: 75
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
 --- !u!1 &4053770892044338117
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,9 +190,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8333991048925211869}
-  - component: {fileID: 6781713739778263217}
+  - component: {fileID: 1991496969303355434}
   m_Layer: 0
-  m_Name: moduleConnector
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -184,7 +212,7 @@ Transform:
   m_Father: {fileID: 7954393135695964101}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 86.4, z: 0}
---- !u!114 &6781713739778263217
+--- !u!114 &1991496969303355434
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -193,7 +221,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4053770892044338117}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 7954393135695964100}
@@ -201,9 +229,8 @@ MonoBehaviour:
   CanSpawn:
   - veinBronze
   IsDefault: 0
-  needsBlockade: 0
-  spawnRate: 75
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
 --- !u!1 &4118845753085179409
 GameObject:
   m_ObjectHideFlags: 0
@@ -213,9 +240,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3479239534507310345}
-  - component: {fileID: 5707816371579715446}
+  - component: {fileID: 515733335033626771}
   m_Layer: 0
-  m_Name: moduleConnector (6)
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -235,7 +262,7 @@ Transform:
   m_Father: {fileID: 7954393135695964101}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 336.61, z: 0}
---- !u!114 &5707816371579715446
+--- !u!114 &515733335033626771
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -244,7 +271,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4118845753085179409}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 7954393135695964100}
@@ -252,9 +279,8 @@ MonoBehaviour:
   CanSpawn:
   - veinBronze
   IsDefault: 0
-  needsBlockade: 0
-  spawnRate: 75
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
 --- !u!1 &4127275898637435511
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,9 +290,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6852320168604304536}
-  - component: {fileID: 2888895349075317287}
+  - component: {fileID: 3673321781556540007}
   m_Layer: 0
-  m_Name: moduleConnector (2)
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -286,7 +312,7 @@ Transform:
   m_Father: {fileID: 7954393135695964101}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: -72.32, z: 0}
---- !u!114 &2888895349075317287
+--- !u!114 &3673321781556540007
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -295,7 +321,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4127275898637435511}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 7954393135695964100}
@@ -304,9 +330,8 @@ MonoBehaviour:
   - veinBronze
   - wallLight
   IsDefault: 0
-  needsBlockade: 0
-  spawnRate: 75
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
 --- !u!1 &4867079049241310835
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,9 +341,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8866527647336644452}
-  - component: {fileID: 433770999205202474}
+  - component: {fileID: 246299991948620155}
   m_Layer: 0
-  m_Name: moduleConnector
+  m_Name: mapModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -332,13 +357,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4867079049241310835}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -0.0012664795, y: 0, z: -2}
+  m_LocalPosition: {x: -0.0012664795, y: -1, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7954393135695964101}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!114 &433770999205202474
+--- !u!114 &246299991948620155
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -347,7 +372,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4867079049241310835}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 974b4c570c577e44bbb28c86a6f11389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 7954393135695964100}
@@ -356,8 +381,6 @@ MonoBehaviour:
   CanSpawn:
   - corridor
   IsDefault: 0
-  needsBlockade: 1
-  spawnRate: 100
   connectedModuleConnector: {fileID: 0}
 --- !u!1 &7942724415329185570
 GameObject:
@@ -368,9 +391,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6278541137218069801}
-  - component: {fileID: 1533783829337966891}
+  - component: {fileID: 4639268359451796309}
   m_Layer: 0
-  m_Name: moduleConnector
+  m_Name: mapModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -384,13 +407,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7942724415329185570}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 4.9993687, y: 0, z: 1.9993668}
+  m_LocalPosition: {x: 4.9993687, y: -1, z: 1.9993668}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7954393135695964101}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &1533783829337966891
+--- !u!114 &4639268359451796309
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -399,7 +422,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7942724415329185570}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 974b4c570c577e44bbb28c86a6f11389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 7954393135695964100}
@@ -408,8 +431,6 @@ MonoBehaviour:
   CanSpawn:
   - corridor
   IsDefault: 0
-  needsBlockade: 1
-  spawnRate: 100
   connectedModuleConnector: {fileID: 0}
 --- !u!1 &7954393135305998041
 GameObject:
@@ -507,7 +528,7 @@ Transform:
   - {fileID: 4398363919198695448}
   - {fileID: 9073005558905857131}
   - {fileID: 3479239534507310345}
-  - {fileID: 4447283537033013384}
+  - {fileID: 77049361361352804}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -523,8 +544,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46a3ca7bcd69ac0429638843420da499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tags:
-  - room
   Colliders:
   - {fileID: 7954393135305998042}
 --- !u!1 &7954393136209364707
@@ -567,9 +586,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6100388841477065310}
-  - component: {fileID: 7340552757864860010}
+  - component: {fileID: 3524170142779242480}
   m_Layer: 0
-  m_Name: moduleConnector (1)
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -589,7 +608,7 @@ Transform:
   m_Father: {fileID: 7954393135695964101}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: -184, z: 0}
---- !u!114 &7340552757864860010
+--- !u!114 &3524170142779242480
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -598,7 +617,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8693473012491815647}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 7954393135695964100}
@@ -606,20 +625,19 @@ MonoBehaviour:
   CanSpawn:
   - veinBronze
   IsDefault: 0
-  needsBlockade: 0
-  spawnRate: 75
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
 --- !u!1001 &4196604629547929443
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 7954393135695964101}
+    m_TransformParent: {fileID: 77049361361352804}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: ae53356863536914b9ab0c644a66797f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae53356863536914b9ab0c644a66797f,
         type: 3}
@@ -644,17 +662,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: ae53356863536914b9ab0c644a66797f,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae53356863536914b9ab0c644a66797f,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae53356863536914b9ab0c644a66797f,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae53356863536914b9ab0c644a66797f,
         type: 3}

@@ -46,8 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46a3ca7bcd69ac0429638843420da499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tags:
-  - plant
   Colliders: []
 --- !u!1 &7347844942842447953
 GameObject:
@@ -58,9 +56,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6277306286468365884}
-  - component: {fileID: 8067439905141682921}
+  - component: {fileID: 6735351195882814936}
   m_Layer: 0
-  m_Name: marker
+  m_Name: propModuleConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +78,7 @@ Transform:
   m_Father: {fileID: 4568531969969053824}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &8067439905141682921
+--- !u!114 &6735351195882814936
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -89,16 +87,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 7347844942842447953}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511df0b57e059d34bbc82570cc741269, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e92dbbb2cc6b4f48ba2e24cfea662a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentModule: {fileID: 596547960387618810}
-  CanReceive: []
+  CanReceive:
+  - mushroom
+  - mushroomBlue
   CanSpawn: []
   IsDefault: 1
-  needsBlockade: 0
-  spawnRate: 100
   connectedModuleConnector: {fileID: 0}
+  spawnRate: 100
 --- !u!1001 &3112952149663666928
 PrefabInstance:
   m_ObjectHideFlags: 0
