@@ -127,14 +127,14 @@ public class SavingController : MonoBehaviour
         SaveGame rawSave = (SaveGame)bf.Deserialize(file);
         file.Close();
 
-        SaveGame updatedSave = UpdateGameSaveToLatestVersion(rawSave);
+        SaveGame updatedSave = UpdateGameSaveToLatestVersion(rawSave, saveNumber);
 
         return updatedSave;
     }
 
-    private static SaveGame UpdateGameSaveToLatestVersion(SaveGame save)
+    private static SaveGame UpdateGameSaveToLatestVersion(SaveGame save, int saveNumber)
     {
-        Debug.Log("Run migrations if needed for save: " + save.saveNumber);
+        Debug.Log("Run migrations if needed for save: " + saveNumber);
         
         //Migration in build unknown.. (probably old)
         if (save.respawningObjects == null)
@@ -185,7 +185,7 @@ public class SavingController : MonoBehaviour
         //Migration to build 2
         if (save.buildNumber < 2)
         {
-            Debug.Log("Run migration for build 2 on save: " + save.saveNumber);
+            Debug.Log("Run migration for build 2 on save: " + saveNumber);
 
             var mapper = new TemporaryPrefabToIdMapper();
             foreach (SaveableItem item in save.itemsStoredInChristmasTree)
@@ -211,7 +211,7 @@ public class SavingController : MonoBehaviour
         //Migration to build 3
         if (save.buildNumber < 3)
         {    
-            Debug.Log("Run migration for build 3 on save: " + save.saveNumber);
+            Debug.Log("Run migration for build 3 on save: " + saveNumber);
 
             save.itemStashes["hat"] = new List<SaveableItem>();
             save.currentHat = null;
@@ -232,7 +232,7 @@ public class SavingController : MonoBehaviour
         //Migration to build 4
         if (save.buildNumber < 4)
         {
-            Debug.Log("Run migration for build 4 on save: " + save.saveNumber);
+            Debug.Log("Run migration for build 4 on save: " + saveNumber);
 
             save.itemsOfTheWeek = new Dictionary<string, ItemOfTheWeek>
             {
@@ -246,7 +246,7 @@ public class SavingController : MonoBehaviour
         //Migration to build 5
         if (save.buildNumber < 5)
         {
-            Debug.Log("Run migration for build 5 on save: " + save.saveNumber);
+            Debug.Log("Run migration for build 5 on save: " + saveNumber);
 
             if(save.animals == null)
             {
@@ -317,7 +317,7 @@ public class SavingController : MonoBehaviour
         //Migration to build 6
         if (save.buildNumber < 6)
         {
-            Debug.Log("Run migration for build 6 on save: " + save.saveNumber);
+            Debug.Log("Run migration for build 6 on save: " + saveNumber);
 
             save.locationConfigurations2 = new Dictionary<string, string> { };
 
@@ -344,7 +344,7 @@ public class SavingController : MonoBehaviour
         //Migration to build 7
         if (save.buildNumber < 7)
         {
-            Debug.Log("Run migration for build 7 on save: " + save.saveNumber);
+            Debug.Log("Run migration for build 7 on save: " + saveNumber);
 
             foreach (SaveablePatch item in save.soilGrids["farm"])
             {
@@ -386,7 +386,7 @@ public class SavingController : MonoBehaviour
         //Migration to build 8
         if (save.buildNumber < 8)
         {
-            Debug.Log("Run migration for build 8 on save: " + save.saveNumber);
+            Debug.Log("Run migration for build 8 on save: " + saveNumber);
 
             save.contractsOfTheWeek = new SaveableContractsOfTheWeek() {
                 currentContracts = new List<SaveableContract>(), 
@@ -394,6 +394,7 @@ public class SavingController : MonoBehaviour
             };
         }
 
+        save.saveNumber = saveNumber;
         save.buildNumber = GameState.Instance.buildNumber;
 
         BinaryFormatter bf = new BinaryFormatter();
