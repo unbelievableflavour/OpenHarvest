@@ -9,16 +9,21 @@ public class GameInformation : MonoBehaviour
     public SaveGame currentSave;
     public void UpdateInformation()
     {
-        if (!SavingController.SaveExists(saveNumber))
-        {
-            GameButtonLabel.text = "New Game";
-            SetAsNewGame();
-            return;
-        }
+        try {
+            if (!SavingController.SaveExists(saveNumber))
+            {
+                GameButtonLabel.text = "New Game";
+                SetAsNewGame();
+                return;
+            }
 
-        currentSave = SavingController.GetSaveInformation(saveNumber);
-        GameButtonLabel.text = currentSave.name;
-        GetComponent<Button>().onClick.AddListener(OnClickLoadGame);
+            currentSave = SavingController.GetSaveInformation(saveNumber);
+            GameButtonLabel.text = currentSave.name;
+            GetComponent<Button>().onClick.AddListener(OnClickLoadGame);
+        } catch {
+            GameButtonLabel.fontSize = 12;
+            GameButtonLabel.text = "This save file is broken. Please find help in the discord.";
+        }
     }
 
     public void SetAsNewGame()
