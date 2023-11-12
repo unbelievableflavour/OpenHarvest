@@ -32,5 +32,11 @@ namespace ProjectSettings
         {
             Assert.AreEqual("Direct3D11", PlayerSettings.GetGraphicsAPIs(BuildTarget.StandaloneWindows)[0].ToString());
         }
+
+        [Test]
+        public void ItHasSRPBatcherDisabled()
+        {
+            Assert.AreEqual(false, GraphicsSettings.useScriptableRenderPipelineBatching);
+        }
     }
 }
