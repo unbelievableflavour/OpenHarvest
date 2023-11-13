@@ -27,7 +27,7 @@ public class GameState: MonoBehaviour
 }
 
 public class CurrentGameState {
-    public int buildNumber = 8; // Used for updating save files.
+    public int buildNumber = 9; // Used for updating save files.
     public int saveNumber;
 
     public Dictionary<string, string> settings = new Dictionary<string, string> {
@@ -39,9 +39,10 @@ public class CurrentGameState {
         { "playerHeightOffset", "0" },
         { "backgroundMusicVolume", "1" },
         { "skinColor", "#FDD7C3" },
-        { "resolutionScale", "0" },
+        { "refreshRate", "0" }, // 0 = refresh rate 72
+        { "resolutionScale", "0" }, // 0 = resolution scale 1
         { "useShadows", "true" },
-        { "useApplicationSpaceWarp", "true" }
+        { "useApplicationSpaceWarp", "false" }
     };
 
     public int currentDay;

@@ -394,6 +394,15 @@ public class SavingController : MonoBehaviour
             };
         }
 
+        //Migration to build 9
+        if (save.buildNumber < 9)
+        {
+            Debug.Log("Run migration for build 8 on save: " + saveNumber);
+
+            save.settings["useApplicationSpaceWarp"] = "false";
+            save.settings["refreshRate"] = "0";
+        }
+
         save.saveNumber = saveNumber;
         save.buildNumber = GameState.Instance.buildNumber;
 

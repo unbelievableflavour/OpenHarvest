@@ -49,9 +49,17 @@ public class PlayerCustomSettings : MonoBehaviour
         AudioManager.Instance.ChangeMusicVolume(float.Parse(GameState.Instance.settings["backgroundMusicVolume"]) / 10);
         playerColours.Refresh();
 
+        var refreshRate = getRefreshRate();
+        if (Unity.XR.Oculus.Performance.TryGetDisplayRefreshRate(out var currentRefreshRate)) {
+            if (currentRefreshRate != refreshRate) {
+                Unity.XR.Oculus.Performance.TrySetDisplayRefreshRate(refreshRate);
+            }
+        }
+
         var pipeline = ((UniversalRenderPipelineAsset)GraphicsSettings.renderPipelineAsset);
-        if (pipeline.renderScale != getResolutionScale()) {       
-            pipeline.renderScale = getResolutionScale();
+        var resolutionScale = getResolutionScale();
+        if (pipeline.renderScale != resolutionScale) {       
+            pipeline.renderScale = resolutionScale;
         }
 
         if (isShadowsActive(pipeline) != bool.Parse(GameState.Instance.settings["useShadows"]))
@@ -65,6 +73,26 @@ public class PlayerCustomSettings : MonoBehaviour
     public bool isShadowsActive(UniversalRenderPipelineAsset pipeline)
     {
         return pipeline.shadowDistance != 0;
+    }
+
+    public float getRefreshRate()
+    {
+        if (GameState.Instance.settings["refreshRate"] == "1")
+        {
+            return 80f;
+        }
+
+        if (GameState.Instance.settings["refreshRate"] == "2")
+        {
+            return 90f;
+        }
+
+        if (GameState.Instance.settings["refreshRate"] == "3")
+        {
+            return 120f;
+        }
+
+        return 72f;
     }
 
     public float getResolutionScale()

@@ -19,6 +19,7 @@ public class SettingsController : MonoBehaviour
     public UnityEngine.UI.Slider backgroundMusicVolumeSlider;
     public Text backgroundMusicVolumeLabel;
 
+    public Dropdown refreshRateDropdown;
     public Dropdown resolutionScaleDropdown;
     public Toggle useShadows;
     public Toggle useApplicationSpaceWarp;
@@ -38,6 +39,7 @@ public class SettingsController : MonoBehaviour
         useAssistMode.isOn = bool.Parse(settings["useAssistMode"]);
         backgroundMusicVolumeLabel.text = settings["backgroundMusicVolume"];
         backgroundMusicVolumeSlider.value = float.Parse(settings["backgroundMusicVolume"]);
+        refreshRateDropdown.value = int.Parse(settings["refreshRate"]);
         resolutionScaleDropdown.value = int.Parse(settings["resolutionScale"]);
         useShadows.isOn = bool.Parse(settings["useShadows"]);
         useApplicationSpaceWarp.isOn = bool.Parse(settings["useApplicationSpaceWarp"]);
@@ -96,6 +98,12 @@ public class SettingsController : MonoBehaviour
     public void UpdateSkinColor(string color)
     {
         GameState.Instance.settings["skinColor"] = color;
+        PlayerCustomSettings.Instance.RefreshSettings();
+    }
+
+    public void UpdateRefreshRate()
+    {
+        GameState.Instance.settings["refreshRate"] = refreshRateDropdown.value.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
     }
 
