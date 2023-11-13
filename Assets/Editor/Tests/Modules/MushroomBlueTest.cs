@@ -11,7 +11,7 @@ namespace Modules
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/DungeonGenerator/Modules/MushroomBlue/MushroomBlue.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/DungeonGenerator/Modules/Room/MushroomBlue/MushroomBlue.prefab");
             module = GameObject.Instantiate(prefab);
         }
 
