@@ -22,7 +22,7 @@ public class ItemInspectorFader : MonoBehaviour
     void Start()
     {
         canvas.enabled = false;
-        tooltipLine.SetActive(true);
+        tooltipLine.SetActive(false);
     }
 
     void Update()
