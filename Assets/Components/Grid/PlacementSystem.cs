@@ -54,7 +54,7 @@ public class PlacementSystem : MonoBehaviour
     }
 
     private void Update(){
-        if(!BuildInputManager.Instance) {
+        if(!HarvestInputManager.Instance) {
             return;
         }
         
@@ -62,7 +62,7 @@ public class PlacementSystem : MonoBehaviour
             return;
         }
 
-        Vector3 mousePosition = BuildInputManager.Instance.GetSelectedMapPosition();
+        Vector3 mousePosition = HarvestInputManager.Instance.GetSelectedMapPosition();
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
         
         if(lastDetectedPosition == gridPosition){
@@ -89,13 +89,13 @@ public class PlacementSystem : MonoBehaviour
 
         gridVisualization.SetActive(true);
         preview.StartShowingPlacementPreview(currentObject.prefab, currentObject.size);
-        BuildInputManager.Instance.OnClicked += PlaceStructure;
-        BuildInputManager.Instance.OnPreviousItem += OnPreviousItem;
-        BuildInputManager.Instance.OnNextItem += OnNextItem;
+        HarvestInputManager.Instance.OnTriggerRight += PlaceStructure;
+        HarvestInputManager.Instance.OnBButton += OnPreviousItem;
+        HarvestInputManager.Instance.OnAButton += OnNextItem;
     }
 
     private void PlaceStructure() {
-        Vector3 mousePosition = BuildInputManager.Instance.GetSelectedMapPosition();
+        Vector3 mousePosition = HarvestInputManager.Instance.GetSelectedMapPosition();
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
         
         
@@ -125,9 +125,9 @@ public class PlacementSystem : MonoBehaviour
         selectedObjectIndex = -1;
         gridVisualization.SetActive(false);
         preview.StopShowingPreview();
-        BuildInputManager.Instance.OnClicked -= PlaceStructure;
-        BuildInputManager.Instance.OnPreviousItem -= OnPreviousItem;
-        BuildInputManager.Instance.OnNextItem -= OnNextItem;
+        HarvestInputManager.Instance.OnTriggerRight -= PlaceStructure;
+        HarvestInputManager.Instance.OnBButton -= OnPreviousItem;
+        HarvestInputManager.Instance.OnAButton -= OnNextItem;
 
         lastDetectedPosition = Vector3Int.zero;
     }

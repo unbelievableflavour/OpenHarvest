@@ -5,9 +5,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using BNG;
 
-public class BuildInputManager : MonoBehaviour
+public class HarvestInputManager : MonoBehaviour
 {
-	public static BuildInputManager Instance = null;
+	public static HarvestInputManager Instance = null;
     public HarvestSettings harvestSettings;
 
     [SerializeField]
@@ -18,11 +18,12 @@ public class BuildInputManager : MonoBehaviour
     [SerializeField]
     private LayerMask placementLayermask;
 
-    public event Action OnClicked, OnPreviousItem, OnNextItem;
+    public event Action OnTriggerRight, OnBButton, OnAButton, OnMenuButton;
         
-    public List<ControllerBinding> placeButton = new List<ControllerBinding>() { ControllerBinding.None };
-    public List<ControllerBinding> previousButton = new List<ControllerBinding>() { ControllerBinding.None };
-    public List<ControllerBinding> nextButton = new List<ControllerBinding>() { ControllerBinding.None };
+    public List<ControllerBinding> triggerRight = new List<ControllerBinding>() { ControllerBinding.None };
+    public List<ControllerBinding> BButton = new List<ControllerBinding>() { ControllerBinding.None };
+    public List<ControllerBinding> AButton = new List<ControllerBinding>() { ControllerBinding.None };
+    public List<ControllerBinding> menuButton = new List<ControllerBinding>() { ControllerBinding.None };
 
     // Initialize instance.
     private void Awake()
@@ -33,37 +34,37 @@ public class BuildInputManager : MonoBehaviour
         }
     }
 
-    private void Update() {
-        if(GameState.Instance.GetMode() != "build") {
-            return;
-        }
-        
+    private void Update() {        
         // vr
-        if(this.KeyDown(placeButton)){
-            OnClicked?.Invoke();
+        if(this.KeyDown(triggerRight)){
+            OnTriggerRight?.Invoke();
         }
 
-        if(this.KeyDown(previousButton)){
-            OnPreviousItem?.Invoke();
+        if(this.KeyDown(BButton)){
+            OnBButton?.Invoke();
         }
 
-        if(this.KeyDown(nextButton)){
-            OnNextItem?.Invoke();
+        if(this.KeyDown(AButton)){
+            OnAButton?.Invoke();
+        }
+
+        if(this.KeyDown(menuButton)){
+            OnMenuButton?.Invoke();
         }
 
 #if UNITY_EDITOR
         if (harvestSettings.isPCMode)
         {
             if(Input.GetMouseButtonDown(0)){
-                OnClicked?.Invoke();
+                OnTriggerRight?.Invoke();
             }
 
             if(Input.GetKeyDown(KeyCode.LeftArrow)){
-                OnPreviousItem?.Invoke();
+                OnBButton?.Invoke();
             }
 
             if(Input.GetKeyDown(KeyCode.RightArrow)){
-                OnNextItem?.Invoke();
+                OnAButton?.Invoke();
             }
         }
 #endif
