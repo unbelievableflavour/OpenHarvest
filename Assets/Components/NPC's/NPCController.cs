@@ -33,6 +33,7 @@ public class NPCController : MonoBehaviour
     public void GiveItem(HarvestDataTypes.Item item)
     {
         var snapZone = handSlot.GetComponent<SnapZone>();
+        bool isUnlockable = item.prefab == null;
 
         if(snapZone.HeldItem != null)
         {
@@ -41,18 +42,16 @@ public class NPCController : MonoBehaviour
         }
 
         HoldOutHand();
-        GameObject spawnedRewardItem = InstantiateItemNew(item.prefab);
+        GameObject spawnedRewardItem = Definitions.InstantiateItemNew(isUnlockable 
+            ? DatabaseManager.Instance.items.fallbackItem.prefab 
+            : item.prefab
+        );
+
         snapZone.GrabGrabbable(spawnedRewardItem.GetComponent<Grabbable>());
-    }
 
-    public void GiveUnlockable(HarvestDataTypes.Item unlockableItem)
-    {
-        var fallbackItem = DatabaseManager.Instance.items.fallbackItem;
-
-        HoldOutHand();
-        GameObject rewardItem = InstantiateItemNew(fallbackItem.prefab);
-        rewardItem.GetComponent<ShowUnlockMessageOnGrab>().setItem(unlockableItem);
-        handSlot.GetComponent<SnapZone>().GrabGrabbable(rewardItem.GetComponent<Grabbable>());
+        if(isUnlockable) {
+            spawnedRewardItem.GetComponent<ShowUnlockMessageOnGrab>().setItem(item);
+        }
     }
 
     public void NPCGaveItem(Grabbable grabbable)

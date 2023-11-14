@@ -143,12 +143,6 @@ public class BuyController : MonoBehaviour
             LockStore(item);
         }
 
-        if (item.prefab == null || itemId == "BackpackBig")
-        {
-            npc.GiveUnlockable(item);
-            return;
-        }
-
         npc.GiveItem(item);
     }
 

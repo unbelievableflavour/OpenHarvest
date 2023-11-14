@@ -109,7 +109,6 @@ GameObject:
   - component: {fileID: 3717825456016160138}
   - component: {fileID: 1204230700579619439}
   - component: {fileID: 8177677842741231571}
-  - component: {fileID: 5409914621850376887}
   m_Layer: 0
   m_Name: ItemUnlockedText
   m_TagString: Untagged
@@ -189,18 +188,6 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 10
   m_PresetInfoIsWorld: 1
---- !u!114 &5409914621850376887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1963805157117914208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9517653c470b70941acee38791ff1709, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2290897699849694604
 GameObject:
   m_ObjectHideFlags: 0
@@ -213,10 +200,9 @@ GameObject:
   - component: {fileID: 2290897699849694594}
   - component: {fileID: 2290897699849694605}
   - component: {fileID: 2290897699849694597}
-  - component: {fileID: 8555612519734303285}
-  - component: {fileID: 2423921724597496080}
   - component: {fileID: 4874924165884272844}
   - component: {fileID: 5883399858819081814}
+  - component: {fileID: 3463837006981946038}
   m_Layer: 10
   m_Name: BuyItemFallback
   m_TagString: Untagged
@@ -349,97 +335,6 @@ MonoBehaviour:
   VibrateFrequency: 0.3
   VibrateAmplitude: 0.1
   VibrateDuration: 0.1
---- !u!114 &8555612519734303285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2290897699849694604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad179a9e83dba5142adaaf7737678e8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onGrab:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5883399858819081814}
-        m_TargetAssemblyTypeName: BNG.ShowUnlockMessageOnGrab, Assembly-CSharp
-        m_MethodName: OnGrab
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onRelease:
-    m_PersistentCalls:
-      m_Calls: []
-  onBecomesClosestGrabbable:
-    m_PersistentCalls:
-      m_Calls: []
-  onNoLongerClosestGrabbable:
-    m_PersistentCalls:
-      m_Calls: []
-  onBecomesClosestRemoteGrabbable:
-    m_PersistentCalls:
-      m_Calls: []
-  onNoLongerClosestRemoteGrabbable:
-    m_PersistentCalls:
-      m_Calls: []
-  onGrip:
-    m_PersistentCalls:
-      m_Calls: []
-  onTrigger:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerDown:
-    m_PersistentCalls:
-      m_Calls: []
-  onTriggerUp:
-    m_PersistentCalls:
-      m_Calls: []
-  onButton1:
-    m_PersistentCalls:
-      m_Calls: []
-  onButton1Down:
-    m_PersistentCalls:
-      m_Calls: []
-  onButton1Up:
-    m_PersistentCalls:
-      m_Calls: []
-  onButton2:
-    m_PersistentCalls:
-      m_Calls: []
-  onButton2Down:
-    m_PersistentCalls:
-      m_Calls: []
-  onButton2Up:
-    m_PersistentCalls:
-      m_Calls: []
-  onSnapZoneEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  onSnapZoneExit:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!135 &2423921724597496080
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2290897699849694604}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.06
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4874924165884272844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,6 +362,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unlockMessage: {fileID: 1963805157117914208}
   unlockSound: {fileID: 8300000, guid: b1cf3bae1a4b77d41bb26eebcb01da38, type: 3}
+--- !u!65 &3463837006981946038
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2290897699849694604}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.07966876, y: 0.07320653, z: 0.08758061}
+  m_Center: {x: -0.001373291, y: -0.0013829842, z: -0.0024772137}
 --- !u!1 &3034702283740608609
 GameObject:
   m_ObjectHideFlags: 0

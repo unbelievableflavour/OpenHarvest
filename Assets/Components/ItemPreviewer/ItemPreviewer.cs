@@ -5,7 +5,6 @@ using UnityEngine;
 public class ItemPreviewer : MonoBehaviour
 {
     public SnapZone snapZone;
-
     public void Spawn(HarvestDataTypes.Item item)
     {
         if (!snapZone)

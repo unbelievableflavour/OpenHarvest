@@ -19,6 +19,12 @@ namespace BNG
 
         public override void OnGrab(Grabber grabber)
         {
+            Debug.Log(newItem);
+            if(this.newItem == null)
+            {
+                return;
+            }
+
             if (alreadyTriggered)
             {
                 return;
@@ -26,17 +32,12 @@ namespace BNG
 
             alreadyTriggered = true;
 
-            if(newItem == null)
-            {
-                return;
-            }
-
             if (unlockSound)
             {
                 VRUtils.Instance.PlaySpatialClipAt(unlockSound, transform.position, 1f, 1f);
             }
 
-            unlockMessage.GetComponentInChildren<Text>().text = "Unlocked " + newItem.name + "!";
+            unlockMessage.GetComponentInChildren<Text>().text = "Unlocked " + this.newItem.name + "!";
 
             CancelInvoke("HideUnlockedMessage");
             ShowUnlockedMessage();
@@ -61,7 +62,7 @@ namespace BNG
 
         public void setItem(HarvestDataTypes.Item newItem)
         {
-            newItem = newItem;
+            this.newItem = newItem;
         }
     }
 }
