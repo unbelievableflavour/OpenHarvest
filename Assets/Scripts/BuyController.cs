@@ -40,7 +40,6 @@ public class BuyController : MonoBehaviour
 
         if (item.isUnlockable) {
             GameState.Instance.unlock(item.itemId, 1);
-            return;
         }
 
         RefreshButton();
