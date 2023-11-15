@@ -42,6 +42,7 @@ public class CurrentGameState {
         { "refreshRate", "0" }, // 0 = refresh rate 72
         { "resolutionScale", "0" }, // 0 = resolution scale 1
         { "useShadows", "true" },
+        { "useFog", "true" },
         { "useApplicationSpaceWarp", "false" }
     };
 

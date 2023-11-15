@@ -401,6 +401,7 @@ public class SavingController : MonoBehaviour
 
             save.settings["useApplicationSpaceWarp"] = "false";
             save.settings["refreshRate"] = "0";
+            save.settings["useFog"] = "false";
         }
 
         save.saveNumber = saveNumber;

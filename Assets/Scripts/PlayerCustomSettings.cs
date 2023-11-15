@@ -62,9 +62,16 @@ public class PlayerCustomSettings : MonoBehaviour
             pipeline.renderScale = resolutionScale;
         }
 
-        if (isShadowsActive(pipeline) != bool.Parse(GameState.Instance.settings["useShadows"]))
+        bool useShadows = bool.Parse(GameState.Instance.settings["useShadows"]);
+        if (isShadowsActive(pipeline) != useShadows)
         {
-            pipeline.shadowDistance = bool.Parse(GameState.Instance.settings["useShadows"]) ? defaultShadowDistanceValue : 0;
+            pipeline.shadowDistance = useShadows ? defaultShadowDistanceValue : 0;
+        }
+
+        bool useFog = bool.Parse(GameState.Instance.settings["useFog"]);
+        if (RenderSettings.fog != useFog)
+        {
+            RenderSettings.fog = useFog;
         }
 
         OVRManager.SetSpaceWarp(bool.Parse(GameState.Instance.settings["useApplicationSpaceWarp"]));

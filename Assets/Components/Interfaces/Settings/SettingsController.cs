@@ -22,6 +22,7 @@ public class SettingsController : MonoBehaviour
     public Dropdown refreshRateDropdown;
     public Dropdown resolutionScaleDropdown;
     public Toggle useShadows;
+    public Toggle useFog;
     public Toggle useApplicationSpaceWarp;
 
     public void UpdateSettingsWithPrefs() {
@@ -42,6 +43,7 @@ public class SettingsController : MonoBehaviour
         refreshRateDropdown.value = int.Parse(settings["refreshRate"]);
         resolutionScaleDropdown.value = int.Parse(settings["resolutionScale"]);
         useShadows.isOn = bool.Parse(settings["useShadows"]);
+        useFog.isOn = bool.Parse(settings["useFog"]);
         useApplicationSpaceWarp.isOn = bool.Parse(settings["useApplicationSpaceWarp"]);
     }
 
@@ -116,6 +118,12 @@ public class SettingsController : MonoBehaviour
     public void UpdateShadowSettings()
     {
         GameState.Instance.settings["useShadows"] = useShadows.isOn.ToString();
+        PlayerCustomSettings.Instance.RefreshSettings();
+    }
+
+    public void UpdateFogSettings()
+    {
+        GameState.Instance.settings["useFog"] = useFog.isOn.ToString();
         PlayerCustomSettings.Instance.RefreshSettings();
     }
 
