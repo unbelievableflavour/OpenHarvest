@@ -18,7 +18,7 @@ namespace Tests
         [Test]
         public void ItCanvasGroupValues()
         {
-            Assert.AreEqual(1, canvasGroup.GetComponent<CanvasGroup>().alpha);
+            Assert.AreEqual(1, canvasGroup.GetComponentInChildren<CanvasGroup>().alpha);
         }
 
         [Test]
