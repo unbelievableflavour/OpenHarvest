@@ -42,6 +42,7 @@ public class TalkUIController : MonoBehaviour
     public void EnableTalkUI()
     {
         DisableAll();
+        npc.BackToIdle();
         talkUI.SetActive(true);
     }
 

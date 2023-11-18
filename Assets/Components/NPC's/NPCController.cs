@@ -20,7 +20,9 @@ public class NPCController : MonoBehaviour
 
     public void BackToIdle()
     {
-        NPCAnimator.Play("GiveToIdle");
+        if (NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("GivingIdle")) {
+            NPCAnimator.Play("GiveToIdle");
+        }
         handSlot.SetActive(false);
     }
 
