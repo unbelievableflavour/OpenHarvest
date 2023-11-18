@@ -41,10 +41,9 @@ GameObject:
   - component: {fileID: 1829258601772179364}
   - component: {fileID: 5116147555234911463}
   - component: {fileID: 349766969020772057}
-  - component: {fileID: 5418896277426019963}
   - component: {fileID: 8877816787198476116}
   - component: {fileID: 8385502592510222828}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: PigAnimated
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65,6 +64,7 @@ Transform:
   - {fileID: 7198426851610915788}
   - {fileID: 6696827820298813255}
   - {fileID: 1886285173279977304}
+  - {fileID: 6854536879410611217}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -98,19 +98,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!135 &5418896277426019963
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1829258601772179365}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.21268153
-  m_Center: {x: 0, y: -0.16571116, z: 1.3725029}
 --- !u!114 &8877816787198476116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,6 +210,51 @@ CapsuleCollider:
   m_Height: 3.0786593
   m_Direction: 1
   m_Center: {x: 0.00000005135889, y: 0.5503526, z: 0.29870132}
+--- !u!1 &4563444135608444173
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6854536879410611217}
+  - component: {fileID: 1060778534373906211}
+  m_Layer: 0
+  m_Name: SlowDownCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6854536879410611217
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4563444135608444173}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1829258601772179364}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!136 &1060778534373906211
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4563444135608444173}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5597211
+  m_Height: 2.4994016
+  m_Direction: 1
+  m_Center: {x: 0.024344802, y: 0.36273694, z: 0.054163814}
 --- !u!1 &5684461329871475773
 GameObject:
   m_ObjectHideFlags: 0

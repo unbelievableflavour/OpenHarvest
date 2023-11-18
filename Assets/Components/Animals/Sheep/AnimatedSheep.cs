@@ -88,4 +88,14 @@ public class AnimatedSheep : MonoBehaviour
     {
         transform.rotation = Quaternion.LookRotation(pointsToMoveTowards);
     }
+
+    private void OnTriggerEnter(Collider col)
+    {
+        if (transform.name == "RenderOnCollide") {
+            // this is just a little hack to make sure animals wont walk against the RenderOnCollide objects.
+            return;
+        }
+
+        SlowDownMovement();
+    }
 }

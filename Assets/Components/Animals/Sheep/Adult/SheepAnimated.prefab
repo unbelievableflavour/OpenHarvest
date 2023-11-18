@@ -1,5 +1,50 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &271981210088451563
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1774176869228817006}
+  - component: {fileID: 6504693132637022502}
+  m_Layer: 0
+  m_Name: SlowDownCollider (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1774176869228817006
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 271981210088451563}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: 0.7071068, w: 0}
+  m_LocalPosition: {x: -0.19361877, y: 0, z: 0.077445984}
+  m_LocalScale: {x: 0.38723725, y: 0.38723728, z: 0.38723722}
+  m_Children: []
+  m_Father: {fileID: 2477920441206668227}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
+--- !u!136 &6504693132637022502
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 271981210088451563}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 1.2099448
+  m_Height: 4.1285095
+  m_Direction: 1
+  m_Center: {x: 0.014433788, y: -0.14051156, z: -0.39402664}
 --- !u!1 &2477920441206668226
 GameObject:
   m_ObjectHideFlags: 0
@@ -11,7 +56,6 @@ GameObject:
   - component: {fileID: 2477920441206668227}
   - component: {fileID: 9050201284769241496}
   - component: {fileID: 4601304112105900734}
-  - component: {fileID: 8084607804197976604}
   - component: {fileID: 1427942587561240330}
   - component: {fileID: 6228355521185345502}
   - component: {fileID: 6669756957651422914}
@@ -36,6 +80,8 @@ Transform:
   m_Children:
   - {fileID: 6596785600854220193}
   - {fileID: 7391977690356587512}
+  - {fileID: 7413126177980073477}
+  - {fileID: 1774176869228817006}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -68,19 +114,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!135 &8084607804197976604
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2477920441206668226}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.35
-  m_Center: {x: 0, y: 0, z: 0.54}
 --- !u!114 &1427942587561240330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,6 +178,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectToToggle: {fileID: 690352050710328748}
+--- !u!1 &4743157130383901708
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7413126177980073477}
+  - component: {fileID: 6345162147448905971}
+  m_Layer: 0
+  m_Name: SlowDownCollider (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7413126177980073477
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4743157130383901708}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: 0.7071068, w: 0}
+  m_LocalPosition: {x: 0.19361877, y: 0, z: 0.077445984}
+  m_LocalScale: {x: 0.38723725, y: 0.38723728, z: 0.38723722}
+  m_Children: []
+  m_Father: {fileID: 2477920441206668227}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
+--- !u!136 &6345162147448905971
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4743157130383901708}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 1.2099448
+  m_Height: 4.05725
+  m_Direction: 1
+  m_Center: {x: 0.0144337835, y: -0.17614192, z: -0.39402664}
 --- !u!1001 &588704284456354665
 PrefabInstance:
   m_ObjectHideFlags: 0

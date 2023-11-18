@@ -1,24 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!95 &5589018965170065702
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1214283574431868898}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: fb6275b6ebac67a41a224afa1636a17f, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6185100332888426615
 GameObject:
   m_ObjectHideFlags: 0
@@ -64,6 +45,51 @@ CapsuleCollider:
   m_Height: 1.405089
   m_Direction: 1
   m_Center: {x: 0, y: 0.35000002, z: -0.038064122}
+--- !u!1 &7021483677524410859
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6499423047647954505}
+  - component: {fileID: 8899120073572189324}
+  m_Layer: 0
+  m_Name: SlowDownCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6499423047647954505
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7021483677524410859}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8802182029558504376}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!136 &8899120073572189324
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7021483677524410859}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5007163
+  m_Height: 2.2628756
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.6283238, z: -0.059004784}
 --- !u!1 &8802182029558504377
 GameObject:
   m_ObjectHideFlags: 0
@@ -75,7 +101,6 @@ GameObject:
   - component: {fileID: 8802182029558504376}
   - component: {fileID: 2613567668419989755}
   - component: {fileID: 7466946048846064325}
-  - component: {fileID: 2915726295112751719}
   - component: {fileID: 4384988482489292729}
   m_Layer: 12
   m_Name: CowYoungAnimated
@@ -97,6 +122,7 @@ Transform:
   m_Children:
   - {fileID: 1986598531077127512}
   - {fileID: 560469302000954554}
+  - {fileID: 6499423047647954505}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -130,19 +156,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!135 &2915726295112751719
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8802182029558504377}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.46
-  m_Center: {x: 0, y: 0.02, z: 1.21}
 --- !u!114 &4384988482489292729
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,3 +283,22 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2025328644126628531}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &5589018965170065702
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214283574431868898}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fb6275b6ebac67a41a224afa1636a17f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
