@@ -111,9 +111,6 @@ public class QuestCleanupCrew : MonoBehaviour
 
     private void handleCheckStatus()
     {
-        Debug.Log("checking status");
-        Debug.Log(questId);
-
         CheckStatus();
     }
 
