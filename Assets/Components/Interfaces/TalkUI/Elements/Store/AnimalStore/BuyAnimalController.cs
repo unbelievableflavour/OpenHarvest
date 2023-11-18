@@ -54,12 +54,7 @@ public class BuyAnimalController : MonoBehaviour
 
     public bool hasBoughtMaximum()
     {
-        if (item.maximumTimesOwned == null)
-        {
-            return false;
-        }
-
-        return GameState.Instance.unlockables[item.itemId] >= item.maximumTimesOwned;
+        return GameState.Instance.ownsMaximumNumber(item);
     }
 
     private bool isAlreadyUnlocked()
