@@ -35,12 +35,11 @@ public class ShowWhenClose : MonoBehaviour
 
         if (shouldBeEnabled)
         {
-            talkUIController.Reset();
             gameObject.SetActive(true);
         } else
         {
+            talkUIController.Reset();
             gameObject.SetActive(false);
-
         }
     }
 

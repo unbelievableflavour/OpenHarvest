@@ -1,19 +1,33 @@
 ﻿using BNG;
 using UnityEngine;
 
-public class QuestSantasLittleHelper : QuestOption
+public class QuestSantasLittleHelper : MonoBehaviour
 {
-    public int minimumNeededHangedBaubleCount = 2;
+    private int minimumNeededHangedBaubleCount = 2;
 
-    public QuestDialogueController questDialogueController;
+    public QuestOption questDialogueController;
     public Transform baubleHangingLocations;
     public HarvestDataTypes.Item rewardItem; 
 
-    void Start()
+    private NPCController npc;
+    private Definitions.Quests questId;
+
+    void OnEnable()
     {
+        questId = questDialogueController.questId;
+        npc = questDialogueController.getTalkUIController().npc;
+
         npc.gaveItem += handleNPCGaveItem;
-        Invoke("CheckStatus", 1f);
+        questDialogueController.checkStatus += handleCheckStatus;
+        CheckStatus();
     }
+
+    void OnDisable() 
+    {
+        npc.gaveItem -= handleNPCGaveItem;
+        questDialogueController.checkStatus -= handleCheckStatus;
+    }
+
 
     public void CheckStatus( )
     {
@@ -22,30 +36,52 @@ public class QuestSantasLittleHelper : QuestOption
             return;
         }
 
-        int hangingBaubleCount = 0;
-        foreach (Transform inventorySlot in baubleHangingLocations)
+        if (GameState.Instance.questList[questId].currentDialogue == 1)
         {
-            var slot = inventorySlot.GetComponent<SnapZone>();
-            if (!slot)
+            int hangingBaubleCount = 0;
+            foreach (Transform inventorySlot in baubleHangingLocations)
             {
-                continue;
+                var slot = inventorySlot.GetComponent<SnapZone>();
+                if (!slot)
+                {
+                    continue;
+                }
+
+                if (!slot.HeldItem)
+                {
+                    continue;
+                }
+                hangingBaubleCount++;
             }
 
-            if (!slot.HeldItem)
+            if(hangingBaubleCount < minimumNeededHangedBaubleCount)
             {
-                continue;
+                return;
             }
-            hangingBaubleCount++;
+
+            Invoke("SpawnReward", 0.5f);
         }
 
-        if(hangingBaubleCount >= minimumNeededHangedBaubleCount)
+        if (GameState.Instance.questList[questId].currentDialogue == 2)
         {
-            SpawnReward();
+            npc.SpawnQuestReward(rewardItem);
         }
     }
 
-    private void handleNPCGaveItem(object sender, Grabbable e)
+    private void handleCheckStatus()
     {
+        CheckStatus();
+    }
+
+    private void handleNPCGaveItem(object sender, Grabbable grabbable)
+    {
+        var item = Definitions.GetItemFromObject(grabbable);
+
+        if (!item || item.itemId != rewardItem.itemId)
+        {
+            return;
+        }
+
         GeneralQuestController.Instance.FinishQuest(questId);
         npc.BackToIdle();
     }
@@ -54,7 +90,5 @@ public class QuestSantasLittleHelper : QuestOption
     {
         GeneralQuestController.Instance.UpdateQuest();
         questDialogueController.SetCurrentQuestDialog(2);
-
-        npc.SpawnQuestReward(rewardItem);
     }
 }

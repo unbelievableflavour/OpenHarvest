@@ -1,17 +1,31 @@
 ﻿using BNG;
 using UnityEngine;
 
-public class QuestGettingBronzeForTheOldy : QuestOption
+public class QuestGettingBronzeForTheOldy : MonoBehaviour
 {
+    public QuestOption questDialogueController;
+    public HarvestDataTypes.Item rewardItem;
     private int minimumNumberOfBronzeOres = 20;
-    public QuestDialogueController questDialogueController;
-    public HarvestDataTypes.Item rewardItem; 
 
-    void Start() 
+    private NPCController npc;
+    private Definitions.Quests questId;
+
+    void OnEnable() 
     {
+        questId = questDialogueController.questId;
+        npc = questDialogueController.getTalkUIController().npc;
+
         npc.gaveItem += handleNPCGaveItem;
         npc.grabbedItem += handleNPCGrabbedItem;
-        npc.talks += handleNPCTalks;
+        questDialogueController.checkStatus += handleCheckStatus;
+        CheckStatus();
+    }
+
+    void OnDisable() 
+    {
+        npc.gaveItem -= handleNPCGaveItem;
+        npc.grabbedItem -= handleNPCGrabbedItem;
+        questDialogueController.checkStatus -= handleCheckStatus;
     }
 
     private void handleNPCGaveItem(object sender, Grabbable grabbable)
@@ -49,7 +63,7 @@ public class QuestGettingBronzeForTheOldy : QuestOption
             }
 
             grabbable.GetComponent<ItemStack>().SetStackSize(stackSize - minimumNumberOfBronzeOres);
-            npc.handSlot.GetComponent<SnapZone>().ReleaseAll();
+            npc.ReleaseItemWithoutCallingEvent();
             if (stackSize - minimumNumberOfBronzeOres == 0)
             {
                 Destroy(grabbable.gameObject);
@@ -61,18 +75,8 @@ public class QuestGettingBronzeForTheOldy : QuestOption
         }
     }
 
-    private void handleNPCTalks(object sender, GameObject talkObject)
+    private void handleCheckStatus()
     {
-        var quest = talkObject.GetComponent<QuestDialogueController>();
-        if (!quest)
-        {
-            return;
-        }
-        if (quest.questId != questId)
-        {
-            return;
-        }
-
         CheckStatus();
     }
 
@@ -90,7 +94,6 @@ public class QuestGettingBronzeForTheOldy : QuestOption
 
         if (GameState.Instance.questList[questId].currentDialogue == 2)
         {
-            npc.HoldOutHand();
             npc.SpawnQuestReward(rewardItem);
         }
     }
@@ -99,7 +102,5 @@ public class QuestGettingBronzeForTheOldy : QuestOption
     {
         GeneralQuestController.Instance.UpdateQuest();
         questDialogueController.SetCurrentQuestDialog(2);
-
-        npc.SpawnQuestReward(rewardItem);
     }
 }

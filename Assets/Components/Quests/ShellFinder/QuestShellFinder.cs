@@ -3,20 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using BNG;
 
-public class QuestShellFinder : QuestOption
+public class QuestShellFinder : MonoBehaviour
 {
     private int minimumNumberOfSeaShell1 = 5;
     private int minimumNumberOfSeaShell2 = 20;
     private int minimumNumberOfSeaStar = 10;
 
-    public QuestDialogueController questDialogueController;
+    public QuestOption questDialogueController;
     public HarvestDataTypes.Item rewardItem;
 
-    void Start()
+    private NPCController npc;
+    private Definitions.Quests questId;
+
+    void OnEnable() 
     {
+        questId = questDialogueController.questId;
+        npc = questDialogueController.getTalkUIController().npc;
+
         npc.gaveItem += handleNPCGaveItem;
         npc.grabbedItem += handleNPCGrabbedItem;
-        npc.talks += handleNPCTalks;
+        questDialogueController.checkStatus += handleCheckStatus;
+        CheckStatus();
+    }
+
+    void OnDisable() 
+    {
+        npc.gaveItem -= handleNPCGaveItem;
+        npc.grabbedItem -= handleNPCGrabbedItem;
+        questDialogueController.checkStatus -= handleCheckStatus;
     }
 
     private void handleNPCGaveItem(object sender, Grabbable grabbable)
@@ -133,17 +147,8 @@ public class QuestShellFinder : QuestOption
         }
     }
 
-    private void handleNPCTalks(object sender, GameObject talkObject)
+    private void handleCheckStatus()
     {
-        var quest = talkObject.GetComponent<QuestDialogueController>();
-        if (!quest)
-        {
-            return;
-        }
-        if(quest.questId != questId){
-            return;
-        }
-
         CheckStatus();
     }
 
@@ -167,6 +172,10 @@ public class QuestShellFinder : QuestOption
         if (GameState.Instance.questList[questId].currentDialogue == 3)
         {
             npc.HoldOutHand();
+        }
+
+        if (GameState.Instance.questList[questId].currentDialogue == 4)
+        {
             npc.SpawnQuestReward(rewardItem);
         }
     }
@@ -175,7 +184,5 @@ public class QuestShellFinder : QuestOption
     {
         GeneralQuestController.Instance.UpdateQuest();
         questDialogueController.SetCurrentQuestDialog(3);
-
-        npc.SpawnQuestReward(rewardItem);
     }
 }

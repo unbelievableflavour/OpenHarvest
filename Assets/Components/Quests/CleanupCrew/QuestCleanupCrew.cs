@@ -1,19 +1,33 @@
 ﻿using BNG;
 using UnityEngine;
 
-public class QuestCleanupCrew : QuestOption
+public class QuestCleanupCrew : MonoBehaviour
 {
     private int minimumNumberOfBottles = 10;
     private int minimumNumberOfCans = 15;
 
-    public QuestDialogueController questDialogueController;
-    public HarvestDataTypes.Item rewardItem; 
+    public QuestOption questDialogueController;
+    public HarvestDataTypes.Item rewardItem;
 
-    void Start()
+    private NPCController npc;
+    private Definitions.Quests questId;
+
+    void OnEnable() 
     {
+        questId = questDialogueController.questId;
+        npc = questDialogueController.getTalkUIController().npc;
+
         npc.gaveItem += handleNPCGaveItem;
         npc.grabbedItem += handleNPCGrabbedItem;
-        npc.talks += handleNPCTalks;
+        questDialogueController.checkStatus += handleCheckStatus;
+        CheckStatus();
+    }
+
+    void OnDisable() 
+    {
+        npc.gaveItem -= handleNPCGaveItem;
+        npc.grabbedItem -= handleNPCGrabbedItem;
+        questDialogueController.checkStatus -= handleCheckStatus;
     }
 
     private void handleNPCGaveItem(object sender, Grabbable grabbable)
@@ -95,17 +109,10 @@ public class QuestCleanupCrew : QuestOption
         }
     }
 
-    private void handleNPCTalks(object sender, GameObject talkObject)
+    private void handleCheckStatus()
     {
-        var quest = talkObject.GetComponent<QuestDialogueController>();
-        if (!quest)
-        {
-            return;
-        }
-        if (quest.questId != questId)
-        {
-            return;
-        }
+        Debug.Log("checking status");
+        Debug.Log(questId);
 
         CheckStatus();
     }
@@ -129,7 +136,6 @@ public class QuestCleanupCrew : QuestOption
 
         if (GameState.Instance.questList[questId].currentDialogue == 3)
         {
-            npc.HoldOutHand();
             npc.SpawnQuestReward(rewardItem);
         }
     }
@@ -138,7 +144,5 @@ public class QuestCleanupCrew : QuestOption
     {
         GeneralQuestController.Instance.UpdateQuest();
         questDialogueController.SetCurrentQuestDialog(3);
-
-        npc.SpawnQuestReward(rewardItem);
     }
 }

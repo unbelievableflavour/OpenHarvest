@@ -31,26 +31,33 @@ public class TalkUIController : MonoBehaviour
         {
             talkOption.gameObject.SetActive(false);
         }
+
+        foreach (TalkUIOption dialogOption in dialogOptions)
+        {
+            dialogOption.gameObject.SetActive(false);
+        }
     }
 
     public void Reset()
     {
         DisableAll();
         miniUI.SetActive(true);
+        npc.BackToIdle();
+        npc.RemoveCurrentlyHoldingItem();
     }
 
     public void EnableTalkUI()
     {
         DisableAll();
-        npc.BackToIdle();
         talkUI.SetActive(true);
+        npc.BackToIdle();
+        npc.RemoveCurrentlyHoldingItem();
     }
 
     public void EnableWindow(GameObject dialog)
     {
         DisableAll();
         dialog.SetActive(true);
-        npc.NPCTalks(dialog);
     }
 
     private GameObject InstantiateDialog(TalkUIOption talkUIOption)
@@ -75,6 +82,7 @@ public class TalkUIController : MonoBehaviour
         void buttonTask()
         {
             EnableWindow(newDialog);
+            talkOption.gameObject.SetActive(true);
         }
 
         GameObject talkButton = Instantiate(talkButtonPrefab);
@@ -93,6 +101,12 @@ public class TalkUIController : MonoBehaviour
             if (talkOption)
             {
                 talkOption.SetTalkDialog(newDialog.GetComponent<Dialogue>());
+                continue;
+            }
+            var questOption = talkUIOption.GetComponent<QuestOption>();
+            if (questOption)
+            {
+                questOption.SetTalkDialog(newDialog.GetComponent<Dialogue>());
                 continue;
             }
 

@@ -9,20 +9,24 @@ public class NPCController : MonoBehaviour
     public Animator NPCAnimator;
     public event EventHandler<Grabbable> gaveItem;
     public event EventHandler<Grabbable> grabbedItem;
-    public event EventHandler<GameObject> talks;
+    
+    private bool dontInvokeEvent = false;
 
     public void SpawnQuestReward(HarvestDataTypes.Item rewardItem)
     {
         HoldOutHand();
+        dontInvokeEvent = true;
         GameObject spawnedRewardItem = InstantiateItemNew(rewardItem.prefab);
         handSlot.GetComponent<SnapZone>().GrabGrabbable(spawnedRewardItem.GetComponent<Grabbable>());
     }
 
     public void BackToIdle()
     {
-        if (NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("GivingIdle")) {
+        if (NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("GivingIdle")
+         || NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleToGive")) {
             NPCAnimator.Play("GiveToIdle");
-        }
+        } 
+
         handSlot.SetActive(false);
     }
 
@@ -56,18 +60,41 @@ public class NPCController : MonoBehaviour
         }
     }
 
+    public void ReleaseItemWithoutCallingEvent()
+    {
+        dontInvokeEvent = true;
+        handSlot.GetComponent<SnapZone>().ReleaseAll();
+    }
+
+    public void RemoveCurrentlyHoldingItem()
+    {
+        if (!handSlot.GetComponent<SnapZone>().HeldItem) {
+            return;
+        }
+
+        var currentlyHeldItem = handSlot.GetComponent<SnapZone>().HeldItem.gameObject;
+        ReleaseItemWithoutCallingEvent();
+        Destroy(currentlyHeldItem);
+    }
+
     public void NPCGaveItem(Grabbable grabbable)
     {
+        if (dontInvokeEvent) {
+            // we just spawned a reward item.
+            dontInvokeEvent = false;
+            return;
+        }
         gaveItem?.Invoke(this, grabbable);
     }
 
     public void NPCGrabbedItem(Grabbable grabbable)
-    {
+    {   
+        if (dontInvokeEvent) {
+            // we just spawned a reward item.
+            dontInvokeEvent = false;
+            Debug.Log("we just spawned a reward item.");
+            return;
+        }
         grabbedItem?.Invoke(this, grabbable);
-    }
-
-    public void NPCTalks(GameObject talkObject)
-    {
-        talks?.Invoke(this, talkObject);
     }
 }
