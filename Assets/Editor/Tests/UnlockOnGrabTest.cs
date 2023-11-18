@@ -9,7 +9,7 @@ namespace Tests
 {
     public class UnlockOnGrabTest
     {
-        string resourcePath = "Assets/Resources/Items/HatChicken/HatChicken.prefab";
+        string resourcePath = "Assets/Items/HatChicken/HatChicken.prefab";
         HarvestDataTypes.Item item;
         string itemId = "HatChicken";
         Grabber fakeGrabber = null;
@@ -25,14 +25,12 @@ namespace Tests
             StartDatabaseManager();
             var itemLoader = new ItemLoader();
             itemLoader.Start();
-
-            //Definitions.ItemsWithInformation[itemId].maximumTimesOwned = 2;
         }
 
         [Test]
         public void ItUnlocksTheItemOnGrabbing()
         {
-            Assert.AreEqual(0, GameState.Instance.unlockables[itemId]);
+            Assert.AreEqual(false, GameState.Instance.unlockables.ContainsKey(itemId));
 
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(resourcePath);
             prefab = GameObject.Instantiate(prefab);
@@ -46,7 +44,7 @@ namespace Tests
         [Test]
         public void ItWontUnlockTwiceWhenGrabbingItAgain()
         {
-            Assert.AreEqual(0, GameState.Instance.unlockables[itemId]);
+            Assert.AreEqual(false, GameState.Instance.unlockables.ContainsKey(itemId));
 
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(resourcePath);
             prefab = GameObject.Instantiate(prefab);
@@ -64,7 +62,9 @@ namespace Tests
         [Test]
         public void ItWontUnlockMoreThanItemsMaximumTimesOwned()
         {
-            Assert.AreEqual(0, GameState.Instance.unlockables[itemId]);
+            item.maximumTimesOwned = 2;
+
+            Assert.AreEqual(false, GameState.Instance.unlockables.ContainsKey(itemId));
 
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(resourcePath);
             prefab = GameObject.Instantiate(prefab);
@@ -93,14 +93,12 @@ namespace Tests
         [TearDown]
         public void Cleanup()
         {
-            //Definitions.ItemsWithInformation = new Dictionary<string, HarvestDataTypes.Item>();
-            GameState.Instance.unlockables = new Dictionary<string, int> { }; 
+            GameState.Reset();
             Object.DestroyImmediate(databaseManager);
-
         }
         void StartDatabaseManager()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ScriptableObjects/Databases/DatabaseManager/DatabaseManager.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Core/DatabaseManager/DatabaseManager.prefab");
             databaseManager = GameObject.Instantiate(prefab);
             DatabaseManager.Instance = databaseManager.GetComponent<DatabaseManager>();
         }

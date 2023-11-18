@@ -25,7 +25,7 @@ namespace Tests
             HatClosetController hatCloset = instantiatedPrefab.GetComponent<HatClosetController>();
             int hatCount = DatabaseManager.Instance.items.FindAllByTag("hatCloset").Count;
             
-            Assert.AreEqual(hatCount, 0);
+            Assert.AreEqual(hatCount, 17);
             Assert.AreEqual(hatCount, hatCloset.inventorySlots.childCount);
         }
 
@@ -37,7 +37,7 @@ namespace Tests
                     
         void StartDatabaseManager()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ScriptableObjects/Databases/DatabaseManager/DatabaseManager.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Core/DatabaseManager/DatabaseManager.prefab");
             databaseManager = GameObject.Instantiate(prefab);
             DatabaseManager.Instance = databaseManager.GetComponent<DatabaseManager>();
         }

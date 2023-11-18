@@ -129,11 +129,7 @@ public class CurrentGameState {
     public void InitializeUnlockablesAndQuests()
     {
         // reset all quests and unlockables for when switching games
-        foreach (string unlockable in unlockables.Keys.ToList())
-        {
-            unlockables[unlockable] = 0;
-        }
-
+        unlockables = new Dictionary<string, int> { };
         LoadQuests();
     }
 
@@ -182,6 +178,10 @@ public class CurrentGameState {
     {
         if (item.maximumTimesOwned == null)
         {
+            return false;
+        }
+
+        if (!unlockables.ContainsKey(item.itemId)) {
             return false;
         }
 

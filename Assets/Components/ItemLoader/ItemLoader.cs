@@ -27,11 +27,6 @@ public class ItemLoader : MonoBehaviour
 
     private void LoadItem(HarvestDataTypes.Item item)
     {
-        if (item.isUnlockable && !GameState.Instance.unlockables.ContainsKey(item.itemId))
-        {
-            GameState.Instance.unlockables[item.itemId] = 0;
-        }
-
         if (!string.IsNullOrEmpty(item.type))
         {
             Definitions.itemsWithTypes[item.type].Add(item.itemId);

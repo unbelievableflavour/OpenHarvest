@@ -23,7 +23,7 @@ namespace Tests
         [Test]
         public void ItUnlocksTheItemOnce()
         {
-            Assert.AreEqual(0, GameState.Instance.unlockables[itemId]);
+            Assert.AreEqual(false, GameState.Instance.unlockables.ContainsKey(itemId));
 
             GameState.Instance.unlock(itemId, 1);
 
@@ -33,7 +33,7 @@ namespace Tests
         [Test]
         public void ItUnlocksTheItemTwice()
         {
-            Assert.AreEqual(0, GameState.Instance.unlockables[itemId]);
+            Assert.AreEqual(false, GameState.Instance.unlockables.ContainsKey(itemId));
 
             GameState.Instance.unlock(itemId, 2);
 
@@ -59,7 +59,7 @@ namespace Tests
 
             GameState.Reset();
 
-            Assert.AreEqual(0, GameState.Instance.unlockables["Windmill"]);
+            Assert.AreEqual(false, GameState.Instance.unlockables.ContainsKey("Windmill"));
         }
 
         [Test]
@@ -85,13 +85,13 @@ namespace Tests
         [TearDown]
         public void Cleanup()
         {
-            GameState.Instance.unlockables = new Dictionary<string, int> { };
+            GameState.Reset();
             Object.DestroyImmediate(databaseManager);
         }
 
         void StartDatabaseManager()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ScriptableObjects/Databases/DatabaseManager/DatabaseManager.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Core/DatabaseManager/DatabaseManager.prefab");
             databaseManager = GameObject.Instantiate(prefab);
             DatabaseManager.Instance = databaseManager.GetComponent<DatabaseManager>();
         }

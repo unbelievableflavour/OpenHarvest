@@ -20,7 +20,7 @@ public class PetInitialiser : MonoBehaviour
     {
         GameState.Instance.DecreaseMoneyByAmount(item.buyPrice);
         BNG.VRUtils.Instance.PlaySpatialClipAt(buySound, transform.position, 0.6f, 1f, 0.05f);
-        GameState.Instance.unlockables[item.itemId]++;
+        GameState.Instance.unlock(item.itemId, 1);
 
         storeItemsLister.RefreshStoreRows();
         gameObject.SetActive(false);
