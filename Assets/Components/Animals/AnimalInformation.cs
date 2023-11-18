@@ -37,7 +37,7 @@ public class AnimalInformation : MonoBehaviour
     private string petId;
     private bool isDead = false;
 
-    void Start()
+    void OnEnable()
     {
         saveLocation = getSaveLocation();
         petId = getPetId();
@@ -50,6 +50,11 @@ public class AnimalInformation : MonoBehaviour
         }
 
         gameObject.SetActive(false);
+    }
+
+    void OnDisable()
+    {
+        TimeController.Instance.RemoveFromDayChange(handleNewDayStarted);
     }
 
     void OnTriggerEnter(Collider other)
