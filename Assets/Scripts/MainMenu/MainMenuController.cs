@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -77,7 +77,6 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
-        GameState.Reset();
         AddSomeStartingEquipmentToPlayer();
         SavingController.SaveGame();
         SceneSwitcher.Instance.SwitchToScene(1, "DefaultSpawnPoint");
@@ -95,7 +94,6 @@ public class MainMenuController : MonoBehaviour
 
     public void PlayTutorial()
     {
-        GameState.Reset();
         AddSomeStartingEquipmentToPlayer();
         SavingController.SaveGame();
         SceneSwitcher.Instance.SwitchToScene(7, "MainMenu");
