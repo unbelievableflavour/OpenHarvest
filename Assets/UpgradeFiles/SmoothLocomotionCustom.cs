@@ -45,7 +45,6 @@ public class SmoothLocomotionCustom : MonoBehaviour
 
         if (!isMoving) {
             UpdateSprintState(false);
-            Debug.Log("stopped moving");
         }
     }
 
@@ -58,12 +57,10 @@ public class SmoothLocomotionCustom : MonoBehaviour
 
         isSprinting = newState;
         if(isSprinting) {
-            Debug.Log("sprint this");
             smoothLocomotion.StrafeSpeed = StrafeSprintSpeed;
             smoothLocomotion.MovementSpeed = SprintSpeed;
         } else {
             ResetSpeeds();
-            Debug.Log("stopped sprinting");
         }
     }
 
