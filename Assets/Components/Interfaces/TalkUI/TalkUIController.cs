@@ -18,7 +18,6 @@ public class TalkUIController : MonoBehaviour
 
     private void Start()
     {
-        miniUI.SetActive(false);
         LoadDialogueOptions();
         talkUIHeading.text = title;
     }
