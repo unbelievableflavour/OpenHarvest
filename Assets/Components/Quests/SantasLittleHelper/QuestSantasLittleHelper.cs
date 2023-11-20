@@ -1,16 +1,11 @@
 ﻿using BNG;
 using UnityEngine;
 
-public class QuestSantasLittleHelper : MonoBehaviour
+public class QuestSantasLittleHelper : QuestBase
 {
-    private int minimumNeededHangedBaubleCount = 2;
-
-    public QuestOption questDialogueController;
     public Transform baubleHangingLocations;
-    public HarvestDataTypes.Item rewardItem; 
 
-    private NPCController npc;
-    private Definitions.Quests questId;
+    private int minimumNeededHangedBaubleCount = 2;
 
     void OnEnable()
     {
@@ -31,13 +26,11 @@ public class QuestSantasLittleHelper : MonoBehaviour
 
     public void CheckStatus( )
     {
-        if (GameState.Instance.questList[questId].currentProgress != Progress.InProgress)
-        {
+        if (!QuestIsInProgress()) {
             return;
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 1)
-        {
+        if (CurrentDialogueIs(1)) {
             int hangingBaubleCount = 0;
             foreach (Transform inventorySlot in baubleHangingLocations)
             {
@@ -59,11 +52,11 @@ public class QuestSantasLittleHelper : MonoBehaviour
                 return;
             }
 
-            Invoke("SpawnReward", 0.5f);
+            GeneralQuestController.Instance.UpdateQuest();
+            questDialogueController.SetCurrentQuestDialog(2);
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 2)
-        {
+        if (CurrentDialogueIs(2)) {
             npc.SpawnQuestReward(rewardItem);
         }
     }
@@ -84,11 +77,5 @@ public class QuestSantasLittleHelper : MonoBehaviour
 
         GeneralQuestController.Instance.FinishQuest(questId);
         npc.BackToIdle();
-    }
-
-    private void SpawnReward()
-    {
-        GeneralQuestController.Instance.UpdateQuest();
-        questDialogueController.SetCurrentQuestDialog(2);
     }
 }

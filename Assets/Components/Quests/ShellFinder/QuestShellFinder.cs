@@ -3,17 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using BNG;
 
-public class QuestShellFinder : MonoBehaviour
+public class QuestShellFinder : QuestBase
 {
     private int minimumNumberOfSeaShell1 = 5;
     private int minimumNumberOfSeaShell2 = 20;
     private int minimumNumberOfSeaStar = 10;
-
-    public QuestOption questDialogueController;
-    public HarvestDataTypes.Item rewardItem;
-
-    private NPCController npc;
-    private Definitions.Quests questId;
 
     void OnEnable() 
     {
@@ -48,28 +42,16 @@ public class QuestShellFinder : MonoBehaviour
 
     private void handleNPCGrabbedItem(object sender, Grabbable grabbable)
     {
-        if (GameState.Instance.questList[questId].currentDialogue == 1)
+        if (CurrentDialogueIs(1))
         {
-            var item = Definitions.GetItemFromObject(grabbable);
-
-            if (item.itemId != "SeaShell1")
-            {
+            if(!MeetsRequirement(grabbable, "SeaShell1", minimumNumberOfSeaShell1)) {
                 return;
             }
 
-            if (grabbable.GetComponent<ItemStack>() == null)
-            {
-                return;
-            }
+            var itemStack = grabbable.GetComponent<ItemStack>();
+            var stackSize = itemStack.GetStackSize();
 
-            int stackSize = grabbable.GetComponent<ItemStack>().GetStackSize();
-
-            if (stackSize < minimumNumberOfSeaShell1)
-            {
-                return;
-            }
-
-            grabbable.GetComponent<ItemStack>().SetStackSize(stackSize - minimumNumberOfSeaShell1);
+            itemStack.SetStackSize(stackSize - minimumNumberOfSeaShell1);
             npc.handSlot.GetComponent<SnapZone>().ReleaseAll();
             if (stackSize - minimumNumberOfSeaShell1 == 0)
             {
@@ -81,28 +63,16 @@ public class QuestShellFinder : MonoBehaviour
             return;
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 2)
+        if (CurrentDialogueIs(2))
         {
-            var item = Definitions.GetItemFromObject(grabbable);
-
-            if (item.itemId != "SeaShell2")
-            {
+            if(!MeetsRequirement(grabbable, "SeaShell2", minimumNumberOfSeaShell2)) {
                 return;
             }
 
-            if (grabbable.GetComponent<ItemStack>() == null)
-            {
-                return;
-            }
+            var itemStack = grabbable.GetComponent<ItemStack>();
+            var stackSize = itemStack.GetStackSize();
 
-            int stackSize = grabbable.GetComponent<ItemStack>().GetStackSize();
-
-            if (stackSize < minimumNumberOfSeaShell2)
-            {
-                return;
-            }
-
-            grabbable.GetComponent<ItemStack>().SetStackSize(stackSize - minimumNumberOfSeaShell2);
+            itemStack.SetStackSize(stackSize - minimumNumberOfSeaShell2);
             npc.handSlot.GetComponent<SnapZone>().ReleaseAll();
             if (stackSize - minimumNumberOfSeaShell2 == 0)
             {
@@ -114,35 +84,24 @@ public class QuestShellFinder : MonoBehaviour
             return;
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 3)
+        if (CurrentDialogueIs(3))
         {
-            var item = Definitions.GetItemFromObject(grabbable);
-
-            if (item.itemId != "SeaStar")
-            {
+            if(!MeetsRequirement(grabbable, "SeaStar", minimumNumberOfSeaStar)) {
                 return;
             }
 
-            if (grabbable.GetComponent<ItemStack>() == null)
-            {
-                return;
-            }
+            var itemStack = grabbable.GetComponent<ItemStack>();
+            var stackSize = itemStack.GetStackSize();
 
-            int stackSize = grabbable.GetComponent<ItemStack>().GetStackSize();
-
-            if (stackSize < minimumNumberOfSeaStar)
-            {
-                return;
-            }
-
-            grabbable.GetComponent<ItemStack>().SetStackSize(stackSize - minimumNumberOfSeaStar);
+            itemStack.SetStackSize(stackSize - minimumNumberOfSeaStar);
             npc.handSlot.GetComponent<SnapZone>().ReleaseAll();
             if (stackSize - minimumNumberOfSeaStar == 0)
             {
                 Destroy(grabbable.gameObject);
             }
 
-            Invoke("SpawnReward", 0.5f);
+            GeneralQuestController.Instance.UpdateQuest();
+            questDialogueController.SetCurrentQuestDialog(4);
             return;
         }
     }
@@ -154,35 +113,24 @@ public class QuestShellFinder : MonoBehaviour
 
     public void CheckStatus()
     {
-        if (GameState.Instance.questList[questId].currentProgress != Progress.InProgress)
-        {
+        if (!QuestIsInProgress()) {
             return;
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 1)
-        {
+        if (CurrentDialogueIs(1)) {
             npc.HoldOutHand();
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 2)
-        {
+        if (CurrentDialogueIs(2)) {
             npc.HoldOutHand();
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 3)
-        {
+        if (CurrentDialogueIs(3)) {
             npc.HoldOutHand();
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 4)
-        {
+        if (CurrentDialogueIs(4)) {
             npc.SpawnQuestReward(rewardItem);
         }
-    }
-
-    private void SpawnReward()
-    {
-        GeneralQuestController.Instance.UpdateQuest();
-        questDialogueController.SetCurrentQuestDialog(3);
     }
 }

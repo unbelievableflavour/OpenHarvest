@@ -1,16 +1,10 @@
 ﻿using BNG;
 using UnityEngine;
 
-public class QuestCleanupCrew : MonoBehaviour
+public class QuestCleanupCrew : QuestBase
 {
     private int minimumNumberOfBottles = 10;
     private int minimumNumberOfCans = 15;
-
-    public QuestOption questDialogueController;
-    public HarvestDataTypes.Item rewardItem;
-
-    private NPCController npc;
-    private Definitions.Quests questId;
 
     void OnEnable() 
     {
@@ -45,27 +39,15 @@ public class QuestCleanupCrew : MonoBehaviour
 
     private void handleNPCGrabbedItem(object sender, Grabbable grabbable)
     {
-        if (GameState.Instance.questList[questId].currentDialogue == 1)
-        {
-            var item = Definitions.GetItemFromObject(grabbable);
-            if (item.itemId != "Bottle")
-            {
+        if (CurrentDialogueIs(1)) {
+            if(!MeetsRequirement(grabbable, "Bottle", minimumNumberOfBottles)) {
                 return;
             }
 
-            if (grabbable.GetComponent<ItemStack>() == null)
-            {
-                return;
-            }
+            var itemStack = grabbable.GetComponent<ItemStack>();
+            var stackSize = itemStack.GetStackSize();
 
-            int stackSize = grabbable.GetComponent<ItemStack>().GetStackSize();
-
-            if (stackSize < minimumNumberOfBottles)
-            {
-                return;
-            }
-
-            grabbable.GetComponent<ItemStack>().SetStackSize(stackSize - minimumNumberOfBottles);
+            itemStack.SetStackSize(stackSize - minimumNumberOfBottles);
             npc.handSlot.GetComponent<SnapZone>().ReleaseAll();
             if (stackSize - minimumNumberOfBottles == 0)
             {
@@ -77,34 +59,23 @@ public class QuestCleanupCrew : MonoBehaviour
             return;
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 2)
-        {
-            var item = Definitions.GetItemFromObject(grabbable);
-            if (item.itemId != "Can")
-            {
+        if (CurrentDialogueIs(2)) {
+            if(!MeetsRequirement(grabbable, "Can", minimumNumberOfCans)) {
                 return;
             }
 
-            if (grabbable.GetComponent<ItemStack>() == null)
-            {
-                return;
-            }
+            var itemStack = grabbable.GetComponent<ItemStack>();
+            var stackSize = itemStack.GetStackSize();
 
-            int stackSize = grabbable.GetComponent<ItemStack>().GetStackSize();
-
-            if (stackSize < minimumNumberOfCans)
-            {
-                return;
-            }
-
-            grabbable.GetComponent<ItemStack>().SetStackSize(stackSize - minimumNumberOfCans);
+            itemStack.SetStackSize(stackSize - minimumNumberOfCans);
             npc.handSlot.GetComponent<SnapZone>().ReleaseAll();
             if (stackSize - minimumNumberOfCans == 0)
             {
                 Destroy(grabbable.gameObject);
             }
 
-            Invoke("SpawnReward", 0.5f);
+            GeneralQuestController.Instance.UpdateQuest();
+            questDialogueController.SetCurrentQuestDialog(3);
             return;
         }
     }
@@ -116,30 +87,20 @@ public class QuestCleanupCrew : MonoBehaviour
 
     public void CheckStatus()
     {
-        if (GameState.Instance.questList[questId].currentProgress != Progress.InProgress)
-        {
+        if (!QuestIsInProgress()) {
             return;
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 1)
-        {
+        if (CurrentDialogueIs(1)) {
             npc.HoldOutHand();
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 2)
-        {
+        if (CurrentDialogueIs(2)) {
             npc.HoldOutHand();
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 3)
-        {
+        if (CurrentDialogueIs(3)) {
             npc.SpawnQuestReward(rewardItem);
         }
-    }
-
-    private void SpawnReward()
-    {
-        GeneralQuestController.Instance.UpdateQuest();
-        questDialogueController.SetCurrentQuestDialog(3);
     }
 }

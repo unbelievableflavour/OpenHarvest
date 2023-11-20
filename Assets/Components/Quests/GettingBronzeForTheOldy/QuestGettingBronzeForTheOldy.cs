@@ -1,14 +1,9 @@
 ﻿using BNG;
 using UnityEngine;
 
-public class QuestGettingBronzeForTheOldy : MonoBehaviour
+public class QuestGettingBronzeForTheOldy : QuestBase
 {
-    public QuestOption questDialogueController;
-    public HarvestDataTypes.Item rewardItem;
     private int minimumNumberOfBronzeOres = 20;
-
-    private NPCController npc;
-    private Definitions.Quests questId;
 
     void OnEnable() 
     {
@@ -43,34 +38,23 @@ public class QuestGettingBronzeForTheOldy : MonoBehaviour
 
     private void handleNPCGrabbedItem(object sender, Grabbable grabbable)
     {
-        if (GameState.Instance.questList[questId].currentDialogue == 1)
-        {
-            var item = Definitions.GetItemFromObject(grabbable);
-            if (item.itemId != "OreBronze")
-            {
+        if (CurrentDialogueIs(1)) {
+            if(!MeetsRequirement(grabbable, "OreBronze", minimumNumberOfBronzeOres)) {
                 return;
             }
-
-            if (grabbable.GetComponent<ItemStack>() == null)
-            {
-                return;
-            }
-
-            int stackSize = grabbable.GetComponent<ItemStack>().GetStackSize();
-            if (stackSize < minimumNumberOfBronzeOres)
-            {
-                return;
-            }
-
-            grabbable.GetComponent<ItemStack>().SetStackSize(stackSize - minimumNumberOfBronzeOres);
+          
+            var itemStack = grabbable.GetComponent<ItemStack>();
+            var stackSize = itemStack.GetStackSize();
+           
+            itemStack.SetStackSize(stackSize - minimumNumberOfBronzeOres);
             npc.ReleaseItemWithoutCallingEvent();
             if (stackSize - minimumNumberOfBronzeOres == 0)
             {
                 Destroy(grabbable.gameObject);
             }
 
-            Invoke("SpawnReward", 0.5f);
-
+            GeneralQuestController.Instance.UpdateQuest();
+            questDialogueController.SetCurrentQuestDialog(2);
             return;
         }
     }
@@ -82,25 +66,16 @@ public class QuestGettingBronzeForTheOldy : MonoBehaviour
 
     public void CheckStatus()
     {
-        if (GameState.Instance.questList[questId].currentProgress != Progress.InProgress)
-        {
+        if (!QuestIsInProgress()) {
             return;
         }
 
-        if(GameState.Instance.questList[questId].currentDialogue == 1)
-        {
+        if (CurrentDialogueIs(1)) {
             npc.HoldOutHand();
         }
 
-        if (GameState.Instance.questList[questId].currentDialogue == 2)
-        {
+        if (CurrentDialogueIs(2)) {
             npc.SpawnQuestReward(rewardItem);
         }
-    }
-
-    private void SpawnReward()
-    {
-        GeneralQuestController.Instance.UpdateQuest();
-        questDialogueController.SetCurrentQuestDialog(2);
     }
 }
