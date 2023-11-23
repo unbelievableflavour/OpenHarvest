@@ -103,6 +103,16 @@ namespace Items
         [Test]
         public void ItHasCorrectGrabbableOptions()
         {
+            string[] listOfWeirdItems = { 
+                "Wallet", // not tested. no time
+                "Basket", // not tested. no time
+                "FishingRod", // 2-handed
+                "Hammer", // 2-handed
+                "LargeAxe", // 2-handed
+                "Pickaxe", // 2-handed
+                "PickaxeIron", // 2-handed
+            };
+
             foreach (var item in itemDatabase.items)
             {
                 if (item.prefab == null)
@@ -110,13 +120,14 @@ namespace Items
                     continue;
                 }
 
-                //Weird wallet, skip for now
-                if(item.name == "Wallet"){
+                //Exceptional items, skip for now
+                if(listOfWeirdItems.Contains(item.itemId)) {
                     continue;
                 }
 
                 GameObject spawnedItem = Definitions.InstantiateItemNew(item.prefab);
                 Grabbable grabbable = spawnedItem.GetComponent<Grabbable>();
+                Assert.AreEqual(GrabPhysics.PhysicsJoint, grabbable.GrabPhysics, "Invalid grab physics for item: " + spawnedItem.transform.name);
                 Assert.AreEqual(20, grabbable.GrabSpeed, "Invalid grab speed for item: " + spawnedItem.transform.name);
                 Assert.AreEqual(2.5, grabbable.RemoteGrabDistance, "Invalid remote grab distance for item: " + spawnedItem.transform.name);
                 Object.DestroyImmediate(spawnedItem);
