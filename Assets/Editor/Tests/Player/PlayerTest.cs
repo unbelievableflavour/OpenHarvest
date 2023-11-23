@@ -42,7 +42,9 @@ namespace Player
             var smoothLocomotion = xrRigAdvanced.GetComponentInChildren<SmoothLocomotion>();
 
             Assert.AreEqual(5, smoothLocomotion.SprintSpeed);
-            Assert.AreEqual("LeftThumbstick", smoothLocomotion.SprintInput[0].ToString());
+
+            var smoothLocomotionCustom = xrRigAdvanced.GetComponentInChildren<SmoothLocomotionCustom>();
+            Assert.AreEqual(smoothLocomotion, smoothLocomotionCustom.smoothLocomotion);
         }
 
         [Test]
