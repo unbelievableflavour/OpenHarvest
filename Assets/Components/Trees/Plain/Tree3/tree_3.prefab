@@ -65,6 +65,7 @@ MonoBehaviour:
   GrabMechanic: 0
   GrabSpeed: 100
   RemoteGrabbable: 0
+  RemoteGrabMechanic: 0
   RemoteGrabDistance: 2
   ThrowForceMultiplier: 1.25
   ThrowForceMultiplierAngular: 1.125
@@ -77,6 +78,9 @@ MonoBehaviour:
   CanBeSnappedToSnapZone: 1
   ForceDisableKinematicOnDrop: 0
   InstantMovement: 0
+  MakeChildCollidersGrabbable: 0
+  handPoseType: 1
+  SelectedHandPose: {fileID: 0}
   CustomHandPose: 0
   SecondaryGrabBehavior: 0
   TwoHandedPosition: 0
@@ -109,6 +113,8 @@ MonoBehaviour:
   LocalOffsetTransform: {fileID: 0}
   GrabPoints: []
   UseCustomInspector: 1
+  lastFlickTime: 0
+  FlickForce: 1
 --- !u!1 &1393667303500658278
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,6 +180,7 @@ MonoBehaviour:
   GrabMechanic: 0
   GrabSpeed: 100
   RemoteGrabbable: 0
+  RemoteGrabMechanic: 0
   RemoteGrabDistance: 2
   ThrowForceMultiplier: 1.25
   ThrowForceMultiplierAngular: 1.125
@@ -186,6 +193,9 @@ MonoBehaviour:
   CanBeSnappedToSnapZone: 1
   ForceDisableKinematicOnDrop: 0
   InstantMovement: 0
+  MakeChildCollidersGrabbable: 0
+  handPoseType: 1
+  SelectedHandPose: {fileID: 0}
   CustomHandPose: 0
   SecondaryGrabBehavior: 0
   TwoHandedPosition: 0
@@ -218,6 +228,8 @@ MonoBehaviour:
   LocalOffsetTransform: {fileID: 0}
   GrabPoints: []
   UseCustomInspector: 1
+  lastFlickTime: 0
+  FlickForce: 1
 --- !u!1 &2253115238587373343
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,6 +295,7 @@ MonoBehaviour:
   GrabMechanic: 0
   GrabSpeed: 100
   RemoteGrabbable: 0
+  RemoteGrabMechanic: 0
   RemoteGrabDistance: 2
   ThrowForceMultiplier: 1.25
   ThrowForceMultiplierAngular: 1.125
@@ -295,6 +308,9 @@ MonoBehaviour:
   CanBeSnappedToSnapZone: 1
   ForceDisableKinematicOnDrop: 0
   InstantMovement: 0
+  MakeChildCollidersGrabbable: 0
+  handPoseType: 1
+  SelectedHandPose: {fileID: 0}
   CustomHandPose: 0
   SecondaryGrabBehavior: 0
   TwoHandedPosition: 0
@@ -327,20 +343,8 @@ MonoBehaviour:
   LocalOffsetTransform: {fileID: 0}
   GrabPoints: []
   UseCustomInspector: 1
---- !u!64 &4335892044103846391
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3489155904238101429}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 8215371604985022416, guid: dfcd675f6571a984b9cc0f6b2c7e2c85, type: 3}
+  lastFlickTime: 0
+  FlickForce: 1
 --- !u!1 &4050347589645030614
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,6 +410,7 @@ MonoBehaviour:
   GrabMechanic: 0
   GrabSpeed: 100
   RemoteGrabbable: 0
+  RemoteGrabMechanic: 0
   RemoteGrabDistance: 2
   ThrowForceMultiplier: 1.25
   ThrowForceMultiplierAngular: 1.125
@@ -418,6 +423,9 @@ MonoBehaviour:
   CanBeSnappedToSnapZone: 1
   ForceDisableKinematicOnDrop: 0
   InstantMovement: 0
+  MakeChildCollidersGrabbable: 0
+  handPoseType: 1
+  SelectedHandPose: {fileID: 0}
   CustomHandPose: 0
   SecondaryGrabBehavior: 0
   TwoHandedPosition: 0
@@ -450,6 +458,8 @@ MonoBehaviour:
   LocalOffsetTransform: {fileID: 0}
   GrabPoints: []
   UseCustomInspector: 1
+  lastFlickTime: 0
+  FlickForce: 1
 --- !u!1 &4631088487415557657
 GameObject:
   m_ObjectHideFlags: 0
@@ -582,6 +592,7 @@ MonoBehaviour:
   GrabMechanic: 0
   GrabSpeed: 100
   RemoteGrabbable: 0
+  RemoteGrabMechanic: 0
   RemoteGrabDistance: 2
   ThrowForceMultiplier: 1.25
   ThrowForceMultiplierAngular: 1.125
@@ -594,6 +605,9 @@ MonoBehaviour:
   CanBeSnappedToSnapZone: 1
   ForceDisableKinematicOnDrop: 0
   InstantMovement: 0
+  MakeChildCollidersGrabbable: 0
+  handPoseType: 1
+  SelectedHandPose: {fileID: 0}
   CustomHandPose: 0
   SecondaryGrabBehavior: 0
   TwoHandedPosition: 0
@@ -626,6 +640,8 @@ MonoBehaviour:
   LocalOffsetTransform: {fileID: 0}
   GrabPoints: []
   UseCustomInspector: 1
+  lastFlickTime: 0
+  FlickForce: 1
 --- !u!1001 &6813259704287318528
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -688,6 +704,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7349306621376506623, guid: dfcd675f6571a984b9cc0f6b2c7e2c85,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: -5690781358255734162, guid: dfcd675f6571a984b9cc0f6b2c7e2c85,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -698,15 +719,35 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7da9bcf7cf1428a4d909699694272fc2, type: 2}
+    - target: {fileID: -3197194462005787935, guid: dfcd675f6571a984b9cc0f6b2c7e2c85,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: -1807682563275007591, guid: dfcd675f6571a984b9cc0f6b2c7e2c85,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7da9bcf7cf1428a4d909699694272fc2, type: 2}
+    - target: {fileID: -1232166242516274763, guid: dfcd675f6571a984b9cc0f6b2c7e2c85,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: -1094407066568309574, guid: dfcd675f6571a984b9cc0f6b2c7e2c85,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: dfcd675f6571a984b9cc0f6b2c7e2c85,
         type: 3}
       propertyPath: m_Name
       value: tree3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: dfcd675f6571a984b9cc0f6b2c7e2c85,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 7870087916386569459, guid: dfcd675f6571a984b9cc0f6b2c7e2c85,
         type: 3}
@@ -727,3 +768,17 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 6813259704287318528}
   m_PrefabAsset: {fileID: 0}
+--- !u!64 &4335892044103846391
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3489155904238101429}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 8215371604985022416, guid: dfcd675f6571a984b9cc0f6b2c7e2c85, type: 3}
