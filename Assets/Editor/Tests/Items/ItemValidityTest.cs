@@ -128,6 +128,7 @@ namespace Items
                 GameObject spawnedItem = Definitions.InstantiateItemNew(item.prefab);
                 Grabbable grabbable = spawnedItem.GetComponent<Grabbable>();
                 Assert.AreEqual(GrabPhysics.PhysicsJoint, grabbable.GrabPhysics, "Invalid grab physics for item: " + spawnedItem.transform.name);
+                Assert.AreEqual(true, grabbable.ParentHandModel, "Hand is not parented for item: " + spawnedItem.transform.name);
                 Assert.AreEqual(20, grabbable.GrabSpeed, "Invalid grab speed for item: " + spawnedItem.transform.name);
                 Assert.AreEqual(2.5, grabbable.RemoteGrabDistance, "Invalid remote grab distance for item: " + spawnedItem.transform.name);
                 Object.DestroyImmediate(spawnedItem);
