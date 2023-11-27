@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class NightLight : MonoBehaviour
 {
-    public Light light;
+    public GameObject light;
     public MeshRenderer lanternLightMesh;
 }

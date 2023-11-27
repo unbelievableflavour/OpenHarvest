@@ -23,7 +23,7 @@ public class NightLightController : MonoBehaviour
 
             if (nightLight.light)
             {
-                nightLight.light.enabled = false;
+                nightLight.light.SetActive(false);
             }
         }
     }
@@ -43,7 +43,7 @@ public class NightLightController : MonoBehaviour
             nightLight.lanternLightMesh.material = enabledLightMaterial;
             if (nightLight.light)
             {
-                nightLight.light.enabled = true;
+                nightLight.light.SetActive(true);
             }
         }
     }

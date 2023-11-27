@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class DayNightController : MonoBehaviour
 {
+    public HarvestSettings harvestSettings;
     public AudioClip nightSoundtrack;
     public AudioClip daySoundTrack;
 
@@ -34,7 +35,10 @@ public class DayNightController : MonoBehaviour
 
         timer = 5;// Initialize timer to skip the first if in update
 
-        if (TimeController.isNight())
+        if (
+            TimeController.isNight() 
+            || harvestSettings.forceTime == TimeManipulation.Night
+            )
         {
             this.GetComponent<Light>().color = nightColor;
             currentColor = this.GetComponent<Light>().color;
@@ -109,6 +113,10 @@ public class DayNightController : MonoBehaviour
 
     void Update()
     {
+        if (harvestSettings.forceTime != 0) {
+            return;
+        }
+
         if (timer <= 1)
         {
             timer += Time.deltaTime / fadeTime;
