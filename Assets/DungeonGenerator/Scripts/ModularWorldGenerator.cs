@@ -101,7 +101,7 @@ public class ModularWorldGenerator : ModularGenerator
         }
 
 #if UNITY_EDITOR
-        if (harvestSettings.isPCMode)
+        if (harvestSettings.playerMode != PlayerMode.VR)
         {
             return;
         }

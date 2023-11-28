@@ -13,11 +13,17 @@ public class HardwareController : MonoBehaviour
 #if UNITY_EDITOR
     void Start()
     {
-        if (HarvestSettings.isPCMode)
+        if (HarvestSettings.playerMode == PlayerMode.FPS)
         {
             GetComponent<HeadsetDetector>().enabled = false;
             VRPlayerObject.SetActive(false);
             Instantiate(PCPlayerObject);
+        }
+
+        if (HarvestSettings.playerMode == PlayerMode.Showcase)
+        {
+            GetComponent<HeadsetDetector>().enabled = false;
+            VRPlayerObject.SetActive(false);
         }
     }
 #endif

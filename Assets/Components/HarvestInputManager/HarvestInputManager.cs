@@ -53,7 +53,7 @@ public class HarvestInputManager : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        if (harvestSettings.isPCMode)
+        if (harvestSettings.playerMode == PlayerMode.FPS)
         {
             if(Input.GetMouseButtonDown(0)){
                 OnTriggerRight?.Invoke();

@@ -12,9 +12,16 @@ public enum TimeManipulation
     Day,
 };
 
+public enum PlayerMode
+{
+    VR,
+    FPS,
+    Showcase,
+};
+
 public class HarvestSettings : ScriptableObject
 {
-    public bool isPCMode = false;
+    public PlayerMode playerMode = PlayerMode.VR;
 
     [Header("Time")]
     public TimeManipulation forceTime = TimeManipulation.None;
