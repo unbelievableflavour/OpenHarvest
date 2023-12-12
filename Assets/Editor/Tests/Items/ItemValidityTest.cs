@@ -101,6 +101,30 @@ namespace Items
         }
 
         [Test]
+        public void ItHasCorrectRingHelperOptions()
+        {
+            foreach (var item in itemDatabase.items)
+            {
+                if (item.prefab == null)
+                {
+                    continue;
+                }
+
+                //Not needed for wallet
+                if(item.name == "Wallet"){
+                    continue;
+                }
+
+                GameObject spawnedItem = Definitions.InstantiateItemNew(item.prefab);
+                RingHelper[] ringHelpers = spawnedItem.GetComponentsInChildren<RingHelper>();
+                GrabbableRingHelper[] grabbableRingHelpers = spawnedItem.GetComponentsInChildren<GrabbableRingHelper>();
+                Assert.AreEqual(true, ringHelpers.Length > 0, "Invalid RingHelper count for item: " + spawnedItem.transform.name);
+                Assert.AreEqual(0, grabbableRingHelpers.Length, "Invalid GrabbableRingHelper count for item: " + spawnedItem.transform.name);
+                Object.DestroyImmediate(spawnedItem);
+            }
+        }
+
+        [Test]
         public void ItHasCorrectGrabbableOptions()
         {
             string[] listOfWeirdItems = { 
