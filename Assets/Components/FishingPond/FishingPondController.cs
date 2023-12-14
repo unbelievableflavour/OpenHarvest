@@ -17,7 +17,6 @@ public enum FishingStates
 public class FishingPondController : MonoBehaviour
 {
     public GameObject fishingIndicator;
-    public Transform toolTipPosition;
     public Text fishingIndicatorText;
 
     public string fishingSpawnLocationName;
@@ -42,6 +41,16 @@ public class FishingPondController : MonoBehaviour
 
     void Update()
     {
+        if (m_currentState != FishingStates.fishing)
+        {
+            return;
+        }
+
+        fishingIndicator.transform.position = fishingHook.position;
+    }
+
+    void UpdateState()
+    {
         if (m_currentState == FishingStates.notFishingHere)
         {
             return;
@@ -52,7 +61,6 @@ public class FishingPondController : MonoBehaviour
             m_currentState = FishingStates.fishing;
 
             fishingIndicator.SetActive(true);
-            toolTipPosition.position = fishingHook.position;
             InvokeRepeating("SetLoader", 0f, 1.0f);
             Invoke("SlowDownHook", 1.0f);
             Invoke("InitiateFishing", Random.Range(fishingTimeFrom, fishingTimeTill));
@@ -81,10 +89,6 @@ public class FishingPondController : MonoBehaviour
         {
             m_currentState = FishingStates.fishGotAway;
             fishingIndicatorText.text = "Too late";
-            if (fishingHook)
-            {
-                SlowDownHook();
-            }
         }
     }
 
@@ -153,6 +157,7 @@ public class FishingPondController : MonoBehaviour
 
         fishingHook = other.transform;
         m_currentState = FishingStates.fishingShouldBeInitiated;
+        UpdateState();
     }
 
     void OnTriggerExit(Collider other)
