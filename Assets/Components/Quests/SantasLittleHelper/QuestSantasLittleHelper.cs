@@ -1,4 +1,4 @@
-﻿using BNG;
+using BNG;
 using UnityEngine;
 
 public class QuestSantasLittleHelper : QuestBase
@@ -54,6 +54,7 @@ public class QuestSantasLittleHelper : QuestBase
 
             GeneralQuestController.Instance.UpdateQuest();
             questDialogueController.SetCurrentQuestDialog(2);
+            return;
         }
 
         if (CurrentDialogueIs(2)) {
