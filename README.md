@@ -1,7 +1,7 @@
 # OpenHarvest
 
 # How to install
-1. Install the required unity version: 2020.3.25f1
+1. Install the required unity version: 2020.3.38f1
 2. Download this project.
 3. Open it in unity.
 4. Install all packages below from the "Required Packages" section.
@@ -37,12 +37,7 @@ The game DOES NOT RUN ON WINDOWS WITH APPLICATION SPACEWARP ENABLED. Make sure t
 
 # Harvest Settings
 
-Harvest specific settings can be found in a scriptable object under `Assets/ScriptableObjects/HarvestSettings`.
-
-| Setting | Description |
-| :---: | :---: |
-| Is PC Mode | Plays harvest in Pancake mode. |
-| Enable Sandbox | Makes the Sandbox scene accessible through main menu. |
+Harvest specific settings can be found in the Unity Editor toolbar under `Harvest VR > Settings`.
 
 # Credits
 
