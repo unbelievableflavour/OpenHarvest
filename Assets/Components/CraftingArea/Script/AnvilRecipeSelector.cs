@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class AnvilRecipeSelector : MonoBehaviour
 {
     public RecipeDatabase recipeDatabase;
-    public SmithingAreaController smithingAreaController;
+    public CraftAreaController craftAreaController;
     public Transform recipeList;
     public GameObject recipeRow;
 
@@ -20,7 +20,7 @@ public class AnvilRecipeSelector : MonoBehaviour
         }
 
         var index = 0;
-        foreach (Recipe recipe in recipeDatabase.getAllForMechanic(smithingAreaController.mechanic))
+        foreach (Recipe recipe in recipeDatabase.getAllForMechanic(craftAreaController.mechanic))
         {
             if(recipe.ingredients[0] != item.itemId) {
                 continue;
@@ -28,7 +28,7 @@ public class AnvilRecipeSelector : MonoBehaviour
 
             void buttonTask()
             {
-                smithingAreaController.SetActiveRecipe(recipe);
+                craftAreaController.SetActiveRecipe(recipe);
             }
 
             GameObject row = Instantiate(recipeRow);

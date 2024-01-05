@@ -5,7 +5,7 @@ using static Definitions;
 using HarvestDataTypes;
 using UnityEngine.UI;
 
-public class SmithingAreaController : CookingBase
+public class CraftAreaController : CookingBase
 {
     public RecipeMechanic mechanic;
     public CookingTool cookingTool;
@@ -45,7 +45,7 @@ public class SmithingAreaController : CookingBase
 
         if (grabbable.GetComponent<ItemStack>() && grabbable.GetComponent<ItemStack>().GetStackSize() > 1)
         {
-            tooltipText.text = "Dont use item stacks on an anvil.";
+            tooltipText.text = "Dont use item stacks here.";
             return;
         }
 
@@ -72,7 +72,7 @@ public class SmithingAreaController : CookingBase
 
         if(m_currentState == CookingStates.notCookingHere) {
             activeRecipe = null;
-            tooltipText.text = "Place an ingredient to smith.";
+            tooltipText.text = "Place ingredients to start.";
             return;
         }
 
