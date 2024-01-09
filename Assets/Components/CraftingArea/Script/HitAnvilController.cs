@@ -67,11 +67,9 @@ public class HitAnvilController : MonoBehaviour
 
     public void PlayRandomHitSounds()
     {
-        var pitch = Random.Range(0.99f, 1.01f);
-
         if (hitSounds.Length != 0)
         {
-            VRUtils.Instance.PlaySpatialClipAt(hitSounds[Random.Range(0, hitSounds.Length)], transform.position, 1f, 1f, pitch);
+            VRUtils.Instance.PlaySpatialClipAt(hitSounds[Random.Range(0, hitSounds.Length)], transform.position, 1f);
         }
     }
 
