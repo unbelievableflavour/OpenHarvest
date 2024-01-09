@@ -4,6 +4,7 @@ using UnityEngine;
 using static Definitions;
 using HarvestDataTypes;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class CraftAreaController : CookingBase
 {
@@ -22,18 +23,39 @@ public class CraftAreaController : CookingBase
     private Recipe activeRecipe;
     private bool isSpawningRecipeItem = false;
 
-    public void Start(){
+    public List<Grabbable> slottedGrabbables = new List<Grabbable>();
+
+    public void Start() {
         Reset();
     }
 
     public void StartCooking()
     {
+        foreach (Grabbable grabbable in slottedGrabbables)
+        {
+            if (grabbable.GetComponent<ItemStack>() && grabbable.GetComponent<ItemStack>().GetStackSize() > 1)
+            {
+                tooltipText.text = "Dont use item stacks here.";
+                return;
+            }
+        }
+
         if (activeRecipe == null)
         {
+            recipesList.SetActive(true);
+            List<string> ingredientIds = new List<string>();
+            foreach (Grabbable slottedGrabbable in slottedGrabbables)
+            {
+                ingredientIds.Add(GetItemFromObject(slottedGrabbable).itemId);
+            }
+
+            anvilRecipeSelector.RefreshListWithIngredients(ingredientIds); 
+
             tooltipText.text = "Select a recipe.";
             return;
         }
-
+        
+        recipesList.SetActive(false);
         SetState(CookingStates.cooking);
     }
 
@@ -43,27 +65,29 @@ public class CraftAreaController : CookingBase
             return;
         }
 
-        if (grabbable.GetComponent<ItemStack>() && grabbable.GetComponent<ItemStack>().GetStackSize() > 1)
-        {
-            tooltipText.text = "Dont use item stacks here.";
-            return;
+        if(!slottedGrabbables.Contains(grabbable)) {
+            slottedGrabbables.Add(grabbable);
         }
 
-        recipesList.SetActive(true);
-        var item = GetItemFromObject(grabbable);
-        anvilRecipeSelector.RefreshListWithIngredient(item);
+        Reset();
         StartCooking();
     }
 
-    public void StopCooking()
-    {
+    public void RemoveIngredient(Grabbable grabbable) {
         if (isSpawningRecipeItem)
         {
             return;
         }
 
+        if(slottedGrabbables.Contains(grabbable)) {
+            slottedGrabbables.Remove(grabbable);
+        }
+
         Reset();
-        return;
+
+        if(slottedGrabbables.Count > 0) {
+            StartCooking();
+        }
     }
 
     void SetState(CookingStates newState)
@@ -71,14 +95,11 @@ public class CraftAreaController : CookingBase
         m_currentState = newState;
 
         if(m_currentState == CookingStates.notCookingHere) {
-            activeRecipe = null;
             tooltipText.text = "Place ingredients to start.";
             return;
         }
 
         if(m_currentState == CookingStates.cooking) {
-            recipesList.SetActive(false);
-
             if (loaderState == 0)
             {
                 tooltipText.text = "Ready! Hit it with the hammer.";
@@ -139,6 +160,7 @@ public class CraftAreaController : CookingBase
         isSpawningRecipeItem = true;
         var spawnedFood = InstantiateItemNew(activeRecipe.item.prefab);
         RemoveOldItems(cookingTool);
+        slottedGrabbables = new List<Grabbable>();
         cookingTool.snapZones[0].GrabGrabbable(spawnedFood.GetComponent<Grabbable>());
         isSpawningRecipeItem = false;
     }
@@ -151,6 +173,7 @@ public class CraftAreaController : CookingBase
     private void Reset() {
         loaderState = 0;
         recipesList.SetActive(false);
+        activeRecipe = null;
         SetState(CookingStates.notCookingHere);
     }
 }

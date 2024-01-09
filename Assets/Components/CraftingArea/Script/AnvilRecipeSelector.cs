@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using HarvestDataTypes;
 using System.Collections.Generic;
+using System.Linq;
 
 public class AnvilRecipeSelector : MonoBehaviour
 {
@@ -12,7 +13,14 @@ public class AnvilRecipeSelector : MonoBehaviour
 
     private int currentRecipeIndex;
 
-    public void RefreshListWithIngredient(HarvestDataTypes.Item item)
+    private bool matchesCurrentIngredients(List<string> recipeIngredients, List<string> currentIngredients)
+    {
+        bool isEqual = recipeIngredients.OrderBy(x => x).SequenceEqual(currentIngredients.OrderBy(x => x));
+ 
+        return isEqual;
+    }
+
+    public void RefreshListWithIngredients(List<string> ingredientIds)
     {
         foreach (Transform child in recipeList)
         {
@@ -22,7 +30,7 @@ public class AnvilRecipeSelector : MonoBehaviour
         var index = 0;
         foreach (Recipe recipe in recipeDatabase.getAllForMechanic(craftAreaController.mechanic))
         {
-            if(recipe.ingredients[0] != item.itemId) {
+            if(!matchesCurrentIngredients(recipe.ingredients, ingredientIds)) {
                 continue;
             }
 
