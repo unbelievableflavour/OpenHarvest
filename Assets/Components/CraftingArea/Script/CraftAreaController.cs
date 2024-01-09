@@ -159,9 +159,11 @@ public class CraftAreaController : CookingBase
         spawnEffect.Play();
         isSpawningRecipeItem = true;
         var spawnedFood = InstantiateItemNew(activeRecipe.item.prefab);
+        var spawnedGrabbable = spawnedFood.GetComponent<Grabbable>();
         RemoveOldItems(cookingTool);
         slottedGrabbables = new List<Grabbable>();
-        cookingTool.snapZones[0].GrabGrabbable(spawnedFood.GetComponent<Grabbable>());
+        slottedGrabbables.Add(spawnedGrabbable);
+        cookingTool.snapZones[0].GrabGrabbable(spawnedGrabbable);
         isSpawningRecipeItem = false;
     }
 
