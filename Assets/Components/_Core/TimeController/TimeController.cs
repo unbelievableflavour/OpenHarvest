@@ -6,7 +6,7 @@ public class TimeController : MonoBehaviour
     public static TimeController Instance = null;
 
     private static bool useRealTime = false; //default = false
-    private static int simulatedTimeIncreasePerSecond = 45;
+    private static int simulatedTimeIncreasePerSecond = 60;
     private float timer;
     private static DateTime currentTime;
     private static double totalSimulatedGameSeconds;
