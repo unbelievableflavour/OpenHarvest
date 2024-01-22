@@ -517,7 +517,7 @@ public class TemporaryPrefabToIdMapper
         { "Sunflower", "Sunflower" },
         { "Watermelon", "Watermelon" },
         { "Banana", "Banana" },
-        { "Pineaple", "Pineapple" },
+        { "Pineapple", "Pineapple" },
         { "SeedSunflower", "SeedBagSunflower" },
         { "SeedWatermelon", "SeedBagWatermelon" },
         { "SeedBanana", "SeedBagBanana" },
