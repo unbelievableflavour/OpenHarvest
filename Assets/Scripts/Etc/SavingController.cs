@@ -6,6 +6,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using static Definitions;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class SavingController : MonoBehaviour
 {
     private static SaveGame CreateSaveGameObject()
@@ -639,4 +643,23 @@ public class TemporaryPrefabToIdMapper
             currentStackSize = item.currentStackSize
         };
     }
+
+    public static void CreateSaveDirectoryIfItDoesntExist() {
+        System.IO.FileInfo file = new System.IO.FileInfo(getSavePath());
+        file.Directory.Create(); // If the directory already exists, this method does nothing.
+    }
+
+    private static string getSavePath()
+    {
+        return Application.persistentDataPath;
+    }
+
+#if UNITY_EDITOR
+    [MenuItem("Harvest VR/Saving/Open save location")]
+    private static void UnityEditorButton()
+    {
+        CreateSaveDirectoryIfItDoesntExist();
+        EditorUtility.RevealInFinder(getSavePath());
+    }
+#endif
 }
