@@ -4,14 +4,8 @@ using UnityEngine.UI;
 
 public class MainTutorialMenuController : MonoBehaviour
 {
+    public ViewSwitcher viewSwitcher;
     public List<Button> buttons = new List<Button>();
-    public GameObject mainCanvas;
-    public GameObject basicsTutorial;
-    public GameObject fishingTutorial;
-    public GameObject cookingTutorial;
-    public GameObject miningTutorial;
-    public GameObject woodcuttingTutorial;
-    public GameObject ranchingTutorial;
 
     void Start()
     {
@@ -21,45 +15,14 @@ public class MainTutorialMenuController : MonoBehaviour
         }
     }
 
-    public void StartBasicTutorial()
+    private void StartBasicTutorial()
     {
-        DisableMainMenu();
-        basicsTutorial.SetActive(true);
+        viewSwitcher.setActiveView("basics");
     }
 
-    public void StartFishingTutorial()
+    public void StartTutorial(string tutorialId)
     {
-        DisableMainMenu();
-        fishingTutorial.SetActive(true);
-    }
-
-    public void StartCookingTutorial()
-    {
-        DisableMainMenu();
-        cookingTutorial.SetActive(true);
-    }
-
-    public void StartMiningTutorial()
-    {
-        DisableMainMenu();
-        miningTutorial.SetActive(true);
-    }
-
-    public void StartWoodcuttingTutorial()
-    {
-        DisableMainMenu();
-        woodcuttingTutorial.SetActive(true);
-    }
-
-    public void StartRanchingTutorial()
-    {
-        DisableMainMenu();
-        ranchingTutorial.SetActive(true);
-    }
-
-    public void ReturnToMainMenu()
-    {
-        mainCanvas.SetActive(true);
+        viewSwitcher.setActiveView(tutorialId);
     }
 
     public void ReturnToGame()
@@ -71,9 +34,9 @@ public class MainTutorialMenuController : MonoBehaviour
         );
     }
 
-    private void DisableMainMenu()
+    public void ReturnToMainMenu()
     {
-        mainCanvas.SetActive(false);
+        viewSwitcher.setActiveView("main");
     }
 
     private void DisableAllButtons()

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class SubMenuTutorialMenuController : MonoBehaviour
 {
+    public ViewSwitcher globalViewSwitcher;
     public GameObject mainCanvas;
     public GameObject ranchingCanvas;
 
@@ -15,8 +16,7 @@ public class SubMenuTutorialMenuController : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
-        DisableMenu();
-        mainCanvas.SetActive(true);
+        globalViewSwitcher.setActiveView("main");
     }
 
     private void DisableMenu()
