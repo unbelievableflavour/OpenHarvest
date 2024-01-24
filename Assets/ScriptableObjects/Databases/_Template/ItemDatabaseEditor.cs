@@ -21,6 +21,8 @@ namespace HarvestDataTypes
 
             if (GUILayout.Button("Add all recipes", GUILayout.Height(20)))
             {
+                database.items = new List<Item>();
+
                 foreach (string includedFolder in includedFolders)
                 {
                     foreach (string s in AssetDatabase.FindAssets("", new string[] { includedFolder }))
@@ -32,10 +34,6 @@ namespace HarvestDataTypes
                             continue;
                         }
 
-                        if (database.items.Contains(item))
-                        {
-                            continue;
-                        }
                         database.items.Add(item);
                         EditorUtility.SetDirty(database);
                     }

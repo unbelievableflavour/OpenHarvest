@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 using HarvestDataTypes;
+using System.Collections.Generic;
 
 [CustomEditor(typeof(RecipeDatabase))]
 public class RecipeDatabaseEditor : Editor
@@ -13,6 +14,8 @@ public class RecipeDatabaseEditor : Editor
 
         if (GUILayout.Button("Add all recipes", GUILayout.Height(20)))
         {
+            recipeDatabase.recipes = new List<Recipe>();
+
             foreach (string s in AssetDatabase.FindAssets("", new string[] { "Assets/ScriptableObjects/Recipes/" }))
             {
                 Recipe recipe = (Recipe)AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(s), typeof(Recipe));
@@ -22,10 +25,6 @@ public class RecipeDatabaseEditor : Editor
                     continue;
                 }
 
-                if (recipeDatabase.recipes.Contains(recipe))
-                {
-                    continue;
-                }
                 recipeDatabase.recipes.Add(recipe);
                 EditorUtility.SetDirty(recipeDatabase);
             }

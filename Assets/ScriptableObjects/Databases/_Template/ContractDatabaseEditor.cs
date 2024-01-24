@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 using HarvestDataTypes;
+using System.Collections.Generic;
 
 [CustomEditor(typeof(ContractDatabase))]
 public class ContractDatabaseEditor : Editor
@@ -13,6 +14,8 @@ public class ContractDatabaseEditor : Editor
 
         if (GUILayout.Button("Add all contracts", GUILayout.Height(20)))
         {
+            database.contracts = new List<Contract>();
+
             foreach (string s in AssetDatabase.FindAssets("", new string[] { "Assets/ScriptableObjects/Contracts/" }))
             {
                 Contract contract = (Contract)AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(s), typeof(Contract));
@@ -22,10 +25,6 @@ public class ContractDatabaseEditor : Editor
                     continue;
                 }
 
-                if (database.contracts.Contains(contract))
-                {
-                    continue;
-                }
                 database.contracts.Add(contract);
                 EditorUtility.SetDirty(database);
             }
