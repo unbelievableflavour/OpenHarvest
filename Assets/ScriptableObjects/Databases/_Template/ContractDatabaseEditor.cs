@@ -16,7 +16,7 @@ public class ContractDatabaseEditor : Editor
         {
             database.contracts = new List<Contract>();
 
-            foreach (string s in AssetDatabase.FindAssets("", new string[] { "Assets/ScriptableObjects/Contracts/" }))
+            foreach (string s in AssetDatabase.FindAssets("", new string[] { "Assets/HarvestDataTypes/Contracts/" }))
             {
                 Contract contract = (Contract)AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(s), typeof(Contract));
 
