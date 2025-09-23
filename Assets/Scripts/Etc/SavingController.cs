@@ -416,7 +416,6 @@ public class SavingController : MonoBehaviour
         {
             Debug.Log("Run migration for build 8 on save: " + saveNumber);
 
-            save.settings["useApplicationSpaceWarp"] = "false";
             save.settings["refreshRate"] = "0";
             save.settings["useFog"] = "false";
         }

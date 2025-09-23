@@ -43,7 +43,7 @@ public class CurrentGameState {
         { "resolutionScale", "0" }, // 0 = resolution scale 1
         { "useShadows", "true" },
         { "useFog", "true" },
-        { "useApplicationSpaceWarp", "false" }
+        { "useApplicationSpaceWarp", "false" } // Removed - was Oculus-specific
     };
 
     public int currentDay;

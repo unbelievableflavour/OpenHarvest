@@ -75,9 +75,6 @@ public class PlayerCustomSettings : MonoBehaviour
         {
             RenderSettings.fog = useFog;
         }
-
-        // Space Warp setting removed - was Oculus-specific
-        // OVRManager.SetSpaceWarp(bool.Parse(GameState.Instance.settings["useApplicationSpaceWarp"]));
     }
 
     public bool isShadowsActive(RenderPipelineAsset pipeline)
