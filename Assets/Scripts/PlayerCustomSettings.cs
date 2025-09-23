@@ -2,7 +2,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 
 public class PlayerCustomSettings : MonoBehaviour
 {
@@ -49,23 +48,26 @@ public class PlayerCustomSettings : MonoBehaviour
         AudioManager.Instance.ChangeMusicVolume(float.Parse(GameState.Instance.settings["backgroundMusicVolume"]) / 10);
         playerColours.Refresh();
 
-        var refreshRate = getRefreshRate();
-        if (Unity.XR.Oculus.Performance.TryGetDisplayRefreshRate(out var currentRefreshRate)) {
-            if (currentRefreshRate != refreshRate) {
-                Unity.XR.Oculus.Performance.TrySetDisplayRefreshRate(refreshRate);
-            }
-        }
+        // Refresh rate setting removed - was Oculus-specific
+        // var refreshRate = getRefreshRate();
+        // if (Unity.XR.Oculus.Performance.TryGetDisplayRefreshRate(out var currentRefreshRate)) {
+        //     if (currentRefreshRate != refreshRate) {
+        //         Unity.XR.Oculus.Performance.TrySetDisplayRefreshRate(refreshRate);
+        //     }
+        // }
 
-        var pipeline = ((UniversalRenderPipelineAsset)GraphicsSettings.renderPipelineAsset);
+        var pipeline = GraphicsSettings.defaultRenderPipeline;
         var resolutionScale = getResolutionScale();
-        if (pipeline.renderScale != resolutionScale) {       
-            pipeline.renderScale = resolutionScale;
-        }
+        // Note: renderScale property may not be available in all render pipelines
+        // This was specific to Universal Render Pipeline
+        // if (pipeline.renderScale != resolutionScale) {       
+        //     pipeline.renderScale = resolutionScale;
+        // }
 
         bool useShadows = bool.Parse(GameState.Instance.settings["useShadows"]);
         if (isShadowsActive(pipeline) != useShadows)
         {
-            pipeline.shadowDistance = useShadows ? defaultShadowDistanceValue : 0;
+            QualitySettings.shadowDistance = useShadows ? defaultShadowDistanceValue : 0;
         }
 
         bool useFog = bool.Parse(GameState.Instance.settings["useFog"]);
@@ -74,12 +76,15 @@ public class PlayerCustomSettings : MonoBehaviour
             RenderSettings.fog = useFog;
         }
 
-        OVRManager.SetSpaceWarp(bool.Parse(GameState.Instance.settings["useApplicationSpaceWarp"]));
+        // Space Warp setting removed - was Oculus-specific
+        // OVRManager.SetSpaceWarp(bool.Parse(GameState.Instance.settings["useApplicationSpaceWarp"]));
     }
 
-    public bool isShadowsActive(UniversalRenderPipelineAsset pipeline)
+    public bool isShadowsActive(RenderPipelineAsset pipeline)
     {
-        return pipeline.shadowDistance != 0;
+        // Default behavior for shadow checking
+        // This was specific to Universal Render Pipeline
+        return QualitySettings.shadowDistance > 0;
     }
 
     public float getRefreshRate()

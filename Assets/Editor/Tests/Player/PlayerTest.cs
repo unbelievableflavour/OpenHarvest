@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
+
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
 namespace Player
@@ -189,7 +189,7 @@ namespace Player
         [Test]
         public void ItChecksIfTheCustomPointerIsConfigured()
         {
-            var uiPointers = xrRigAdvanced.GetComponentsInChildren<XRInteractorLineVisual>(true);
+            var uiPointers = xrRigAdvanced.GetComponentsInChildren<UnityEngine.XR.Interaction.Toolkit.Interactors.Visuals.XRInteractorLineVisual>(true);
 
             Assert.AreEqual("CustomXRCursorLeft", uiPointers[0].reticle.transform.name);
             Assert.AreEqual("CustomXRCursorRight", uiPointers[1].reticle.transform.name);

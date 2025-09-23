@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class HeadsetDetector : MonoBehaviour
 {
@@ -53,6 +54,8 @@ public class HeadsetDetector : MonoBehaviour
 
     private bool ifInOculusHomeOrHeadsetIsNotWorn()
     {
-        return !(OVRManager.hasInputFocus && OVRManager.hasVrFocus);
+        // Using XR APIs instead of OVR APIs
+        // Check if XR is active and has input focus
+        return !(XRSettings.enabled && XRSettings.isDeviceActive);
     }
 }

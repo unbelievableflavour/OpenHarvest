@@ -1,10 +1,10 @@
 ﻿using HarvestDataTypes;
-using OVRSimpleJSON;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using static Definitions;
+using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -304,14 +304,20 @@ public class SavingController : MonoBehaviour
 
             if (save.unlockables != null)
             {
-
-                JSONNode jsonObject = JSON.Parse(save.unlockables);
-                if (jsonObject != null && jsonObject["unlockables"] != null)
+                try
                 {
-                    foreach (var item in jsonObject["unlockables"])
+                    UnlockablesWrapper wrapper = JsonUtility.FromJson<UnlockablesWrapper>(save.unlockables);
+                    if (wrapper != null && wrapper.unlockables != null)
                     {
-                        save.unlockables2[item.Key] = item.Value;
+                        foreach (var item in wrapper.unlockables)
+                        {
+                            save.unlockables2[item.Key] = item.Value;
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("Failed to parse unlockables JSON during migration: " + e.Message);
                 }
             }
 
@@ -327,18 +333,25 @@ public class SavingController : MonoBehaviour
 
             if (save.locationConfigurations != null)
             {
-                JSONNode jsonObject = JSON.Parse(save.locationConfigurations);
-                if (jsonObject != null && jsonObject["locationConfigurations"] != null)
+                try
                 {
-                    foreach (var item in jsonObject["locationConfigurations"])
+                    LocationConfigurationsWrapper wrapper = JsonUtility.FromJson<LocationConfigurationsWrapper>(save.locationConfigurations);
+                    if (wrapper != null && wrapper.locationConfigurations != null)
                     {
-                        if (item.Value == "")
+                        foreach (var item in wrapper.locationConfigurations)
                         {
-                            continue;
-                        }
+                            if (item.Value == "")
+                            {
+                                continue;
+                            }
 
-                        save.locationConfigurations2[item.Key] = item.Value;
+                            save.locationConfigurations2[item.Key] = item.Value;
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("Failed to parse locationConfigurations JSON during migration: " + e.Message);
                 }
             }
 
@@ -662,4 +675,17 @@ public class TemporaryPrefabToIdMapper
         EditorUtility.RevealInFinder(getSavePath());
     }
 #endif
+}
+
+// Helper classes for JSON migration (replacing OVRSimpleJSON)
+[System.Serializable]
+public class UnlockablesWrapper
+{
+    public Dictionary<string, int> unlockables;
+}
+
+[System.Serializable]
+public class LocationConfigurationsWrapper
+{
+    public Dictionary<string, string> locationConfigurations;
 }

@@ -18,7 +18,7 @@ public class DropTable : MonoBehaviour {
     public List<DroppedItem> items = new List<DroppedItem>();
 
     public GameObject GetItemByDropRate()
-    {
+    {        
         var randomNumber = Random.Range(0, getTotalDropRateCount());
         return GetItem(randomNumber);
     }
