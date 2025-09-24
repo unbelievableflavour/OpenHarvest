@@ -39,8 +39,8 @@ public class CurrentGameState {
         { "playerHeightOffset", "0" },
         { "backgroundMusicVolume", "1" },
         { "skinColor", "#FDD7C3" },
-        { "refreshRate", "0" }, // 0 = refresh rate 72
-        { "resolutionScale", "0" }, // 0 = resolution scale 1
+        { "refreshRate", "2" }, // 2 = refresh rate 90
+        { "resolutionScale", "2" }, // 2 = resolution scale 1.0f
         { "useShadows", "true" },
         { "useFog", "true" },
         { "useApplicationSpaceWarp", "false" } // Removed - was Oculus-specific
