@@ -1,39 +1,24 @@
 # OpenHarvest
 
 # How to install
-1. Install the required unity version: 2020.3.38f1
+1. Install the required unity version: 6000.0.58f1
 2. Download this project.
 3. Open it in unity.
 4. Install all packages below from the "Required Packages" section.
 
 ## Required packages
 
-This repository contains a lot of packages that could not be included. You will have to install them manually to get the project working.
+This repository contains a paid package not be included due to licensing reasons. You will have to install it manually to get the project running.
 
 | Package | Folder Name | Version  | Url  |
 | :---:   | :---: | :---: | :---: |
 | VR Interaction Framework | BNG Framework | 1.81 | https://assetstore.unity.com/packages/templates/systems/vr-interaction-framework-161066 |
-| Shader Pack : Cartoon Water | ZerinLabs_shaderPack_CartoonWater | 1.1 | https://assetstore.unity.com/packages/vfx/shaders/shader-pack-cartoon-water-178978 |
-| Oculus Integration | Oculus | 57.0 | https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022 |
 
-Put these in the "Assets/External” Folder.
-
-# Custom URP
-
-This application runs on a custom version of the Universal Rendering Pipeline specifically to run Application Spacewarp. When upgrading unity to a new major release, the custom URP should also be updated.
-Current pipeline can be found here:
-https://github.com/Oculus-VR/Unity-Graphics/tree/2020.3/oculus-app-spacewarp
-
-2021 branch can be found here:
-https://github.com/Oculus-VR/Unity-Graphics/tree/2021.2/oculus-app-spacewarp
+Put it in the "Assets/External” Folder.
 
 # Platforms
 
-Open Harvest can build for Windows & Android.
-
-## Running on Windows
-The game DOES NOT RUN ON WINDOWS WITH APPLICATION SPACEWARP ENABLED. Make sure to disable it during development.
-`Edit > Project Settings > XR Plug-in Management > Oculus > Android > Experimental > Application Spacewarp >` uncheck the box. (Dont forget to recheck it before commiting)
+OpenHarvest can build for Windows & Android.
 
 # Harvest Settings
 

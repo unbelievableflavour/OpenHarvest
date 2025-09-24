@@ -41,14 +41,14 @@ public class AnimatedChicken : MonoBehaviour
     private void SlowDownMovement()
     {
         animator.Play("IdleAnimation");
-        rigidBody.drag = 10;
+        rigidBody.linearDamping = 10;
         isMoving = false;
     }
 
     private void MoveInRandomDirection()
     {
         isMoving = true;
-        rigidBody.drag = 0;
+        rigidBody.linearDamping = 0;
         pointsToMoveTowards = Random.onUnitSphere;
         pointsToMoveTowards.y = 0.0f;
 

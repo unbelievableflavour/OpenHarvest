@@ -77,7 +77,7 @@ public class FishingPondController : MonoBehaviour
             if (fishingHook)
             {
                 CancelInvoke("SlowDownHook");
-                fishingHook.GetComponent<Rigidbody>().drag = 1;
+                fishingHook.GetComponent<Rigidbody>().linearDamping = 1;
             }
             Invoke("InitiateTooLate", timeBeforeFishGetsAway);
         }
@@ -124,7 +124,7 @@ public class FishingPondController : MonoBehaviour
 
     void SlowDownHook()
     {
-        fishingHook.GetComponent<Rigidbody>().drag = 50;
+        fishingHook.GetComponent<Rigidbody>().linearDamping = 50;
     }
 
     void OnTriggerEnter(Collider other)
@@ -174,7 +174,7 @@ public class FishingPondController : MonoBehaviour
             CancelInvoke("SlowDownHook");
             CancelInvoke("InitiateFishing");
             CancelInvoke("InitiateTooLate");
-            fishingHook.GetComponent<Rigidbody>().drag = 1;
+            fishingHook.GetComponent<Rigidbody>().linearDamping = 1;
         }
 
         if (m_currentState == FishingStates.fishOnLine)

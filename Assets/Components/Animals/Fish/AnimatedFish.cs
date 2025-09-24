@@ -40,13 +40,13 @@ public class AnimatedFish : MonoBehaviour
 
     private void SlowDownFish()
     {
-        if (rigidBody.velocity.magnitude < 0.2)
+        if (rigidBody.linearVelocity.magnitude < 0.2)
         {
             isMoving = false;
             return;
         }
 
-        var currentVelocity = GetComponent<Rigidbody>().velocity;
+        var currentVelocity = GetComponent<Rigidbody>().linearVelocity;
         var oppositeForce = -currentVelocity;
         GetComponent<Rigidbody>().AddForce(oppositeForce.x, oppositeForce.y, oppositeForce.z);
     }

@@ -9,7 +9,7 @@ public class EnableConsole : MonoBehaviour
 
     void Start()
     {
-        if (HarvestSettings.enableIngameConsole) {
+        if (HarvestSettings.enableIngameConsole && debugMenu != null) {
             debugMenu.SetActive(true);
         }
     }

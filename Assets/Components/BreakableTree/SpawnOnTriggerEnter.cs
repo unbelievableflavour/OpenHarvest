@@ -53,7 +53,7 @@ public class SpawnOnTriggerEnter : MonoBehaviour
     public void Reset()
     {
         isAlreadyTriggered = false;
-        fallingTree.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        fallingTree.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         fallingTree.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
         fallingTree.transform.localPosition = new Vector3(0,0,0);
