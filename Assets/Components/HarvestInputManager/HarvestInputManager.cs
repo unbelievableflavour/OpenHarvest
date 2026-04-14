@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using BNG;
 
 public class HarvestInputManager : MonoBehaviour
@@ -55,15 +56,15 @@ public class HarvestInputManager : MonoBehaviour
 #if UNITY_EDITOR
         if (harvestSettings.playerMode == PlayerMode.FPS)
         {
-            if(Input.GetMouseButtonDown(0)){
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame){
                 OnTriggerRight?.Invoke();
             }
 
-            if(Input.GetKeyDown(KeyCode.LeftArrow)){
+            if (Keyboard.current != null && Keyboard.current.leftArrowKey.wasPressedThisFrame){
                 OnBButton?.Invoke();
             }
 
-            if(Input.GetKeyDown(KeyCode.RightArrow)){
+            if (Keyboard.current != null && Keyboard.current.rightArrowKey.wasPressedThisFrame){
                 OnAButton?.Invoke();
             }
         }

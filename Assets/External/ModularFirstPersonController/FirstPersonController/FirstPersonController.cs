@@ -8,6 +8,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 #if UNITY_EDITOR
     using UnityEditor;
@@ -207,16 +209,17 @@ public class FirstPersonController : MonoBehaviour
         // Control camera movement
         if(cameraCanMove)
         {
-            yaw = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * mouseSensitivity;
+            Vector2 mouseDelta = GetMouseDelta();
+            yaw = transform.localEulerAngles.y + mouseDelta.x * mouseSensitivity;
 
             if (!invertCamera)
             {
-                pitch -= mouseSensitivity * Input.GetAxis("Mouse Y");
+                pitch -= mouseSensitivity * mouseDelta.y;
             }
             else
             {
                 // Inverted Y
-                pitch += mouseSensitivity * Input.GetAxis("Mouse Y");
+                pitch += mouseSensitivity * mouseDelta.y;
             }
 
             // Clamp pitch between lookAngle
@@ -232,7 +235,7 @@ public class FirstPersonController : MonoBehaviour
         {
             // Changes isZoomed when key is pressed
             // Behavior for toogle zoom
-            if(Input.GetKeyDown(zoomKey) && !holdToZoom && !isSprinting)
+            if(GetKeyDownCompat(zoomKey) && !holdToZoom && !isSprinting)
             {
                 if (!isZoomed)
                 {
@@ -248,11 +251,11 @@ public class FirstPersonController : MonoBehaviour
             // Behavior for hold to zoom
             if(holdToZoom && !isSprinting)
             {
-                if(Input.GetKeyDown(zoomKey))
+                if(GetKeyDownCompat(zoomKey))
                 {
                     isZoomed = true;
                 }
-                else if(Input.GetKeyUp(zoomKey))
+                else if(GetKeyUpCompat(zoomKey))
                 {
                     isZoomed = false;
                 }
@@ -326,7 +329,7 @@ public class FirstPersonController : MonoBehaviour
         #region Jump
 
         // Gets input and calls jump method
-        if(enableJump && Input.GetKeyDown(jumpKey) && isGrounded)
+        if(enableJump && GetKeyDownCompat(jumpKey) && isGrounded)
         {
             Jump();
         }
@@ -337,17 +340,17 @@ public class FirstPersonController : MonoBehaviour
 
         if (enableCrouch)
         {
-            if(Input.GetKeyDown(crouchKey) && !holdToCrouch)
+            if(GetKeyDownCompat(crouchKey) && !holdToCrouch)
             {
                 Crouch();
             }
             
-            if(Input.GetKeyDown(crouchKey) && holdToCrouch)
+            if(GetKeyDownCompat(crouchKey) && holdToCrouch)
             {
                 isCrouched = false;
                 Crouch();
             }
-            else if(Input.GetKeyUp(crouchKey) && holdToCrouch)
+            else if(GetKeyUpCompat(crouchKey) && holdToCrouch)
             {
                 isCrouched = true;
                 Crouch();
@@ -371,7 +374,8 @@ public class FirstPersonController : MonoBehaviour
         if (playerCanMove)
         {
             // Calculate how fast we should be moving
-            Vector3 targetVelocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            Vector2 moveInput = GetMoveAxis();
+            Vector3 targetVelocity = new Vector3(moveInput.x, 0, moveInput.y);
 
             // Checks if player is walking and isGrounded
             // Will allow head bob
@@ -385,7 +389,7 @@ public class FirstPersonController : MonoBehaviour
             }
 
             // All movement calculations shile sprint is active
-            if (enableSprint && Input.GetKey(sprintKey) && sprintRemaining > 0f && !isSprintCooldown)
+            if (enableSprint && GetKeyCompat(sprintKey) && sprintRemaining > 0f && !isSprintCooldown)
             {
                 targetVelocity = transform.TransformDirection(targetVelocity) * sprintSpeed;
 
@@ -524,6 +528,114 @@ public class FirstPersonController : MonoBehaviour
             // Resets when play stops moving
             timer = 0;
             joint.localPosition = new Vector3(Mathf.Lerp(joint.localPosition.x, jointOriginalPos.x, Time.deltaTime * bobSpeed), Mathf.Lerp(joint.localPosition.y, jointOriginalPos.y, Time.deltaTime * bobSpeed), Mathf.Lerp(joint.localPosition.z, jointOriginalPos.z, Time.deltaTime * bobSpeed));
+        }
+    }
+
+    private Vector2 GetMouseDelta()
+    {
+        if (Mouse.current == null)
+        {
+            return Vector2.zero;
+        }
+
+        return Mouse.current.delta.ReadValue();
+    }
+
+    private Vector2 GetMoveAxis()
+    {
+        if (Keyboard.current == null)
+        {
+            return Vector2.zero;
+        }
+
+        float horizontal = 0f;
+        float vertical = 0f;
+
+        if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) horizontal -= 1f;
+        if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) horizontal += 1f;
+        if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) vertical -= 1f;
+        if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) vertical += 1f;
+
+        return new Vector2(Mathf.Clamp(horizontal, -1f, 1f), Mathf.Clamp(vertical, -1f, 1f));
+    }
+
+    private bool GetKeyCompat(KeyCode keyCode)
+    {
+        return GetButtonState(keyCode, button => button.isPressed);
+    }
+
+    private bool GetKeyDownCompat(KeyCode keyCode)
+    {
+        return GetButtonState(keyCode, button => button.wasPressedThisFrame);
+    }
+
+    private bool GetKeyUpCompat(KeyCode keyCode)
+    {
+        return GetButtonState(keyCode, button => button.wasReleasedThisFrame);
+    }
+
+    private bool GetButtonState(KeyCode keyCode, System.Func<ButtonControl, bool> query)
+    {
+        if (TryGetMouseButton(keyCode, out var mouseButton))
+        {
+            return mouseButton != null && query(mouseButton);
+        }
+
+        if (!TryMapKeyCode(keyCode, out var key))
+        {
+            return false;
+        }
+
+        if (Keyboard.current == null)
+        {
+            return false;
+        }
+
+        return query(Keyboard.current[key]);
+    }
+
+    private bool TryGetMouseButton(KeyCode keyCode, out ButtonControl mouseButton)
+    {
+        mouseButton = null;
+        if (Mouse.current == null)
+        {
+            return false;
+        }
+
+        switch (keyCode)
+        {
+            case KeyCode.Mouse0:
+                mouseButton = Mouse.current.leftButton;
+                return true;
+            case KeyCode.Mouse1:
+                mouseButton = Mouse.current.rightButton;
+                return true;
+            case KeyCode.Mouse2:
+                mouseButton = Mouse.current.middleButton;
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private bool TryMapKeyCode(KeyCode keyCode, out Key mappedKey)
+    {
+        switch (keyCode)
+        {
+            case KeyCode.LeftShift:
+                mappedKey = Key.LeftShift;
+                return true;
+            case KeyCode.RightShift:
+                mappedKey = Key.RightShift;
+                return true;
+            case KeyCode.LeftControl:
+                mappedKey = Key.LeftCtrl;
+                return true;
+            case KeyCode.RightControl:
+                mappedKey = Key.RightCtrl;
+                return true;
+            default:
+                return System.Enum.TryParse(keyCode.ToString(), out mappedKey);
         }
     }
 }
