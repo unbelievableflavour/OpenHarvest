@@ -1,0 +1,207 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1347899318793061390
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4031905199157250578}
+  - component: {fileID: 1347899318793061381}
+  - component: {fileID: 3620908750276658387}
+  m_Layer: 0
+  m_Name: Quest - ShellFinder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &4031905199157250578
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347899318793061390}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1347899318793061381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347899318793061390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecbb838f96f8a794eadbaeff5729cafa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Dialog: {fileID: 332422655449932628, guid: 19956a4aa9d6a2e408a1da72344fb4ef, type: 3}
+  title: Shell Finder
+  icon: {fileID: 21300000, guid: 7e5d4555455560742a29f8389ac31e8a, type: 3}
+  questId: 3
+  talkUIController: {fileID: 0}
+  NPCName: Joffrey
+  dialogues:
+  - text: Hi! While you are cleaning up the beach will you do me a favor? Collect
+      me some shells too!
+    leftButton:
+      text: Back
+      onClick:
+        m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 1347899318793061381}
+            m_TargetAssemblyTypeName: QuestDialogueController, Assembly-CSharp
+            m_MethodName: BackToMenu
+            m_Mode: 1
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+    rightButton:
+      text: Ok!
+      onClick:
+        m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 1347899318793061381}
+            m_TargetAssemblyTypeName: QuestOption, Assembly-CSharp
+            m_MethodName: StartQuest
+            m_Mode: 1
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+          - m_Target: {fileID: 1347899318793061381}
+            m_TargetAssemblyTypeName: QuestDialogueController, Assembly-CSharp
+            m_MethodName: SetCurrentQuestDialog
+            m_Mode: 3
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 1
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+  - text: First some of those round shells. 5 Shells ok?
+    leftButton:
+      text: Ok I'll get some!
+      onClick:
+        m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 1347899318793061381}
+            m_TargetAssemblyTypeName: QuestDialogueController, Assembly-CSharp
+            m_MethodName: BackToMenu
+            m_Mode: 1
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+    rightButton:
+      text: 
+      onClick:
+        m_PersistentCalls:
+          m_Calls: []
+  - text: Next some pointy shells. How about 20 of them!
+    leftButton:
+      text: Alrighty!
+      onClick:
+        m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 1347899318793061381}
+            m_TargetAssemblyTypeName: QuestDialogueController, Assembly-CSharp
+            m_MethodName: BackToMenu
+            m_Mode: 1
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+    rightButton:
+      text: 
+      onClick:
+        m_PersistentCalls:
+          m_Calls: []
+  - text: And finally some star shaped shells! 10 please!
+    leftButton:
+      text: Right away!
+      onClick:
+        m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 1347899318793061381}
+            m_TargetAssemblyTypeName: QuestDialogueController, Assembly-CSharp
+            m_MethodName: BackToMenu
+            m_Mode: 1
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+    rightButton:
+      text: 
+      onClick:
+        m_PersistentCalls:
+          m_Calls: []
+  - text: Thank you so much for helping out!
+    leftButton:
+      text: No problem!
+      onClick:
+        m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 1347899318793061381}
+            m_TargetAssemblyTypeName: QuestDialogueController, Assembly-CSharp
+            m_MethodName: BackToMenu
+            m_Mode: 1
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+    rightButton:
+      text: 
+      onClick:
+        m_PersistentCalls:
+          m_Calls: []
+--- !u!114 &3620908750276658387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347899318793061390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 600cf682bda7e1f45b54d190989da54c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  questDialogueController: {fileID: 1347899318793061381}
+  rewardItem: {fileID: 11400000, guid: f93b8609824698d4c812eeaac32bf3c3, type: 2}
