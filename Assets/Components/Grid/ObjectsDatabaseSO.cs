@@ -11,7 +11,7 @@ public class ObjectData
     [field: SerializeField]
     public int ID { get; private set; }
     [field: SerializeField]
-    public Vector2Int size { get; private set; } = Vector2Int.one;
+    public List<string> unlockableIds { get; private set; } = new List<string>();
     [field: SerializeField]
     public GameObject prefab { get; private set; }
 }

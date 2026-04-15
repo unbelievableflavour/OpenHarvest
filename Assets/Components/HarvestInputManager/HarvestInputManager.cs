@@ -18,6 +18,15 @@ public class HarvestInputManager : MonoBehaviour
 
     [SerializeField]
     private LayerMask placementLayermask;
+    
+    [SerializeField]
+    private LineRenderer pointerRayRenderer;
+
+    [SerializeField]
+    private float pointerRayLength = 100f;
+    private int cachedSelectedMapHitFrame = -1;
+    private bool hasCachedSelectedMapHit = false;
+    private RaycastHit cachedSelectedMapHit;
 
     public event Action OnTriggerRight, OnBButton, OnAButton, OnMenuButton;
         
@@ -33,9 +42,16 @@ public class HarvestInputManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        if (pointerRayRenderer != null)
+        {
+            pointerRayRenderer.useWorldSpace = true;
+        }
     }
 
     private void Update() {        
+        UpdatePointerRayRenderer();
+
         // vr
         if(this.KeyDown(triggerRight)){
             OnTriggerRight?.Invoke();
@@ -87,12 +103,88 @@ public class HarvestInputManager : MonoBehaviour
 
     public Vector3 GetSelectedMapPosition()
     {
-        RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(pointer.position, pointer.TransformDirection(Vector3.forward), out hit, 100, placementLayermask))
+        if (TryGetSelectedMapHit(out var hit))
         {
             lastPosition = hit.point;
         }
         return lastPosition;
     }
+
+    public bool TryGetSelectedMapHit(out RaycastHit hit)
+    {
+        int currentFrame = Time.frameCount;
+        if (cachedSelectedMapHitFrame != currentFrame)
+        {
+            cachedSelectedMapHitFrame = currentFrame;
+            hasCachedSelectedMapHit = false;
+            cachedSelectedMapHit = default;
+
+            if (pointer != null)
+            {
+                hasCachedSelectedMapHit = Physics.Raycast(
+                    pointer.position,
+                    pointer.TransformDirection(Vector3.forward),
+                    out cachedSelectedMapHit,
+                    100,
+                    placementLayermask,
+                    QueryTriggerInteraction.Collide
+                );
+            }
+        }
+
+        if (!hasCachedSelectedMapHit)
+        {
+            hit = default;
+            return false;
+        }
+
+        hit = cachedSelectedMapHit;
+        return true;
+    }
+
+    public bool TryGetPointerRotation(out Quaternion rotation)
+    {
+        if (pointer == null)
+        {
+            rotation = Quaternion.identity;
+            return false;
+        }
+
+        rotation = pointer.rotation;
+        return true;
+    }
+
+    public bool TryGetPointerRay(out Ray ray)
+    {
+        if (pointer == null)
+        {
+            ray = default;
+            return false;
+        }
+
+        ray = new Ray(pointer.position, pointer.TransformDirection(Vector3.forward));
+        return true;
+    }
+
+    private void UpdatePointerRayRenderer()
+    {
+        if (pointerRayRenderer == null || pointer == null)
+        {
+            return;
+        }
+
+        Vector3 start = pointer.position;
+        Vector3 direction = pointer.TransformDirection(Vector3.forward);
+        Vector3 end = start + (direction * pointerRayLength);
+
+        if (TryGetSelectedMapHit(out var hit))
+        {
+            end = hit.point;
+        }
+
+        pointerRayRenderer.positionCount = 2;
+        pointerRayRenderer.SetPosition(0, start);
+        pointerRayRenderer.SetPosition(1, end);
+    }
+
 }
