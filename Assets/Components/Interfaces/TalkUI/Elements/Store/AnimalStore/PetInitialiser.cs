@@ -6,12 +6,12 @@ using static Definitions;
 public class PetInitialiser : MonoBehaviour
 {
     public AudioClip buySound;
-    private HarvestDataTypes.Item item;
+    private HarvestDataTypes.StoreProduct item;
     public Text nameLabel;
     public StoreItemsLister storeItemsLister;
     public GameObject boughtPetMessage;
 
-    public void SetItem(HarvestDataTypes.Item item)
+    public void SetItem(HarvestDataTypes.StoreProduct item)
     {
         this.item = item;
     }
@@ -20,7 +20,11 @@ public class PetInitialiser : MonoBehaviour
     {
         GameState.Instance.DecreaseMoneyByAmount(item.buyPrice);
         BNG.VRUtils.Instance.PlaySpatialClipAt(buySound, transform.position, 0.6f, 1f, 0.05f);
-        GameState.Instance.unlock(item.itemId, 1);
+        string unlockableKey = string.IsNullOrWhiteSpace(item.unlockableId) ? item.id : item.unlockableId;
+        if (!string.IsNullOrWhiteSpace(unlockableKey))
+        {
+            GameState.Instance.unlock(unlockableKey, 1);
+        }
 
         storeItemsLister.RefreshStoreRows();
         gameObject.SetActive(false);
@@ -54,22 +58,24 @@ public class PetInitialiser : MonoBehaviour
 
     private List<Animal> getSaveLocation()
     {
-        if (item.itemId == "Chicken")
+        string animalId = item != null ? item.id : string.Empty;
+
+        if (animalId == "Chicken")
         {
             return GameState.Instance.animals["chickens"];
         }
 
-        if (item.itemId == "Cow")
+        if (animalId == "Cow")
         {
             return GameState.Instance.animals["cows"];
         }
 
-        if (item.itemId == "Sheep")
+        if (animalId == "Sheep")
         {
             return GameState.Instance.animals["sheep"];
         }
 
-        if (item.itemId == "Pig")
+        if (animalId == "Pig")
         {
             return GameState.Instance.animals["pigs"];
         }

@@ -7,6 +7,11 @@ public class ItemPreviewer : MonoBehaviour
     public SnapZone snapZone;
     public void Spawn(HarvestDataTypes.Item item)
     {
+        Spawn(HarvestDataTypes.StoreProduct.FromItem(item));
+    }
+
+    public void Spawn(HarvestDataTypes.StoreProduct item)
+    {
         if (!snapZone)
         {
             return;
@@ -27,10 +32,15 @@ public class ItemPreviewer : MonoBehaviour
         InstantiateAndGrab(snapZone, item);
     }
 
-    private void InstantiateAndGrab(SnapZone snapZone, HarvestDataTypes.Item item)
+    private void InstantiateAndGrab(SnapZone snapZone, HarvestDataTypes.StoreProduct item)
     {
-        var newItem = Definitions.InstantiateItemNew(item.prefab == null 
-            ? DatabaseManager.Instance.items.fallbackItem.prefab 
+        if (item.sourceUnlockableDefinition != null && item.prefab == null)
+        {
+            return;
+        }
+
+        var newItem = Definitions.InstantiateItemNew(item.prefab == null
+            ? DatabaseManager.Instance.items.fallbackItem.prefab
             : item.prefab
         );
         var grabbableIsNotParent = newItem.GetComponent<GrabbableInDifferentLocation>();

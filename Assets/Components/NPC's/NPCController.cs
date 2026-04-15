@@ -60,6 +60,27 @@ public class NPCController : MonoBehaviour
         }
     }
 
+    public void GiveStoreProduct(HarvestDataTypes.StoreProduct product)
+    {
+        var snapZone = handSlot.GetComponent<SnapZone>();
+        bool hasPrefab = product != null && product.prefab != null;
+
+        if (snapZone.HeldItem != null)
+        {
+            snapZone.HeldItem.GetComponent<ItemStack>().IncreaseStack(1);
+            return;
+        }
+
+        HoldOutHand();
+        GameObject spawnedRewardItem = Definitions.InstantiateItemNew(
+            hasPrefab
+                ? product.prefab
+                : DatabaseManager.Instance.items.fallbackItem.prefab
+        );
+
+        snapZone.GrabGrabbable(spawnedRewardItem.GetComponent<Grabbable>());
+    }
+
     public void ReleaseItemWithoutCallingEvent()
     {
         dontInvokeEvent = true;

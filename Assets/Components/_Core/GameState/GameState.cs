@@ -188,6 +188,21 @@ public class CurrentGameState {
         return unlockables[item.itemId] >= item.maximumTimesOwned;
     }
 
+    public bool ownsMaximumNumber(string unlockableId, int maximumTimesOwned)
+    {
+        if (maximumTimesOwned <= 0 || string.IsNullOrWhiteSpace(unlockableId))
+        {
+            return false;
+        }
+
+        if (!unlockables.ContainsKey(unlockableId))
+        {
+            return false;
+        }
+
+        return unlockables[unlockableId] >= maximumTimesOwned;
+    }
+
     public event Action OnToggleMode;
     private string currentMode = "default";
 

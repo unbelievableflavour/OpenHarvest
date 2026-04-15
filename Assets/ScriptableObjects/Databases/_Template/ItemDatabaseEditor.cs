@@ -10,7 +10,6 @@ namespace HarvestDataTypes
     {
         private List<string> includedFolders = new List<string>() {
             "Assets/ScriptableObjects/Items/",
-            "Assets/ScriptableObjects/Unlockables/", //Might wanna move these two out
             "Assets/ScriptableObjects/Animals/" //Might wanna move these two out
         };
 

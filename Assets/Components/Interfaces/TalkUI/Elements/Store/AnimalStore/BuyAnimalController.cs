@@ -5,18 +5,18 @@ public class BuyAnimalController : MonoBehaviour
 {
     public Text buttonLabel;
     public Button button;
-    public HarvestDataTypes.Item item;
+    public HarvestDataTypes.StoreProduct item;
 
     private StoreItemsLister storeItemsLister;
 
-    public void SetItem(HarvestDataTypes.Item item)
+    public void SetItem(HarvestDataTypes.StoreProduct item)
     {
         button.interactable = true;
         this.item = item;
 
-        if (item.DependsOnBeforeBuyingItem != null && !GameState.Instance.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
+        if (!string.IsNullOrWhiteSpace(item.dependsOnId) && !GameState.Instance.isUnlocked(item.dependsOnId))
         {
-            setButtonToDependsOnOtherItem(item.DependsOnBeforeBuyingItem);
+            setButtonToDependsOnOtherItem(item.dependsOnId);
             return;
         }
 
@@ -54,19 +54,21 @@ public class BuyAnimalController : MonoBehaviour
 
     public bool hasBoughtMaximum()
     {
-        return GameState.Instance.ownsMaximumNumber(item);
+        string ownedCountKey = GetOwnedCountKey(item);
+        return GameState.Instance.ownsMaximumNumber(ownedCountKey, item.maximumTimesOwned);
     }
 
     private bool isAlreadyUnlocked()
     {
-        return GameState.Instance.isUnlocked(item.itemId);
+        string ownedCountKey = GetOwnedCountKey(item);
+        return GameState.Instance.isUnlocked(ownedCountKey);
     }
 
-    private void setButtonToDependsOnOtherItem(HarvestDataTypes.Item item)
+    private void setButtonToDependsOnOtherItem(string dependsOnId)
     {
         button.interactable = false;
         var newText = buttonLabel;
-        newText.text = "Buy " + item.name + " first!";
+        newText.text = "Buy " + dependsOnId + " first!";
     }
 
     private void setButtonToAlreadyBought()
@@ -114,7 +116,7 @@ public class BuyAnimalController : MonoBehaviour
         storeItemsLister = newStoreItemsLister;
     }
 
-    public void LockStoreItem(HarvestDataTypes.Item currentBoughtItem)
+    public void LockStoreItem(HarvestDataTypes.StoreProduct currentBoughtItem)
     {
         if (item == currentBoughtItem)
         {
@@ -123,5 +125,20 @@ public class BuyAnimalController : MonoBehaviour
         button.interactable = false;
         var newText = buttonLabel;
         newText.text = "Pickup bought item first";
+    }
+
+    private static string GetOwnedCountKey(HarvestDataTypes.StoreProduct product)
+    {
+        if (product == null)
+        {
+            return string.Empty;
+        }
+
+        if (!string.IsNullOrWhiteSpace(product.ownedCountId))
+        {
+            return product.ownedCountId;
+        }
+
+        return string.IsNullOrWhiteSpace(product.unlockableId) ? product.id : product.unlockableId;
     }
 }

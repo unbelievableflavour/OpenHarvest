@@ -6,10 +6,10 @@ public class ItemRow : MonoBehaviour
     public Text buttonLabel;
     public Button button;
 
-    private HarvestDataTypes.Item item;
+    private HarvestDataTypes.StoreProduct item;
     private StoreItemsLister storeItemsLister;
 
-    public void SetItem(HarvestDataTypes.Item item)
+    public void SetItem(HarvestDataTypes.StoreProduct item)
     {
         this.item = item;
         RefreshButton();
@@ -18,14 +18,15 @@ public class ItemRow : MonoBehaviour
     private void RefreshButton()
     {
         button.interactable = true;
+        string ownedCountKey = !string.IsNullOrWhiteSpace(item.ownedCountId) ? item.ownedCountId : (string.IsNullOrWhiteSpace(item.unlockableId) ? item.id : item.unlockableId);
 
-        if (item.DependsOnBeforeBuyingItem != null && !GameState.Instance.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
+        if (!string.IsNullOrWhiteSpace(item.dependsOnId) && !GameState.Instance.isUnlocked(item.dependsOnId))
         {
-            setButtonToDependsOnOtherItem(item.DependsOnBeforeBuyingItem);
+            setButtonToDependsOnOtherItem(item.dependsOnId);
             return;
         }
 
-        if (GameState.Instance.isUnlocked(item.itemId) && GameState.Instance.ownsMaximumNumber(item))
+        if (GameState.Instance.isUnlocked(ownedCountKey) && GameState.Instance.ownsMaximumNumber(ownedCountKey, item.maximumTimesOwned))
         {
             buttonLabel.text = "Maximum owned amount of item reached";
             return;
@@ -40,9 +41,9 @@ public class ItemRow : MonoBehaviour
         buttonLabel.text = "Buy (" + item.buyPrice + ")";
     }
 
-    private void setButtonToDependsOnOtherItem(HarvestDataTypes.Item item)
+    private void setButtonToDependsOnOtherItem(string dependsOnId)
     {
-        buttonLabel.text = "Buy " + item.name + " first!";
+        buttonLabel.text = "Buy " + dependsOnId + " first!";
     }
 
     private bool hasEnoughMoney()
@@ -63,7 +64,7 @@ public class ItemRow : MonoBehaviour
 
     public void ResetItemDetailsLabel()
     {
-        storeItemsLister.itemPreviewer.Spawn(null);
+        storeItemsLister.itemPreviewer.Spawn((HarvestDataTypes.StoreProduct)null);
     }
 
     public void Refresh()
@@ -76,7 +77,7 @@ public class ItemRow : MonoBehaviour
         storeItemsLister = newStoreItemsLister;
     }
 
-    public void LockStoreItem(HarvestDataTypes.Item currentBoughtItem)
+    public void LockStoreItem(HarvestDataTypes.StoreProduct currentBoughtItem)
     {
         if (item == currentBoughtItem)
         {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using HarvestDataTypes;
+using ObjectData = HarvestDataTypes.PlaceableObject;
 
 public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 {
@@ -21,7 +23,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     private GameObject mouseIndicator;
     
     [SerializeField]
-    private ObjectsDatabaseSO database;
+    private PlaceableObjectDatabase database;
 
     private int selectedObjectIndex = -1;
 
@@ -29,6 +31,21 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 
     [SerializeField]
     private PreviewSystem preview;
+
+    [Header("Placement Surface")]
+    [SerializeField]
+    [Tooltip("Layers the placement pointer can target for placing/moving objects.")]
+    private LayerMask placementSurfaceLayers = Physics.DefaultRaycastLayers;
+
+    [Header("Stacked Placement")]
+    [SerializeField]
+    [Tooltip("Stackable placeables can only be placed on colliders in these layers.")]
+    private LayerMask childPlacementSupportLayers = ~0;
+
+    [Header("Wall Placement")]
+    [SerializeField]
+    [Tooltip("Maximum absolute Y value of a surface normal to be considered a wall.")]
+    private float wallSurfaceMaxNormalY = 0.35f;
 
     [Header("Debug")]
     [SerializeField]
@@ -65,7 +82,9 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     private Quaternion lastXrPointerRotation = Quaternion.identity;
     private bool placementPreviewDirty = false;
     private Collider currentPlacementTargetCollider = null;
-    private readonly Dictionary<int, Bounds> cachedLocalBoundsByObjectId = new Dictionary<int, Bounds>();
+    private Vector3 currentPlacementHitNormal = Vector3.up;
+    private bool hasCurrentPlacementHitNormal = false;
+    private readonly Dictionary<string, Bounds> cachedLocalBoundsByObjectId = new Dictionary<string, Bounds>();
     private bool hasDebugCandidateBounds = false;
     private bool debugCandidateOverlapping = false;
     private Vector3 debugCandidateCenter = Vector3.zero;
@@ -239,18 +258,27 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             return;
         }
 
-        int selectedObjectId = database.objectsData[selectedObjectIndex].ID;
+        int selectedObjectId = selectedObjectIndex;
         bool placementValidity = CheckPlacementValidity(mousePosition, selectedObjectId);
         if (!placementValidity)
         {
             return;
         }
 
-        PlaceStructureWithoutPreview(mousePosition, selectedObjectId);
+        ObjectData selectedObjectData = database != null &&
+            database.objectsData != null &&
+            selectedObjectId >= 0 &&
+            selectedObjectId < database.objectsData.Count
+            ? database.objectsData[selectedObjectId]
+            : null;
+        GameObject supportObject = ResolveSupportObjectForPlacement(selectedObjectData);
+        Quaternion placementRotation = GetCurrentPlacementRotation();
+
+        PlaceStructureWithoutPreview(mousePosition, selectedObjectId, supportObject, placementRotation);
         ConsumeSelectedPlacementItem();
         OnPlacementInventoryChanged?.Invoke();
         NotifyPlacementSelectionChanged();
-        preview.UpdatePosition(mousePosition, true, Quaternion.Euler(0f, currentRotationY, 0f));
+        preview.UpdatePosition(mousePosition, true, placementRotation);
     }
 
     private void HandleDeleteAction(Collider hitCollider)
@@ -283,10 +311,21 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             return;
         }
 
-        Quaternion moveRotation = Quaternion.Euler(0f, currentRotationY, 0f);
+        Quaternion moveRotation = GetCurrentPlacementRotation();
         if (!CheckPlacementValidityForExistingObject(pendingMoveObject, mousePosition, moveRotation))
         {
             return;
+        }
+
+        GameObject moveSupportObject = ResolveSupportObjectForExistingObject(pendingMoveObject);
+        if (moveSupportObject != null && moveSupportObject != pendingMoveObject)
+        {
+            pendingMoveObject.transform.SetParent(moveSupportObject.transform, true);
+        }
+        else
+        {
+            // Detach when no valid support is targeted anymore.
+            pendingMoveObject.transform.SetParent(null, true);
         }
 
         pendingMoveObject.transform.position = mousePosition;
@@ -322,7 +361,11 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         }
     }
 
-    public void PlaceStructureWithoutPreview(Vector3 worldPosition, int objectId)
+    public void PlaceStructureWithoutPreview(
+        Vector3 worldPosition,
+        int objectId,
+        GameObject supportObject = null,
+        Quaternion? worldRotation = null)
     {
         int resolvedIndex = ResolveObjectIndex(objectId);
         if (resolvedIndex == -1)
@@ -333,7 +376,12 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 
         GameObject newObject = Instantiate(database.objectsData[resolvedIndex].prefab);
         newObject.transform.position = worldPosition;
-        newObject.transform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
+        newObject.transform.rotation = worldRotation ?? Quaternion.Euler(0f, currentRotationY, 0f);
+        if (supportObject != null && supportObject != newObject)
+        {
+            // Keep world-space transform while attaching, so stacked children follow parent movement.
+            newObject.transform.SetParent(supportObject.transform, true);
+        }
         EnsurePlacementBlocker(newObject);
         placedGameObjects.Add(newObject);
     }
@@ -357,13 +405,28 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             return false;
         }
 
-        if (IsHitPlacedObject(currentPlacementTargetCollider))
+        bool hitPlacedObject = TryGetCurrentPlacementSupportObject(out GameObject hitSupportObject);
+        GameObject supportObject = objectData.canBePlacedOnPlacedObjects ? hitSupportObject : null;
+        if (!objectData.canBePlacedOnPlacedObjects && hitPlacedObject)
+        {
+            return false;
+        }
+        if (objectData.canBePlacedOnPlacedObjects && hitPlacedObject && !IsChildSupportLayerAllowed(currentPlacementTargetCollider))
+        {
+            return false;
+        }
+        bool isWallSurface = IsCurrentPlacementSurfaceWall();
+        if (objectData.canBePlacedOnWall && !isWallSurface)
+        {
+            return false;
+        }
+        if (!objectData.canBePlacedOnWall && isWallSurface)
         {
             return false;
         }
 
-        Quaternion placementRotation = Quaternion.Euler(0f, currentRotationY, 0f);
-        if (WouldOverlapPlacedObjects(objectData, worldPosition, placementRotation))
+        Quaternion placementRotation = GetCurrentPlacementRotation();
+        if (WouldOverlapPlacedObjects(objectData, worldPosition, placementRotation, supportObject))
         {
             return false;
         }
@@ -378,7 +441,30 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             return false;
         }
 
-        if (IsHitPlacedObject(currentPlacementTargetCollider))
+        bool allowPlacementOnPlacedObjects = TryGetObjectDataForPlacedObject(existingObject, out ObjectData existingObjectData) &&
+            existingObjectData != null &&
+            existingObjectData.canBePlacedOnPlacedObjects;
+
+        if (!allowPlacementOnPlacedObjects && TryGetCurrentPlacementSupportObject(out _))
+        {
+            return false;
+        }
+        if (allowPlacementOnPlacedObjects &&
+            TryGetCurrentPlacementSupportObject(out _) &&
+            !IsChildSupportLayerAllowed(currentPlacementTargetCollider))
+        {
+            return false;
+        }
+        bool isWallSurface = IsCurrentPlacementSurfaceWall();
+        if (existingObjectData != null &&
+            existingObjectData.canBePlacedOnWall &&
+            !isWallSurface)
+        {
+            return false;
+        }
+        if (existingObjectData != null &&
+            !existingObjectData.canBePlacedOnWall &&
+            isWallSurface)
         {
             return false;
         }
@@ -399,12 +485,20 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             hasPendingMoveLocalBounds = true;
         }
 
-        return !WouldOverlapPlacedObjects(worldPosition, worldRotation, localBounds);
+        GameObject supportObject = allowPlacementOnPlacedObjects
+            ? ResolveSupportObjectForExistingObject(existingObject)
+            : null;
+        return !WouldOverlapPlacedObjects(worldPosition, worldRotation, localBounds, supportObject);
     }
 
     private int ResolveObjectIndex(int objectIdOrIndex)
     {
-        int idMatch = database.objectsData.FindIndex(data => data.ID == objectIdOrIndex);
+        if (database == null || database.objectsData == null || database.objectsData.Count == 0)
+        {
+            return -1;
+        }
+
+        int idMatch = database.objectsData.FindIndex(data => ParseNumericObjectId(data) == objectIdOrIndex);
         if (idMatch >= 0)
         {
             return idMatch;
@@ -422,15 +516,25 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     {
         position = Vector3.zero;
         hitCollider = null;
+        hasCurrentPlacementHitNormal = false;
 
         // Unified aiming source is handled by HarvestInputManager:
         // - FPS: center-camera ray
         // - XR/VR: controller pointer ray
+        int raycastMask = placementSurfaceLayers.value;
+        if (ShouldIncludeChildSupportLayersInPlacementRaycast())
+        {
+            raycastMask |= childPlacementSupportLayers.value;
+        }
+
         if (HarvestInputManager.Instance != null &&
-            HarvestInputManager.Instance.TryGetSelectedMapHit(out var mappedHit))
+            HarvestInputManager.Instance.TryGetPointerRay(out var pointerRay) &&
+            Physics.Raycast(pointerRay, out var mappedHit, 100f, raycastMask, QueryTriggerInteraction.Collide))
         {
             position = mappedHit.point;
             hitCollider = mappedHit.collider;
+            currentPlacementHitNormal = mappedHit.normal;
+            hasCurrentPlacementHitNormal = true;
             return true;
         }
 
@@ -574,7 +678,11 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         }
     }
 
-    private bool WouldOverlapPlacedObjects(ObjectData objectData, Vector3 worldPosition, Quaternion worldRotation)
+    private bool WouldOverlapPlacedObjects(
+        ObjectData objectData,
+        Vector3 worldPosition,
+        Quaternion worldRotation,
+        GameObject ignoredPlacedObject = null)
     {
         if (!TryGetLocalBoundsForObject(objectData, out var localBounds))
         {
@@ -582,10 +690,14 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             return false;
         }
 
-        return WouldOverlapPlacedObjects(worldPosition, worldRotation, localBounds);
+        return WouldOverlapPlacedObjects(worldPosition, worldRotation, localBounds, ignoredPlacedObject);
     }
 
-    private bool WouldOverlapPlacedObjects(Vector3 worldPosition, Quaternion worldRotation, Bounds localBounds)
+    private bool WouldOverlapPlacedObjects(
+        Vector3 worldPosition,
+        Quaternion worldRotation,
+        Bounds localBounds,
+        GameObject ignoredPlacedObject = null)
     {
         Vector3 worldCenter = worldPosition + (worldRotation * localBounds.center);
         Vector3 halfExtents = localBounds.extents;
@@ -621,6 +733,14 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
                 continue;
             }
 
+            Transform blockerParent = hit.transform.parent;
+            if (ignoredPlacedObject != null &&
+                blockerParent != null &&
+                blockerParent.gameObject == ignoredPlacedObject)
+            {
+                continue;
+            }
+
             debugCandidateOverlapping = true;
             return true;
         }
@@ -636,7 +756,8 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             return false;
         }
 
-        if (cachedLocalBoundsByObjectId.TryGetValue(objectData.ID, out localBounds))
+        string cacheKey = GetObjectCacheKey(objectData);
+        if (cachedLocalBoundsByObjectId.TryGetValue(cacheKey, out localBounds))
         {
             return true;
         }
@@ -646,7 +767,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             return false;
         }
 
-        cachedLocalBoundsByObjectId[objectData.ID] = localBounds;
+        cachedLocalBoundsByObjectId[cacheKey] = localBounds;
         return true;
     }
 
@@ -688,6 +809,214 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         }
 
         return false;
+    }
+
+    private bool CanCurrentSelectionBePlacedOnPlacedObjects()
+    {
+        if (database == null ||
+            database.objectsData == null ||
+            selectedObjectIndex < 0 ||
+            selectedObjectIndex >= database.objectsData.Count)
+        {
+            return false;
+        }
+
+        ObjectData selectedObject = database.objectsData[selectedObjectIndex];
+        return selectedObject != null && selectedObject.canBePlacedOnPlacedObjects;
+    }
+
+    private GameObject ResolveSupportObjectForPlacement(ObjectData objectData)
+    {
+        if (objectData == null || !objectData.canBePlacedOnPlacedObjects)
+        {
+            return null;
+        }
+
+        if (!IsChildSupportLayerAllowed(currentPlacementTargetCollider))
+        {
+            return null;
+        }
+
+        if (!TryGetCurrentPlacementSupportObject(out var supportObject))
+        {
+            return null;
+        }
+
+        return supportObject;
+    }
+
+    private GameObject ResolveSupportObjectForExistingObject(GameObject existingObject)
+    {
+        if (existingObject == null)
+        {
+            return null;
+        }
+
+        if (!TryGetObjectDataForPlacedObject(existingObject, out ObjectData objectData) ||
+            objectData == null ||
+            !objectData.canBePlacedOnPlacedObjects)
+        {
+            return null;
+        }
+
+        if (!IsChildSupportLayerAllowed(currentPlacementTargetCollider))
+        {
+            return null;
+        }
+
+        if (!TryGetCurrentPlacementSupportObject(out var supportObject))
+        {
+            return null;
+        }
+
+        if (supportObject == existingObject)
+        {
+            return null;
+        }
+        return supportObject;
+    }
+
+    private bool TryGetObjectDataForPlacedObject(GameObject placedObject, out ObjectData objectData)
+    {
+        objectData = null;
+        if (placedObject == null || database == null || database.objectsData == null)
+        {
+            return false;
+        }
+
+        string cleanName = placedObject.name.Replace("(Clone)", string.Empty).Trim();
+        for (int i = 0; i < database.objectsData.Count; i++)
+        {
+            ObjectData candidate = database.objectsData[i];
+            if (candidate == null)
+            {
+                continue;
+            }
+
+            string candidateId = candidate.placeableObjectId ?? string.Empty;
+            string candidateName = candidate.name ?? string.Empty;
+            string prefabName = candidate.prefab != null ? candidate.prefab.name : string.Empty;
+
+            if (string.Equals(candidateId, cleanName, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(candidateName, cleanName, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(prefabName, cleanName, StringComparison.OrdinalIgnoreCase))
+            {
+                objectData = candidate;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool TryGetCurrentPlacementSupportObject(out GameObject supportObject)
+    {
+        supportObject = null;
+        if (currentPlacementTargetCollider == null)
+        {
+            return false;
+        }
+
+        return TryGetPlacedObjectRoot(currentPlacementTargetCollider, out supportObject);
+    }
+
+    private bool IsChildSupportLayerAllowed(Collider supportCollider)
+    {
+        if (supportCollider == null)
+        {
+            return false;
+        }
+
+        return (childPlacementSupportLayers.value & (1 << supportCollider.gameObject.layer)) != 0;
+    }
+
+    private bool ShouldIncludeChildSupportLayersInPlacementRaycast()
+    {
+        if (currentToolMode == PlacementToolMode.Place)
+        {
+            return CanCurrentSelectionBePlacedOnPlacedObjects();
+        }
+
+        if (currentToolMode == PlacementToolMode.Move &&
+            pendingMoveObject != null &&
+            TryGetObjectDataForPlacedObject(pendingMoveObject, out ObjectData pendingMoveObjectData) &&
+            pendingMoveObjectData != null)
+        {
+            return pendingMoveObjectData.canBePlacedOnPlacedObjects;
+        }
+
+        return false;
+    }
+
+    private Quaternion GetCurrentPlacementRotation()
+    {
+        Quaternion defaultRotation = Quaternion.Euler(0f, currentRotationY, 0f);
+        ObjectData objectData = GetCurrentRotationObjectData();
+        if (objectData == null || !objectData.canBePlacedOnWall)
+        {
+            return defaultRotation;
+        }
+
+        if (!TryGetCurrentWallNormal(out var wallNormal))
+        {
+            return defaultRotation;
+        }
+
+        Vector3 forward = Vector3.ProjectOnPlane(wallNormal, Vector3.up);
+        if (forward.sqrMagnitude <= 0.0001f)
+        {
+            forward = wallNormal;
+        }
+
+        if (forward.sqrMagnitude <= 0.0001f)
+        {
+            return defaultRotation;
+        }
+
+        return Quaternion.LookRotation(forward.normalized, Vector3.up);
+    }
+
+    private ObjectData GetCurrentRotationObjectData()
+    {
+        if (currentToolMode == PlacementToolMode.Place &&
+            database != null &&
+            database.objectsData != null &&
+            selectedObjectIndex >= 0 &&
+            selectedObjectIndex < database.objectsData.Count)
+        {
+            return database.objectsData[selectedObjectIndex];
+        }
+
+        if (currentToolMode == PlacementToolMode.Move &&
+            pendingMoveObject != null &&
+            TryGetObjectDataForPlacedObject(pendingMoveObject, out ObjectData pendingObjectData))
+        {
+            return pendingObjectData;
+        }
+
+        return null;
+    }
+
+    private bool IsCurrentPlacementSurfaceWall()
+    {
+        return TryGetCurrentWallNormal(out _);
+    }
+
+    private bool TryGetCurrentWallNormal(out Vector3 wallNormal)
+    {
+        wallNormal = Vector3.zero;
+        if (!hasCurrentPlacementHitNormal)
+        {
+            return false;
+        }
+
+        if (Mathf.Abs(currentPlacementHitNormal.y) > wallSurfaceMaxNormalY)
+        {
+            return false;
+        }
+
+        wallNormal = currentPlacementHitNormal.normalized;
+        return wallNormal.sqrMagnitude > 0.0001f;
     }
 
     private void HandlePlacementRotationInput()
@@ -766,7 +1095,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     }
 
     private void OnPreviousItem () {
-        if (database.objectsData.Count == 0 || selectedObjectIndex < 0)
+        if (database == null || database.objectsData == null || database.objectsData.Count == 0 || selectedObjectIndex < 0)
         {
             return;
         }
@@ -776,7 +1105,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     }
 
     private void OnNextItem () {
-        if (database.objectsData.Count == 0 || selectedObjectIndex < 0)
+        if (database == null || database.objectsData == null || database.objectsData.Count == 0 || selectedObjectIndex < 0)
         {
             return;
         }
@@ -1104,14 +1433,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             return lookupKeys;
         }
 
-        if (objectData.unlockableIds != null)
-        {
-            for (int i = 0; i < objectData.unlockableIds.Count; i++)
-            {
-                AddLookupKeyIfMissing(lookupKeys, objectData.unlockableIds[i]);
-            }
-        }
-
+        AddLookupKeyIfMissing(lookupKeys, objectData.placeableObjectId);
         AddLookupKeyIfMissing(lookupKeys, objectData.name);
         if (objectData.prefab != null)
         {
@@ -1125,6 +1447,36 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     {
         List<string> lookupKeys = GetUnlockableLookupKeys(objectData);
         return lookupKeys.Count > 0 ? lookupKeys[0] : string.Empty;
+    }
+
+    private static string GetObjectCacheKey(ObjectData objectData)
+    {
+        if (objectData == null)
+        {
+            return string.Empty;
+        }
+
+        if (!string.IsNullOrWhiteSpace(objectData.placeableObjectId))
+        {
+            return objectData.placeableObjectId;
+        }
+
+        return objectData.prefab != null ? objectData.prefab.name : objectData.name;
+    }
+
+    private static int ParseNumericObjectId(ObjectData objectData)
+    {
+        if (objectData == null || string.IsNullOrWhiteSpace(objectData.placeableObjectId))
+        {
+            return int.MinValue;
+        }
+
+        if (int.TryParse(objectData.placeableObjectId, out int id))
+        {
+            return id;
+        }
+
+        return int.MinValue;
     }
 
     private static void AddLookupKeyIfMissing(List<string> keys, string key)
@@ -1323,7 +1675,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             return -1;
         }
 
-        return database.objectsData[selectedObjectIndex].ID;
+        return selectedObjectIndex;
     }
 
     bool IPlacementToolHost.CheckPlacementValidity(Vector3 worldPosition, int objectId)
@@ -1333,7 +1685,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 
     Quaternion IPlacementToolHost.GetCurrentPlacementRotation()
     {
-        return Quaternion.Euler(0f, currentRotationY, 0f);
+        return GetCurrentPlacementRotation();
     }
 
     void IPlacementToolHost.SetMouseIndicatorPosition(Vector3 worldPosition)

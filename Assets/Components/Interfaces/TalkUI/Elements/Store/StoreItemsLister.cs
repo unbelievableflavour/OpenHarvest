@@ -19,8 +19,8 @@ public class StoreItemsLister : MonoBehaviour
     private string storeIdFunctional;
     private string storeIdDecorational;
 
-    private List<HarvestDataTypes.Item> decorationalItemsInStore = new List<HarvestDataTypes.Item>();
-    private List<HarvestDataTypes.Item> functionalItemsInStore = new List<HarvestDataTypes.Item>();
+    private List<HarvestDataTypes.StoreProduct> decorationalItemsInStore = new List<HarvestDataTypes.StoreProduct>();
+    private List<HarvestDataTypes.StoreProduct> functionalItemsInStore = new List<HarvestDataTypes.StoreProduct>();
 
     public GameObject petInitialiser;
 
@@ -73,7 +73,7 @@ public class StoreItemsLister : MonoBehaviour
         fillStore(functionalItemsInStore, functionalButton);
     }
 
-    private void fillStore(List<HarvestDataTypes.Item> selectedTabItemsInStore, GameObject currentButton)
+    private void fillStore(List<HarvestDataTypes.StoreProduct> selectedTabItemsInStore, GameObject currentButton)
     {
 
         ClearStore();
@@ -83,28 +83,28 @@ public class StoreItemsLister : MonoBehaviour
             return;
         }
 
-        foreach (HarvestDataTypes.Item item in selectedTabItemsInStore)
+        foreach (HarvestDataTypes.StoreProduct product in selectedTabItemsInStore)
         {
-            if (item == null)
+            if (product == null)
             {
                 continue;
             }
 
-            GameObject row = Instantiate(animalsList.Contains(item.itemId) ? animalRowPrefab : itemRowPrefab) as GameObject;
+            GameObject row = Instantiate(animalsList.Contains(product.id) ? animalRowPrefab : itemRowPrefab) as GameObject;
             row.SetActive(true);
             var text = row.GetComponentInChildren<Text>();
-            text.text = item.name;
+            text.text = product.displayName;
             row.transform.SetParent(scrollViewContent, false);
 
             var animalRow = row.GetComponentInChildren<BuyAnimalController>();
             if (animalRow)
             {
-                animalRow.SetItem(item);
+                animalRow.SetItem(product);
                 animalRow.SetItemLister(this);
                 continue;
             }
             var itemRow = row.GetComponentInChildren<ItemRow>();
-            itemRow.SetItem(item);
+            itemRow.SetItem(product);
             itemRow.SetStoreItemsLister(this);
         }
     }
@@ -125,7 +125,7 @@ public class StoreItemsLister : MonoBehaviour
         }
     }
 
-    public void LockStore(HarvestDataTypes.Item currentBoughtItem)
+    public void LockStore(HarvestDataTypes.StoreProduct currentBoughtItem)
     {
         foreach (Transform item in scrollViewContent)
         {
@@ -160,7 +160,7 @@ public class StoreItemsLister : MonoBehaviour
         }
     }
 
-    public void InitialisePet(HarvestDataTypes.Item item)
+    public void InitialisePet(HarvestDataTypes.StoreProduct item)
     {
         petInitialiser.SetActive(true);
         petInitialiser.GetComponent<PetInitialiser>().SetItem(item);

@@ -70,6 +70,24 @@ public class PreviewSystem : MonoBehaviour
         {
             collider.enabled = false;
         }
+
+        Rigidbody[] rigidbodies = previewObject.GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody rigidbody in rigidbodies)
+        {
+            rigidbody.linearVelocity = Vector3.zero;
+            rigidbody.angularVelocity = Vector3.zero;
+            rigidbody.useGravity = false;
+            rigidbody.isKinematic = true;
+            rigidbody.detectCollisions = false;
+        }
+
+        Joint[] joints = previewObject.GetComponentsInChildren<Joint>();
+        foreach (Joint joint in joints)
+        {
+            joint.connectedBody = null;
+            joint.enableCollision = false;
+            Destroy(joint);
+        }
     }
 
     public void StopShowingPreview()

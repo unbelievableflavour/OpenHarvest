@@ -92,23 +92,23 @@ public static class Definitions
         {"plant", new List<string>()},
     };
 
-    public static Dictionary<string, List<HarvestDataTypes.Item>> itemStores = new Dictionary<string, List<HarvestDataTypes.Item>> {
-        {"storeAnimals", new List<HarvestDataTypes.Item>()},
-        {"storeFishingTabFunctional", new List<HarvestDataTypes.Item>()},
-        {"storeFishingTabDecorational", new List<HarvestDataTypes.Item>()},
-        {"storeToolsTabFunctional", new List<HarvestDataTypes.Item>()},
-        {"storeToolsTabDecorational", new List<HarvestDataTypes.Item>()},
-        {"storeArtTabFunctional", new List<HarvestDataTypes.Item>()},
-        {"storeArtTabDecorational", new List<HarvestDataTypes.Item>()},
-        {"storeSeedsTabFunctional", new List<HarvestDataTypes.Item>()},
-        {"storeSeedsTabDecorational", new List<HarvestDataTypes.Item>()},
-        {"storeArtisanTabFunctional", new List<HarvestDataTypes.Item>()},
-        {"storeArtisanTabDecorational", new List<HarvestDataTypes.Item>()},
-        {"storeDecorationsTabFunctional", new List<HarvestDataTypes.Item>()},
-        {"storeDecorationsTabDecorational", new List<HarvestDataTypes.Item>()},
-        {"storeChristmasDecorationsTabDecorational", new List<HarvestDataTypes.Item>()},
-        {"storeCookingTabDecorational", new List<HarvestDataTypes.Item>()},
-        {"storeCookingTabFunctional", new List<HarvestDataTypes.Item>()}
+    public static Dictionary<string, List<HarvestDataTypes.StoreProduct>> itemStores = new Dictionary<string, List<HarvestDataTypes.StoreProduct>> {
+        {"storeAnimals", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeFishingTabFunctional", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeFishingTabDecorational", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeToolsTabFunctional", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeToolsTabDecorational", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeArtTabFunctional", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeArtTabDecorational", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeSeedsTabFunctional", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeSeedsTabDecorational", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeArtisanTabFunctional", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeArtisanTabDecorational", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeDecorationsTabFunctional", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeDecorationsTabDecorational", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeChristmasDecorationsTabDecorational", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeCookingTabDecorational", new List<HarvestDataTypes.StoreProduct>()},
+        {"storeCookingTabFunctional", new List<HarvestDataTypes.StoreProduct>()}
     };
 
     static Definitions()

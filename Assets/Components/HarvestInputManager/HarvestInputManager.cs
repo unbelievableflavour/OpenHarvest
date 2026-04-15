@@ -15,18 +15,12 @@ public class HarvestInputManager : MonoBehaviour
     private Transform pointer;
 
     private Vector3 lastPosition;
-
-    [SerializeField]
-    private LayerMask placementLayermask;
     
     [SerializeField]
     private LineRenderer pointerRayRenderer;
 
     [SerializeField]
     private float pointerRayLength = 100f;
-    private int cachedSelectedMapHitFrame = -1;
-    private bool hasCachedSelectedMapHit = false;
-    private RaycastHit cachedSelectedMapHit;
 
     public event Action OnTriggerRight, OnBButton, OnAButton, OnMenuButton;
         
@@ -112,34 +106,20 @@ public class HarvestInputManager : MonoBehaviour
 
     public bool TryGetSelectedMapHit(out RaycastHit hit)
     {
-        int currentFrame = Time.frameCount;
-        if (cachedSelectedMapHitFrame != currentFrame)
-        {
-            cachedSelectedMapHitFrame = currentFrame;
-            hasCachedSelectedMapHit = false;
-            cachedSelectedMapHit = default;
-
-            if (pointer != null)
-            {
-                hasCachedSelectedMapHit = Physics.Raycast(
-                    pointer.position,
-                    pointer.TransformDirection(Vector3.forward),
-                    out cachedSelectedMapHit,
-                    100,
-                    placementLayermask,
-                    QueryTriggerInteraction.Collide
-                );
-            }
-        }
-
-        if (!hasCachedSelectedMapHit)
+        if (pointer == null)
         {
             hit = default;
             return false;
         }
 
-        hit = cachedSelectedMapHit;
-        return true;
+        return Physics.Raycast(
+            pointer.position,
+            pointer.TransformDirection(Vector3.forward),
+            out hit,
+            100f,
+            Physics.DefaultRaycastLayers,
+            QueryTriggerInteraction.Collide
+        );
     }
 
     public bool TryGetPointerRotation(out Quaternion rotation)
