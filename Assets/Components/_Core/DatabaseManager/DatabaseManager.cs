@@ -7,6 +7,7 @@ public class DatabaseManager : MonoBehaviour
 	public ItemDatabase items;
     public PlaceableObjectDatabase placeableObjects;
     public UnlockableDatabase unlockables;
+    public SceneDatabase scenes;
 
 	public static DatabaseManager Instance = null;
 

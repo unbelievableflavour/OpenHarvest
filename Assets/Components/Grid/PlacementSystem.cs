@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using HarvestDataTypes;
 using ObjectData = HarvestDataTypes.PlaceableObject;
 
@@ -60,13 +61,6 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     [SerializeField]
     private Color overlappingCandidateBoundsColor = new Color(1f, 0f, 0f, 0.9f);
 
-    [Header("Test Data")]
-    [SerializeField]
-    private bool loadTestOwnedItemsOnStart = false;
-
-    [SerializeField]
-    private int testOwnedItemCount = 10;
-
     private Vector3 lastDetectedPosition = Vector3.positiveInfinity;
     private const float PreviewMoveThreshold = 0.01f;
     private const float RotationStepDegrees = 15f;
@@ -92,6 +86,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     private Quaternion debugCandidateRotation = Quaternion.identity;
     private PlacementToolMode activePreviewMode = (PlacementToolMode)(-1);
     private int activePreviewSourceId = int.MinValue;
+    private SceneSettings currentScenePlacementSettings;
 
     public event Action<bool> OnPlacementModeChanged;
     public event Action<string> OnPlacementSelectionChanged;
@@ -105,6 +100,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     }
 
     void Start() {
+        RefreshCurrentScenePlacementSettings();
         SeedTestOwnedItemsIfEnabled();
         StopPlacement();
         OnToggleMode();
@@ -129,7 +125,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 
     private void SeedTestOwnedItemsIfEnabled()
     {
-        if (!loadTestOwnedItemsOnStart || database == null || database.objectsData == null)
+        if (!ShouldSeedPlaceableObjectsOnStart() || database == null || database.objectsData == null)
         {
             return;
         }
@@ -140,7 +136,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         }
 
         int seededCount = 0;
-        int amount = Mathf.Max(0, testOwnedItemCount);
+        int amount = Mathf.Max(0, GetSeedPlaceableObjectCount());
         for (int i = 0; i < database.objectsData.Count; i++)
         {
             ObjectData objectData = database.objectsData[i];
@@ -159,6 +155,33 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         }
 
         Debug.Log("[PlacementSystem] Seeded test ownership for " + seededCount + " placeable items with x" + amount + ".");
+    }
+
+    private bool ShouldSeedPlaceableObjectsOnStart()
+    {
+        return currentScenePlacementSettings != null && currentScenePlacementSettings.seedPlaceableObjectsOnStart;
+    }
+
+    private int GetSeedPlaceableObjectCount()
+    {
+        if (currentScenePlacementSettings == null)
+        {
+            return 10;
+        }
+
+        return currentScenePlacementSettings.seedPlaceableObjectCount;
+    }
+
+    private void RefreshCurrentScenePlacementSettings()
+    {
+        currentScenePlacementSettings = null;
+        if (DatabaseManager.Instance == null || DatabaseManager.Instance.scenes == null)
+        {
+            return;
+        }
+
+        Scene activeScene = SceneManager.GetActiveScene();
+        currentScenePlacementSettings = DatabaseManager.Instance.scenes.FindByScene(activeScene.name, activeScene.buildIndex);
     }
 
     public void OnEnable() {
