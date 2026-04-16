@@ -19,5 +19,9 @@ namespace HarvestDataTypes
         [Tooltip("Owned amount assigned to each placeable during seeding.")]
         [Min(0)]
         public int seedPlaceableObjectCount = 10;
+
+        [Header("Build Mode")]
+        [Tooltip("If disabled, hide build mode entry points in scene UI.")]
+        public bool allowBuildMode = true;
     }
 }
