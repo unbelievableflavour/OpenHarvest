@@ -26,6 +26,10 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
     [SerializeField]
     private PlaceableObjectDatabase database;
 
+    [Header("Global Settings")]
+    [SerializeField]
+    private HarvestSettings harvestSettings;
+
     private int selectedObjectIndex = -1;
 
     private List<GameObject> placedGameObjects = new List<GameObject>();
@@ -159,11 +163,21 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 
     private bool ShouldSeedPlaceableObjectsOnStart()
     {
+        if (harvestSettings != null && harvestSettings.startWithLotsOfPlaceables)
+        {
+            return true;
+        }
+
         return currentScenePlacementSettings != null && currentScenePlacementSettings.seedPlaceableObjectsOnStart;
     }
 
     private int GetSeedPlaceableObjectCount()
     {
+        if (harvestSettings != null && harvestSettings.startWithLotsOfPlaceables)
+        {
+            return 50;
+        }
+
         if (currentScenePlacementSettings == null)
         {
             return 10;

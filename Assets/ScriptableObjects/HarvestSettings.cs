@@ -30,6 +30,13 @@ public class HarvestSettings : ScriptableObject
     public bool enableIngameConsole = false;
     public bool enableDevMode = false;
 
+    [Header("Start Options")]
+    [Tooltip("If enabled, new games start with a large amount of money.")]
+    public bool startWithLotsOfMoney = false;
+
+    [Tooltip("If enabled, new games start with many owned placeable objects.")]
+    public bool startWithLotsOfPlaceables = false;
+
     [Header("Random World Generator")]
     public bool showAllModulesOnStart = false;
     public bool showOverlapColliders = false;
