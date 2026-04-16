@@ -29,6 +29,7 @@ public class SavingController : MonoBehaviour
         save.respawningObjects = GameState.Instance.respawningObjects;
         save.soilGrids = GameState.Instance.soilGrids;
         save.itemStashes = GameState.Instance.itemStashes;
+        save.placedObjectsByScene = GameState.Instance.placedObjectsByScene;
         save.animals = GameState.Instance.animals;
         save.itemsOfTheWeek = GameState.Instance.itemsOfTheWeek;
         save.contractsOfTheWeek = GameState.Instance.contractsOfTheWeek.ToSaveable();
@@ -80,6 +81,7 @@ public class SavingController : MonoBehaviour
         GameState.Instance.respawningObjects = save.respawningObjects;
         GameState.Instance.soilGrids = save.soilGrids;
         GameState.Instance.itemStashes = save.itemStashes;
+        GameState.Instance.placedObjectsByScene = save.placedObjectsByScene;
         GameState.Instance.animals = save.animals;
 
         GameState.Instance.itemsOfTheWeek = save.itemsOfTheWeek;
@@ -149,6 +151,11 @@ public class SavingController : MonoBehaviour
         if (save.itemStashes == null)
         {
             save.itemStashes = GameState.Instance.itemStashes;
+        }
+
+        if (save.placedObjectsByScene == null)
+        {
+            save.placedObjectsByScene = GameState.Instance.placedObjectsByScene;
         }
 
         if (save.soilGrids == null)

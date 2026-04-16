@@ -153,6 +153,7 @@ public class PlacementHandPanel : MonoBehaviour
         ApplyPcInteractionState(panelRoot.activeSelf);
         if (isActive)
         {
+            RebuildItemList();
             RefreshItemButtonTexts();
             RefreshItemButtonHighlights();
             RefreshModeViews();

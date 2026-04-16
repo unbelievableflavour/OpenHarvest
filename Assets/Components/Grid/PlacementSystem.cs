@@ -105,9 +105,11 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 
     void Start() {
         RefreshCurrentScenePlacementSettings();
+        LoadPlacedObjectsForCurrentScene();
         SeedTestOwnedItemsIfEnabled();
         StopPlacement();
         OnToggleMode();
+        OnPlacementInventoryChanged?.Invoke();
     }
 
     private void InitializeToolControllers()
@@ -200,10 +202,18 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 
     public void OnEnable() {
         GameState.Instance.OnToggleMode += OnToggleMode;
+        if (SceneSwitcher.Instance != null)
+        {
+            SceneSwitcher.Instance.beforeSceneSwitch += beforeSceneSwitch;
+        }
     }
 
     public void OnDisable() {
         GameState.Instance.OnToggleMode -= OnToggleMode;
+        if (SceneSwitcher.Instance != null)
+        {
+            SceneSwitcher.Instance.beforeSceneSwitch -= beforeSceneSwitch;
+        }
     }
 
     void OnToggleMode() {
@@ -316,6 +326,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         OnPlacementInventoryChanged?.Invoke();
         NotifyPlacementSelectionChanged();
         preview.UpdatePosition(mousePosition, true, placementRotation);
+        SavePlacedObjectsForCurrentScene();
     }
 
     private void HandleDeleteAction(Collider hitCollider)
@@ -328,6 +339,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         DeletePlacedObject(placedRoot, true);
         OnPlacementInventoryChanged?.Invoke();
         NotifyPlacementSelectionChanged();
+        SavePlacedObjectsForCurrentScene();
     }
 
     private void HandleMoveAction(Vector3 mousePosition, Collider hitCollider)
@@ -371,6 +383,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         RegisterPlacedObjectIfMissing(pendingMoveObject);
         ClearPendingMoveState();
         EnsurePreviewForCurrentToolMode();
+        SavePlacedObjectsForCurrentScene();
     }
 
     private void StopPlacement() {
@@ -398,7 +411,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         }
     }
 
-    public void PlaceStructureWithoutPreview(
+    public GameObject PlaceStructureWithoutPreview(
         Vector3 worldPosition,
         int objectId,
         GameObject supportObject = null,
@@ -408,7 +421,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         if (resolvedIndex == -1)
         {
             Debug.LogWarning("[PlacementSystem] Unable to place object with id/index: " + objectId);
-            return;
+            return null;
         }
 
         GameObject newObject = Instantiate(database.objectsData[resolvedIndex].prefab);
@@ -421,6 +434,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         }
         EnsurePlacementBlocker(newObject);
         placedGameObjects.Add(newObject);
+        return newObject;
     }
 
     public bool CheckPlacementValidity(Vector3 worldPosition, int objectId)
@@ -547,6 +561,186 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         }
 
         return -1;
+    }
+
+    private int ResolveObjectIndex(string objectIdOrName)
+    {
+        if (database == null || database.objectsData == null || database.objectsData.Count == 0 || string.IsNullOrWhiteSpace(objectIdOrName))
+        {
+            return -1;
+        }
+
+        for (int i = 0; i < database.objectsData.Count; i++)
+        {
+            ObjectData objectData = database.objectsData[i];
+            if (objectData == null)
+            {
+                continue;
+            }
+
+            List<string> lookupKeys = GetUnlockableLookupKeys(objectData);
+            for (int keyIndex = 0; keyIndex < lookupKeys.Count; keyIndex++)
+            {
+                if (string.Equals(lookupKeys[keyIndex], objectIdOrName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    private static string GetCurrentScenePlacementKey()
+    {
+        Scene activeScene = SceneManager.GetActiveScene();
+        return activeScene.name + "_" + activeScene.buildIndex;
+    }
+
+    private void LoadPlacedObjectsForCurrentScene()
+    {
+        if (GameState.Instance == null || GameState.Instance.placedObjectsByScene == null)
+        {
+            return;
+        }
+
+        string sceneKey = GetCurrentScenePlacementKey();
+        if (!GameState.Instance.placedObjectsByScene.TryGetValue(sceneKey, out List<SaveablePlacedObject> placedObjects) || placedObjects == null)
+        {
+            return;
+        }
+
+        List<GameObject> loadedObjects = new List<GameObject>(placedObjects.Count);
+        for (int i = 0; i < placedObjects.Count; i++)
+        {
+            SaveablePlacedObject saveablePlacedObject = placedObjects[i];
+            if (saveablePlacedObject == null || string.IsNullOrWhiteSpace(saveablePlacedObject.objectId))
+            {
+                loadedObjects.Add(null);
+                continue;
+            }
+
+            int resolvedIndex = ResolveObjectIndex(saveablePlacedObject.objectId);
+            if (resolvedIndex == -1)
+            {
+                loadedObjects.Add(null);
+                continue;
+            }
+
+            Vector3 worldPosition = new Vector3(
+                saveablePlacedObject.positionX,
+                saveablePlacedObject.positionY,
+                saveablePlacedObject.positionZ
+            );
+            Quaternion worldRotation = new Quaternion(
+                saveablePlacedObject.rotationX,
+                saveablePlacedObject.rotationY,
+                saveablePlacedObject.rotationZ,
+                saveablePlacedObject.rotationW
+            );
+
+            GameObject loadedObject = PlaceStructureWithoutPreview(worldPosition, resolvedIndex, null, worldRotation);
+            loadedObjects.Add(loadedObject);
+        }
+
+        for (int i = 0; i < placedObjects.Count; i++)
+        {
+            SaveablePlacedObject saveablePlacedObject = placedObjects[i];
+            if (saveablePlacedObject == null || !saveablePlacedObject.parentObjectIndex.HasValue)
+            {
+                continue;
+            }
+
+            int parentIndex = saveablePlacedObject.parentObjectIndex.Value;
+            if (parentIndex < 0 || parentIndex >= loadedObjects.Count || parentIndex == i)
+            {
+                continue;
+            }
+
+            GameObject childObject = i < loadedObjects.Count ? loadedObjects[i] : null;
+            GameObject parentObject = loadedObjects[parentIndex];
+            if (childObject == null || parentObject == null)
+            {
+                continue;
+            }
+
+            childObject.transform.SetParent(parentObject.transform, true);
+        }
+    }
+
+    private void SavePlacedObjectsForCurrentScene()
+    {
+        if (GameState.Instance == null)
+        {
+            return;
+        }
+
+        if (GameState.Instance.placedObjectsByScene == null)
+        {
+            GameState.Instance.placedObjectsByScene = new Dictionary<string, List<SaveablePlacedObject>>();
+        }
+
+        List<GameObject> serializablePlacedObjects = new List<GameObject>();
+        for (int i = 0; i < placedGameObjects.Count; i++)
+        {
+            GameObject placedObject = placedGameObjects[i];
+            if (placedObject != null)
+            {
+                serializablePlacedObjects.Add(placedObject);
+            }
+        }
+
+        Dictionary<GameObject, int> placedObjectIndices = new Dictionary<GameObject, int>();
+        for (int i = 0; i < serializablePlacedObjects.Count; i++)
+        {
+            placedObjectIndices[serializablePlacedObjects[i]] = i;
+        }
+
+        List<SaveablePlacedObject> saveableObjects = new List<SaveablePlacedObject>();
+        for (int i = 0; i < serializablePlacedObjects.Count; i++)
+        {
+            GameObject placedObject = serializablePlacedObjects[i];
+
+            string objectId = ResolvePlacedObjectItemKey(placedObject);
+            if (string.IsNullOrWhiteSpace(objectId))
+            {
+                continue;
+            }
+
+            int? parentObjectIndex = null;
+            Transform parentTransform = placedObject.transform.parent;
+            if (parentTransform != null && placedObjectIndices.TryGetValue(parentTransform.gameObject, out int resolvedParentIndex))
+            {
+                parentObjectIndex = resolvedParentIndex;
+            }
+
+            Vector3 position = placedObject.transform.position;
+            Quaternion rotation = placedObject.transform.rotation;
+            saveableObjects.Add(new SaveablePlacedObject
+            {
+                objectId = objectId,
+                positionX = position.x,
+                positionY = position.y,
+                positionZ = position.z,
+                rotationX = rotation.x,
+                rotationY = rotation.y,
+                rotationZ = rotation.z,
+                rotationW = rotation.w,
+                parentObjectIndex = parentObjectIndex
+            });
+        }
+
+        GameState.Instance.placedObjectsByScene[GetCurrentScenePlacementKey()] = saveableObjects;
+    }
+
+    protected void beforeSceneSwitch(object sender, EventArgs e)
+    {
+        if (SceneSwitcher.Instance != null)
+        {
+            SceneSwitcher.Instance.beforeSceneSwitch -= beforeSceneSwitch;
+        }
+
+        SavePlacedObjectsForCurrentScene();
     }
 
     private bool TryGetPlacementPoint(out Vector3 position, out Collider hitCollider)

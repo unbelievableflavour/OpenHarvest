@@ -69,6 +69,8 @@ public class CurrentGameState {
         {"hat", new List<SaveableItem>()}
     };
 
+    public Dictionary<string, List<SaveablePlacedObject>> placedObjectsByScene = new Dictionary<string, List<SaveablePlacedObject>>();
+
     public Dictionary<string, List<Animal>> animals = new Dictionary<string, List<Animal>>
     {
         {"chickens", new List<Animal>()},
