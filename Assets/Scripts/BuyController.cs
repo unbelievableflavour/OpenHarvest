@@ -195,7 +195,7 @@ public class BuyController : MonoBehaviour
 
     private static bool ShouldSpawnBoughtProduct(HarvestDataTypes.StoreProduct product)
     {
-        return product != null && product.sourceUnlockableDefinition == null;
+        return product != null && product.sourceUnlockableDefinition == null && product.isUnlockable != true;
     }
 
     private void handleNPCGaveItem(object sender, BNG.Grabbable grabbable)
