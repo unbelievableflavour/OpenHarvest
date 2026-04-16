@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class SprinklerController : MonoBehaviour
 {
+    private const string SPRINKLER_UNLOCKABLE_ID = "SprinklerStandard";
+
     public GameObject errorMessage;
     public Text errorMessageValue;
-    public ConfigurationModeToggler configurationController;
+    public List<Sprinkler> sprinklers;
 
     void Start()
     {
@@ -14,24 +17,20 @@ public class SprinklerController : MonoBehaviour
 
     public void StartSprinklers()
     {
-        if (configurationController.configurationModeIsActive())
+        if (!PlayerOwnsAtLeastOneSprinkler())
         {
             CancelInvoke("HideErrorMessage");
-            errorMessageValue.text = "Please disable configuration mode first";
+            errorMessageValue.text = "No sprinklers unlocked";
             ShowErrorMessage();
             Invoke("HideErrorMessage", 1.0f);
             return;
         }
 
         int numberOfSprinklers = 0;
-        foreach (var itemLocation in configurationController.itemLocations)
+        foreach (var sprinkler in GetSprinklers())
         {
-            var sprinkler = itemLocation.options.GetChild(itemLocation.GetActiveIndex()).GetComponent<Sprinkler>();
-            if (sprinkler)
-            {
-                numberOfSprinklers++;
-                sprinkler.EnableSprinklers();
-            }
+            numberOfSprinklers++;
+            sprinkler.EnableSprinklers();
         }
 
         if(numberOfSprinklers == 0)
@@ -40,6 +39,19 @@ public class SprinklerController : MonoBehaviour
             errorMessageValue.text = "No sprinklers configured";
             ShowErrorMessage();
             Invoke("HideErrorMessage", 1.0f);
+        }
+    }
+
+    private bool PlayerOwnsAtLeastOneSprinkler()
+    {
+        return GameState.Instance.isUnlocked(SPRINKLER_UNLOCKABLE_ID);
+    }
+
+    private IEnumerable<Sprinkler> GetSprinklers()
+    {
+        foreach (var sprinkler in sprinklers)
+        {
+            yield return sprinkler;
         }
     }
 

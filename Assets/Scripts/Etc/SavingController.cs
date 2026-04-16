@@ -38,7 +38,6 @@ public class SavingController : MonoBehaviour
         save.money = GameState.Instance.getTotalAmount();
 
         save.unlockables2 = GameState.Instance.unlockables;
-        save.locationConfigurations2 = GameState.Instance.locationConfigurations;
 
         save.totalSecondsSpentIngame = TimeController.GetTotalSecondsSpentIngame();
         save.totalSimulatedGameSeconds = TimeController.GetTotalSimulatedGameSeconds();
@@ -97,9 +96,6 @@ public class SavingController : MonoBehaviour
 
         foreach (var quest in save.questList)
             GameState.Instance.questList[quest.Key] = quest.Value;
-
-        foreach (var locationConfig in save.locationConfigurations2)
-            GameState.Instance.locationConfigurations[locationConfig.Key] = locationConfig.Value;
 
         GameState.Instance.name = save.name;
         GameState.Instance.farmName = save.farmName;
@@ -329,40 +325,6 @@ public class SavingController : MonoBehaviour
             }
 
             save.unlockables = null;   
-        }
-
-        //Migration to build 6
-        if (save.buildNumber < 6)
-        {
-            Debug.Log("Run migration for build 6 on save: " + saveNumber);
-
-            save.locationConfigurations2 = new Dictionary<string, string> { };
-
-            if (save.locationConfigurations != null)
-            {
-                try
-                {
-                    LocationConfigurationsWrapper wrapper = JsonUtility.FromJson<LocationConfigurationsWrapper>(save.locationConfigurations);
-                    if (wrapper != null && wrapper.locationConfigurations != null)
-                    {
-                        foreach (var item in wrapper.locationConfigurations)
-                        {
-                            if (item.Value == "")
-                            {
-                                continue;
-                            }
-
-                            save.locationConfigurations2[item.Key] = item.Value;
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.LogWarning("Failed to parse locationConfigurations JSON during migration: " + e.Message);
-                }
-            }
-
-            save.locationConfigurations = null;
         }
 
         //Migration to build 7
@@ -688,10 +650,4 @@ public class TemporaryPrefabToIdMapper
 public class UnlockablesWrapper
 {
     public Dictionary<string, int> unlockables;
-}
-
-[System.Serializable]
-public class LocationConfigurationsWrapper
-{
-    public Dictionary<string, string> locationConfigurations;
 }

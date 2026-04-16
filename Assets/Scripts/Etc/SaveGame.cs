@@ -35,14 +35,12 @@ public class SaveGame
     public int money = 0;
 
     public Dictionary<string, int> unlockables2;
-    public Dictionary<string, string> locationConfigurations2;
 
     public string weatherToday;
     public string weatherTomorrow;
 
     //DEPRECATED
     public string unlockables;
-    public string locationConfigurations;
     public ItemOfTheWeek plantOfTheWeek = new ItemOfTheWeek();
     public ItemOfTheWeek fishOfTheWeek = new ItemOfTheWeek();
     public List<SaveablePatch> patches = new List<SaveablePatch>();
