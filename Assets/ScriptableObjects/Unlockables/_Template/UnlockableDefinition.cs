@@ -17,7 +17,6 @@ namespace HarvestDataTypes
         public string description = "";
         public int buyPrice = 0;
         public List<string> stores = new List<string>();
-        public GameObject previewPrefab;
 
         [Tooltip("Optional prerequisite unlockable ID")]
         public string dependsOnId;
