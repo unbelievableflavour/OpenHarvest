@@ -223,9 +223,11 @@ public class PlacementHandPanel : MonoBehaviour
 
     public void ConfigureVisibilityForPcToggle()
     {
+        EnsurePanelExists();
         autoShowInBuildMode = false;
         enableKeyboardTabToggle = true;
         isPanelVisibleOverride = false;
+        ConfigureCanvasForPcToggle();
         if (panelRoot != null)
         {
             panelRoot.SetActive(false);
@@ -374,6 +376,34 @@ public class PlacementHandPanel : MonoBehaviour
             {
                 canvas.gameObject.AddComponent<GraphicRaycaster>();
             }
+        }
+    }
+
+    private void ConfigureCanvasForPcToggle()
+    {
+        if (panelRoot == null)
+        {
+            return;
+        }
+
+        Camera eventCamera = GetComponentInParent<Camera>();
+        if (eventCamera == null)
+        {
+            eventCamera = Camera.main;
+        }
+
+        Canvas[] canvases = panelRoot.GetComponentsInChildren<Canvas>(true);
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            Canvas canvas = canvases[i];
+            if (canvas == null)
+            {
+                continue;
+            }
+
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = eventCamera;
+            canvas.planeDistance = 1f;
         }
     }
 
