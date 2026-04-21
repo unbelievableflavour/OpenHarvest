@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PreviewSystem : MonoBehaviour
@@ -16,6 +17,8 @@ public class PreviewSystem : MonoBehaviour
     private Renderer cellIndicatorRenderer;
     private Material cellIndicatorMaterialInstance;
     private bool isInitialized = false;
+
+    private readonly List<SpriteRenderer> previewSpriteRenderers = new List<SpriteRenderer>();
 
     private void Start()
     {
@@ -51,16 +54,28 @@ public class PreviewSystem : MonoBehaviour
             return;
         }
 
+        previewSpriteRenderers.Clear();
+
         Renderer[] renderers = previewObject.GetComponentsInChildren<Renderer>();
         foreach(Renderer renderer in renderers)
         {
+            // Keep SpriteRenderers' original material so the sprite still samples correctly;
+            // they are tinted via SpriteRenderer.color in ApplyFeedbackToPreview instead.
+            if (renderer is SpriteRenderer spriteRenderer)
+            {
+                previewSpriteRenderers.Add(spriteRenderer);
+                continue;
+            }
+
+            if (previewMaterialInstance == null)
+            {
+                continue;
+            }
+
             Material[] materials = renderer.materials;
             for (int i = 0; i < materials.Length; i++)
-        {
-                if (previewMaterialInstance != null)
-                {
-                    materials[i] = previewMaterialInstance;
-                }
+            {
+                materials[i] = previewMaterialInstance;
             }
             renderer.materials = materials;
         }
@@ -100,6 +115,7 @@ public class PreviewSystem : MonoBehaviour
             Destroy(previewObject);
             previewObject = null;
         }
+        previewSpriteRenderers.Clear();
     }
 
     public void UpdatePosition(Vector3 position, bool validity, Quaternion rotation)
@@ -118,15 +134,22 @@ public class PreviewSystem : MonoBehaviour
 
     private void ApplyFeedbackToPreview(bool validity)
     {
-        if (previewMaterialInstance == null)
+        Color color = validity ? Color.white : Color.red;
+        color.a = 0.5f;
+
+        if (previewMaterialInstance != null)
         {
-            return;
+            previewMaterialInstance.color = color;
         }
 
-        Color color = validity ? Color.white : Color.red;
-        
-        color.a = 0.5f;
-        previewMaterialInstance.color = color;
+        for (int i = 0; i < previewSpriteRenderers.Count; i++)
+        {
+            SpriteRenderer spriteRenderer = previewSpriteRenderers[i];
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = color;
+            }
+        }
     }
 
     private void ApplyFeedbackToCursor(bool validity)
