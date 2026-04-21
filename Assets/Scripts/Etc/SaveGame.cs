@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using static Definitions;
 
 [Serializable]
@@ -11,6 +12,8 @@ public class SaveGame
     public Dictionary<string, string> settings;
     public Dictionary<string, List<SaveablePatch>> soilGrids;
     public Dictionary<string, List<SaveableItem>> itemStashes;
+    [OptionalField]
+    public Dictionary<string, List<SaveablePlacedObject>> placedObjectsByScene;
     public Dictionary<string, List<Animal>> animals;
     public Dictionary<string, ItemOfTheWeek> itemsOfTheWeek;
 
@@ -32,14 +35,12 @@ public class SaveGame
     public int money = 0;
 
     public Dictionary<string, int> unlockables2;
-    public Dictionary<string, string> locationConfigurations2;
 
     public string weatherToday;
     public string weatherTomorrow;
 
     //DEPRECATED
     public string unlockables;
-    public string locationConfigurations;
     public ItemOfTheWeek plantOfTheWeek = new ItemOfTheWeek();
     public ItemOfTheWeek fishOfTheWeek = new ItemOfTheWeek();
     public List<SaveablePatch> patches = new List<SaveablePatch>();

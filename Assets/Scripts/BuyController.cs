@@ -9,7 +9,7 @@ public class BuyController : MonoBehaviour
     public Button backButton;
     public StoreItemsLister storeItemsLister;
 
-    private HarvestDataTypes.Item item;
+    private HarvestDataTypes.StoreProduct item;
     private NPCController npc;
     public void SetNPC(NPCController newNPC)
     {
@@ -17,7 +17,7 @@ public class BuyController : MonoBehaviour
         npc.gaveItem += handleNPCGaveItem;
     }
 
-    public void SetItem(HarvestDataTypes.Item newItem)
+    public void SetItem(HarvestDataTypes.StoreProduct newItem)
     {
         item = newItem;
         RefreshButton();
@@ -33,13 +33,23 @@ public class BuyController : MonoBehaviour
 
         GameState.Instance.DecreaseMoneyByAmount(item.buyPrice);
         AudioManager.Instance.PlayClip("buy");
-        if (storeItemsLister)
+        if (storeItemsLister && ShouldSpawnBoughtProduct(item))
         {
             SpawnInNPCHand(item);
         }
 
         if (item.isUnlockable) {
-            GameState.Instance.unlock(item.itemId, 1);
+            string unlockableKey = GetUnlockableKey(item);
+            if (!string.IsNullOrWhiteSpace(unlockableKey))
+            {
+                GameState.Instance.unlock(unlockableKey, 1);
+            }
+        }
+
+        string ownedCountKey = GetOwnedCountKey(item);
+        if (!string.IsNullOrWhiteSpace(ownedCountKey) && (!item.isUnlockable || ownedCountKey != GetUnlockableKey(item)))
+        {
+            GameState.Instance.unlock(ownedCountKey, 1);
         }
 
         RefreshButton();
@@ -48,14 +58,17 @@ public class BuyController : MonoBehaviour
     private void RefreshButton()
     {
         button.interactable = true;
+        string ownedCountKey = GetOwnedCountKey(item);
 
-        if (item.DependsOnBeforeBuyingItem != null && !GameState.Instance.isUnlocked(item.DependsOnBeforeBuyingItem.itemId))
+        if (!string.IsNullOrWhiteSpace(item.dependsOnId) && !GameState.Instance.isUnlocked(item.dependsOnId))
         {
-            setButtonToDependsOnOtherItem(item.DependsOnBeforeBuyingItem);
+            setButtonToDependsOnOtherItem(item.dependsOnId);
             return;
         }
 
-        if (GameState.Instance.isUnlocked(item.itemId) && GameState.Instance.ownsMaximumNumber(item))
+        if (!string.IsNullOrWhiteSpace(ownedCountKey) &&
+            GameState.Instance.isUnlocked(ownedCountKey) &&
+            GameState.Instance.ownsMaximumNumber(ownedCountKey, item.maximumTimesOwned))
         {
             setButtonToAlreadyBought();
             return;
@@ -70,10 +83,10 @@ public class BuyController : MonoBehaviour
         setButtonPrice();
     }
 
-    private void setButtonToDependsOnOtherItem(HarvestDataTypes.Item item)
+    private void setButtonToDependsOnOtherItem(string dependsOnId)
     {
         button.interactable = false;
-        buttonLabel.text = "Buy " + item.name + " first!";
+        buttonLabel.text = "Buy " + dependsOnId + " first!";
     }
 
     private void setButtonToAlreadyBought()
@@ -108,7 +121,7 @@ public class BuyController : MonoBehaviour
         storeItemsLister = newStoreItemsLister;
     }
 
-    public void LockStoreItem(HarvestDataTypes.Item currentBoughtItem)
+    public void LockStoreItem(HarvestDataTypes.StoreProduct currentBoughtItem)
     {
         if (item == currentBoughtItem)
         {
@@ -124,26 +137,65 @@ public class BuyController : MonoBehaviour
         Refresh();
     }
 
-    public void LockStore(HarvestDataTypes.Item currentBoughtItem)
+    public void LockStore(HarvestDataTypes.StoreProduct currentBoughtItem)
     {
         LockStoreItem(currentBoughtItem);
     }
 
-    public void SpawnInNPCHand(HarvestDataTypes.Item item)
+    public void SpawnInNPCHand(HarvestDataTypes.StoreProduct item)
     {
         backButton.interactable = false;
-        var itemId = item.itemId;
-        int currentlyOwnedCount = (item.isUnlockable && GameState.Instance.isUnlocked(itemId)) ? GameState.Instance.unlockables[itemId] : 0;
+        string ownedCountKey = GetOwnedCountKey(item);
+        int currentlyOwnedCount = (!string.IsNullOrWhiteSpace(ownedCountKey) && GameState.Instance.isUnlocked(ownedCountKey))
+            ? GameState.Instance.unlockables[ownedCountKey]
+            : 0;
         if (item.maximumTimesOwned == currentlyOwnedCount + 1 || item.prefab == null)
         {
-            LockStore(new HarvestDataTypes.Item());
+            LockStore(new HarvestDataTypes.StoreProduct());
         }
         else
         {
             LockStore(item);
         }
 
-        npc.GiveItem(item);
+        if (item.sourceItem != null)
+        {
+            npc.GiveItem(item.sourceItem);
+        }
+        else
+        {
+            npc.GiveStoreProduct(item);
+        }
+    }
+
+    private static string GetUnlockableKey(HarvestDataTypes.StoreProduct product)
+    {
+        if (product == null)
+        {
+            return string.Empty;
+        }
+
+        return string.IsNullOrWhiteSpace(product.unlockableId) ? product.id : product.unlockableId;
+    }
+
+    private static string GetOwnedCountKey(HarvestDataTypes.StoreProduct product)
+    {
+        if (product == null)
+        {
+            return string.Empty;
+        }
+
+        if (!string.IsNullOrWhiteSpace(product.ownedCountId))
+        {
+            return product.ownedCountId;
+        }
+
+        return GetUnlockableKey(product);
+    }
+
+    private static bool ShouldSpawnBoughtProduct(HarvestDataTypes.StoreProduct product)
+    {
+        return product != null && product.sourceUnlockableDefinition == null && product.isUnlockable != true;
     }
 
     private void handleNPCGaveItem(object sender, BNG.Grabbable grabbable)

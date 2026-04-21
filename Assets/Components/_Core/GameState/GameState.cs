@@ -69,6 +69,8 @@ public class CurrentGameState {
         {"hat", new List<SaveableItem>()}
     };
 
+    public Dictionary<string, List<SaveablePlacedObject>> placedObjectsByScene = new Dictionary<string, List<SaveablePlacedObject>>();
+
     public Dictionary<string, List<Animal>> animals = new Dictionary<string, List<Animal>>
     {
         {"chickens", new List<Animal>()},
@@ -103,26 +105,6 @@ public class CurrentGameState {
     public string enteredSceneThrough = null;
 
     public Dictionary<string, int> unlockables = new Dictionary<string, int> { };
-    public Dictionary<string, string> locationConfigurations = new Dictionary<string, string> {
-        {"FireplaceDecoration", null},
-        {"CornerDecoration1", null},
-        {"CornerDecoration2", null},
-        {"Poster1", null},
-        {"Poster2", null},
-        {"Poster3", null},
-        {"GreenHouseSprinkler1", null},
-        {"GreenHouseSprinkler2", null},
-        {"GreenHouseSprinkler3", null},
-        {"GreenHouseSprinkler4", null},
-        {"GreenHouseSprinkler5", null},
-        {"GreenHouseSprinkler6", null},
-        {"TableDecoration1", null},
-        {"ChairDecoration1", null},
-        {"ChairDecoration2", null},
-        {"ChairDecoration3", null},
-        {"ChairDecoration4", null},
-        {"BedDecoration1", null},
-    };
 
     public Dictionary<Quests, Quest> questList = new Dictionary<Quests, Quest> { };
 
@@ -186,6 +168,21 @@ public class CurrentGameState {
         }
 
         return unlockables[item.itemId] >= item.maximumTimesOwned;
+    }
+
+    public bool ownsMaximumNumber(string unlockableId, int maximumTimesOwned)
+    {
+        if (maximumTimesOwned <= 0 || string.IsNullOrWhiteSpace(unlockableId))
+        {
+            return false;
+        }
+
+        if (!unlockables.ContainsKey(unlockableId))
+        {
+            return false;
+        }
+
+        return unlockables[unlockableId] >= maximumTimesOwned;
     }
 
     public event Action OnToggleMode;

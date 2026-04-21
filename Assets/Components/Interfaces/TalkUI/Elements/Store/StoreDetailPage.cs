@@ -7,14 +7,14 @@ public class StoreDetailPage : MonoBehaviour
     public ItemPreviewer itemPreviewer;
     public BuyController buyController;
 
-    private void UpdateInformation(HarvestDataTypes.Item item)
+    private void UpdateInformation(HarvestDataTypes.StoreProduct item)
     {
-        heading.ResetText(item.name);
+        heading.ResetText(item.displayName);
         description.ResetText(item.description);
         itemPreviewer.Spawn(item);
     }
 
-    public void SetItem(HarvestDataTypes.Item item)
+    public void SetItem(HarvestDataTypes.StoreProduct item)
     {
         buyController.SetItem(item);
         UpdateInformation(item);

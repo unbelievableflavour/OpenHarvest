@@ -5,6 +5,9 @@ public class DatabaseManager : MonoBehaviour
 {
 	public ContractDatabase contracts;
 	public ItemDatabase items;
+    public PlaceableObjectDatabase placeableObjects;
+    public UnlockableDatabase unlockables;
+    public SceneDatabase scenes;
 
 	public static DatabaseManager Instance = null;
 

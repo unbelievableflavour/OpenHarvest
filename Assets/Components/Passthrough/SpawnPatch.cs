@@ -5,7 +5,6 @@ using UnityEngine;
 public class SpawnPatch : MonoBehaviour
 {
     private int patchIndexInDB = 4;
-    public Grid grid;
     public PlacementSystem placementSystem;
 
     public void OnTriggerExit(Collider other) {
@@ -17,13 +16,11 @@ public class SpawnPatch : MonoBehaviour
 
         var otherObjectPosition = other.ClosestPointOnBounds(transform.position);
 
-        Vector3Int gridPosition = grid.WorldToCell(otherObjectPosition);
-
-        bool placementValidity = placementSystem.CheckPlacementValidity(gridPosition, patchIndexInDB);
+        bool placementValidity = placementSystem.CheckPlacementValidity(otherObjectPosition, patchIndexInDB);
         if (!placementValidity) {
             return;
         }
 
-        placementSystem.PlaceStructureWithoutPreview(gridPosition, patchIndexInDB);
+        placementSystem.PlaceStructureWithoutPreview(otherObjectPosition, patchIndexInDB);
     }
 }

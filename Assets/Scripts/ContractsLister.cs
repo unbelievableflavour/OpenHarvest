@@ -42,7 +42,7 @@ public class ContractsLister : MonoBehaviour
         }
     }
 
-    public void LockStore(HarvestDataTypes.Item currentBoughtItem)
+    public void LockStore(HarvestDataTypes.StoreProduct currentBoughtItem)
     {
         foreach (Transform item in scrollViewContent)
         {

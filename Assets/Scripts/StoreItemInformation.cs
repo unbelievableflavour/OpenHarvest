@@ -10,7 +10,7 @@ public class StoreItemInformation : MonoBehaviour
     private string backupHeading;
     private string backupDescription;
 
-    private static HarvestDataTypes.Item currentItem;
+    private static HarvestDataTypes.StoreProduct currentItem;
     private static bool informationHasBeenUpdated = false;
 
     private void Start()
@@ -39,7 +39,7 @@ public class StoreItemInformation : MonoBehaviour
             return;
         }
 
-        heading.text = currentItem.name;
+        heading.text = currentItem.displayName;
         description.text = currentItem.description;
         if (itemPreviewer)
         {
@@ -47,7 +47,7 @@ public class StoreItemInformation : MonoBehaviour
         }
     }
 
-    public static void SetItem(HarvestDataTypes.Item item)
+    public static void SetItem(HarvestDataTypes.StoreProduct item)
     {
         currentItem = item;
         informationHasBeenUpdated = false;

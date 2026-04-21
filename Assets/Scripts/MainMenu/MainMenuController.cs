@@ -8,6 +8,9 @@ public class MainMenuController : MonoBehaviour
     public GameObject gameButton2;
     public GameObject gameButton3;
 
+    [Header("Global Settings")]
+    public HarvestSettings harvestSettings;
+
     public GameObject mainCanvas;
     public GameObject deleteSaveCanvas;
     public GameObject playInRealTimeCanvas;
@@ -78,6 +81,7 @@ public class MainMenuController : MonoBehaviour
         }
 
         AddSomeStartingEquipmentToPlayer();
+        ApplyGlobalStartOptions();
         SavingController.SaveGame();
         SceneSwitcher.Instance.SwitchToScene(1, "DefaultSpawnPoint");
     }
@@ -90,6 +94,19 @@ public class MainMenuController : MonoBehaviour
             id = "SeedBagTomato",
             currentStackSize = 10,
         });
+    }
+
+    private void ApplyGlobalStartOptions()
+    {
+        if (harvestSettings == null)
+        {
+            return;
+        }
+
+        if (harvestSettings.startWithLotsOfMoney)
+        {
+            GameState.Instance.IncreaseMoneyByAmount(100000);
+        }
     }
 
     public void PlayTutorial()
