@@ -6,7 +6,7 @@ public class OnDoorRotation : MonoBehaviour
 {
     public UnityEvent onDoorOpen;
     public UnityEvent onDoorClosed;
-    public DoorHelper doorHelper;
+    public OpenHarvestDoorHelper doorHelper;
 
     private bool openedOnce = false;
     private bool doorIsOpen = false;

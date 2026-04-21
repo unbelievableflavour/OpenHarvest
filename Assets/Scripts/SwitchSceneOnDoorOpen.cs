@@ -8,13 +8,13 @@ public class SwitchSceneOnDoorOpen : MonoBehaviour
     public string sceneEnterLocationName;
 
     private bool doorIsEnabled = true;
-    private DoorHelper doorHelper;
+    private OpenHarvestDoorHelper doorHelper;
     
     private bool heldOnce = false;
 
     void Start()
     {
-        doorHelper = GetComponent<DoorHelper>();
+        doorHelper = GetComponent<OpenHarvestDoorHelper>();
     }
 
     void Update()
