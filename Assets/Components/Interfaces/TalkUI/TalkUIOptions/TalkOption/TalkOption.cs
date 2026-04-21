@@ -18,4 +18,10 @@ public class TalkOption : TalkUIOption
     {
         dialogue.UpdateDialogue(NPCName, dialogues[currentDialogue]);
     }
+
+    public override void SpeakCurrentDialogue()
+    {
+        if (dialogues == null || dialogues.Length == 0) return;
+        SpeakDialogue(dialogues[currentDialogue]);
+    }
 }

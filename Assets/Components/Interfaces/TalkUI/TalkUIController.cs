@@ -82,6 +82,9 @@ public class TalkUIController : MonoBehaviour
         {
             EnableWindow(newDialog);
             talkOption.gameObject.SetActive(true);
+            // Only speak when the dialog is actually opened by the player.
+            // Pre-instantiation during Start() sets text but must stay silent.
+            talkOption.SpeakCurrentDialogue();
         }
 
         GameObject talkButton = Instantiate(talkButtonPrefab);
