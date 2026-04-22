@@ -48,5 +48,49 @@ public class HarvestSettings : ScriptableObject
         var texturePath = AssetDatabase.LoadMainAssetAtPath($"Assets/ScriptableObjects/HarvestSettings.asset");
         AssetDatabase.OpenAsset(texturePath);
     }
+
+    public void ResetToProductionValues()
+    {
+        playerMode = PlayerMode.VR;
+        forceTime = TimeManipulation.None;
+        enableIngameConsole = false;
+        enableDevMode = false;
+        startWithLotsOfMoney = false;
+        startWithLotsOfPlaceables = false;
+        showAllModulesOnStart = false;
+        showOverlapColliders = false;
+        showRemovedOverlapColliders = false;
+    }
 #endif
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(HarvestSettings))]
+public class HarvestSettingsEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        GUILayout.Space(10);
+
+        var settings = (HarvestSettings)target;
+        GUI.backgroundColor = new Color(1.0f, 0.6f, 0.6f);
+        if (GUILayout.Button("Reset to production values", GUILayout.Height(28)))
+        {
+            if (EditorUtility.DisplayDialog(
+                "Reset to production values?",
+                "This will disable dev mode, the ingame console, all start-with-bonus flags and all world-generator debug toggles, and set player mode back to VR and time to None.\n\nContinue?",
+                "Reset",
+                "Cancel"))
+            {
+                Undo.RecordObject(settings, "Reset HarvestSettings to production values");
+                settings.ResetToProductionValues();
+                EditorUtility.SetDirty(settings);
+                AssetDatabase.SaveAssets();
+            }
+        }
+        GUI.backgroundColor = Color.white;
+    }
+}
+#endif
