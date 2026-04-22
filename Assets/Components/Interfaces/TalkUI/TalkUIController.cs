@@ -9,6 +9,7 @@ public class TalkUIController : MonoBehaviour
     public Transform talkOptionsButtons;
     public GameObject talkButtonPrefab;
     public Text talkUIHeading;
+    public AutoType talkUISubheading;
 
     [Header("Dialog Specific")]
 
@@ -51,6 +52,14 @@ public class TalkUIController : MonoBehaviour
         talkUI.SetActive(true);
         npc.BackToIdle();
         npc.RemoveCurrentlyHoldingItem();
+        SpeakSubheading();
+    }
+
+    private void SpeakSubheading()
+    {
+        string message = talkUISubheading.GetMessage();
+        var voice = npc.GetComponent<NPCVoice>();
+        voice.Speak(message);
     }
 
     public void EnableWindow(GameObject dialog)
@@ -82,6 +91,9 @@ public class TalkUIController : MonoBehaviour
         {
             EnableWindow(newDialog);
             talkOption.gameObject.SetActive(true);
+            // Only speak when the dialog is actually opened by the player.
+            // Pre-instantiation during Start() sets text but must stay silent.
+            talkOption.SpeakCurrentDialogue();
         }
 
         GameObject talkButton = Instantiate(talkButtonPrefab);

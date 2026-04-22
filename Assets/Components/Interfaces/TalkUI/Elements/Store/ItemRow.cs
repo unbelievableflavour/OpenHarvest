@@ -18,7 +18,6 @@ public class ItemRow : MonoBehaviour
     private void RefreshButton()
     {
         button.interactable = true;
-        string ownedCountKey = !string.IsNullOrWhiteSpace(item.ownedCountId) ? item.ownedCountId : (string.IsNullOrWhiteSpace(item.unlockableId) ? item.id : item.unlockableId);
 
         if (!string.IsNullOrWhiteSpace(item.dependsOnId) && !GameState.Instance.isUnlocked(item.dependsOnId))
         {
@@ -26,7 +25,7 @@ public class ItemRow : MonoBehaviour
             return;
         }
 
-        if (GameState.Instance.isUnlocked(ownedCountKey) && GameState.Instance.ownsMaximumNumber(ownedCountKey, item.maximumTimesOwned))
+        if (GameState.Instance.isUnlocked(item.id) && GameState.Instance.ownsMaximumNumber(item.id, item.maximumTimesOwned))
         {
             buttonLabel.text = "Maximum owned amount of item reached";
             return;

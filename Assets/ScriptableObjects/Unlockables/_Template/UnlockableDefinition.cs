@@ -24,6 +24,9 @@ namespace HarvestDataTypes
         [Tooltip("0 means infinite")]
         public int maximumTimesOwned;
 
+        [Tooltip("Optional: the Item this unlockable hands over as a physical prefab when purchased. Leave empty for pure unlockables (buildings, animals).")]
+        public Item linkedItem;
+
         private void OnValidate()
         {
             var scriptableObject = (ScriptableObject)this;

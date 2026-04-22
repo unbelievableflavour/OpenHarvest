@@ -44,6 +44,9 @@ public class QuestOption : TalkUIOption
 
         GameState.Instance.questList[questId].currentDialogue = currentDialogue;
         UpdateDialogue();
+        // The dialog window is already open at this point (this is called
+        // while the player is mid-conversation), so speak the new line.
+        SpeakCurrentDialogue();
     }
 
     public void BackToMenu()
@@ -55,6 +58,12 @@ public class QuestOption : TalkUIOption
     {
         dialogue.UpdateDialogue(NPCName, dialogues[currentDialogue]);
         this.UpdateQuest();
+    }
+
+    public override void SpeakCurrentDialogue()
+    {
+        if (dialogues == null || dialogues.Length == 0) return;
+        SpeakDialogue(dialogues[currentDialogue]);
     }
 
     public TalkUIController getTalkUIController()

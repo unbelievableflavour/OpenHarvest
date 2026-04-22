@@ -1,4 +1,4 @@
-﻿using BNG;
+using BNG;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -94,8 +94,7 @@ public class CurrentlyGrabbedItemSaverController : MonoBehaviour
         }
 
         var saveableItem = new SaveableItem();
-        saveableItem.name = item.name;
-        saveableItem.prefabFileName = item.prefab.transform.name;
+        saveableItem.id = item.itemId;
 
         var itemStack = grabber.HeldGrabbable.GetComponent<ItemStack>();
         if (itemStack)

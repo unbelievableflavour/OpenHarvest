@@ -20,10 +20,9 @@ public class PetInitialiser : MonoBehaviour
     {
         GameState.Instance.DecreaseMoneyByAmount(item.buyPrice);
         BNG.VRUtils.Instance.PlaySpatialClipAt(buySound, transform.position, 0.6f, 1f, 0.05f);
-        string unlockableKey = string.IsNullOrWhiteSpace(item.unlockableId) ? item.id : item.unlockableId;
-        if (!string.IsNullOrWhiteSpace(unlockableKey))
+        if (!string.IsNullOrWhiteSpace(item.id))
         {
-            GameState.Instance.unlock(unlockableKey, 1);
+            GameState.Instance.unlock(item.id, 1);
         }
 
         storeItemsLister.RefreshStoreRows();

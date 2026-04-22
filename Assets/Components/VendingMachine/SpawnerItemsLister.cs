@@ -8,13 +8,23 @@ public class SpawnerItemsLister : MonoBehaviour
     public GameObject itemRowPrefab;
     public Transform functionalScrollViewContent;
     public SpawnController spawnController;
+    public HarvestSettings harvestSettings;
 
     List<HarvestDataTypes.Item> itemsInVendingMachine = new List<HarvestDataTypes.Item>();
 
     void Start()
     {
         var itemDatabase = DatabaseManager.Instance.items;
-        itemsInVendingMachine = itemDatabase.FindAllByTag("vendingMachine");
+
+        if (harvestSettings.enableDevMode)
+        {
+            itemsInVendingMachine = new List<HarvestDataTypes.Item>(itemDatabase.items);
+        }
+        else
+        {
+            itemsInVendingMachine = itemDatabase.FindAllByTag("vendingMachine");
+        }
+
         fillSpawnerList();
     }
 
@@ -27,7 +37,7 @@ public class SpawnerItemsLister : MonoBehaviour
                 continue;
             }
 
-            if (item.isUnlockable && !GameState.Instance.isUnlocked(item.itemId))
+            if (!harvestSettings.enableDevMode && item.isUnlockable && !GameState.Instance.isUnlocked(item.itemId))
             {
                 continue;
             }
