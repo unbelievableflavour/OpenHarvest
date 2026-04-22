@@ -1,4 +1,4 @@
-﻿using BNG;
+using BNG;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -19,7 +19,7 @@ namespace Tests
         [Test]
         public void ItChecksIfAllRequiredFieldsAreNotEmpty()
         {
-            Assert.AreNotEqual(null, animal.GetComponent<AnimatedCow>().animator);
+            Assert.AreNotEqual(null, animal.GetComponent<AnimalNavAgent>().animator);
             Assert.AreNotEqual(0, animal.GetComponent<PetSound>().soundsToPlay.Length);
 
             var firstMesh = animal.GetComponentInChildren<SkinnedMeshRenderer>();
