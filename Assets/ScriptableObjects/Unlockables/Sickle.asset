@@ -9,19 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 203841854d50391449710d7925005506, type: 3}
+  m_Script: {fileID: 11500000, guid: 5d5a85e7284ef48508808747d05ed8e3, type: 3}
   m_Name: Sickle
   m_EditorClassIdentifier: 
-  itemId: Sickle
-  prefab: {fileID: 7267972105475651203, guid: b36e779d7f14d7741b2f6356770269c7, type: 3}
-  name: Sickle
+  unlockableId: Sickle
+  displayName: Sickle
   description: This tool is used to cut down tall grass.
-  tags: []
-  isSellable: 0
-  sellPrice: 0
-  buyPrice: 0
-  stores: []
-  DependsOnBeforeBuyingItem: {fileID: 0}
-  isUnlockable: 1
-  maximumTimesOwned: 0
-  type: 
+  buyPrice: 900
+  stores:
+  - storeToolsTabFunctional
+  dependsOnId: 
+  maximumTimesOwned: 1
+  linkedItem: {fileID: 11400000, guid: f6f551f190414b92ac577c1c07dc3bed, type: 2}

@@ -9,19 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 203841854d50391449710d7925005506, type: 3}
+  m_Script: {fileID: 11500000, guid: 5d5a85e7284ef48508808747d05ed8e3, type: 3}
   m_Name: Whisk
   m_EditorClassIdentifier: 
-  itemId: Whisk
-  prefab: {fileID: 7267972105475651203, guid: 580cb4d825b963349abc9284e011328b, type: 3}
-  name: Whisk
+  unlockableId: Whisk
+  displayName: Whisk
   description: This tool is used to stir in the mixing bowl.
-  tags: []
-  isSellable: 0
-  sellPrice: 0
-  buyPrice: 0
-  stores: []
-  DependsOnBeforeBuyingItem: {fileID: 0}
-  isUnlockable: 1
-  maximumTimesOwned: 0
-  type: 
+  buyPrice: 600
+  stores:
+  - storeCookingTabFunctional
+  dependsOnId: 
+  maximumTimesOwned: 1
+  linkedItem: {fileID: 11400000, guid: 8e3f87f0d35a48959175eafde3219f1d, type: 2}

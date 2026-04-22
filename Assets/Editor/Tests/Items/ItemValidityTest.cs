@@ -54,6 +54,51 @@ namespace Items
             }
         }
 
+        // Regression guard for the "item disappears from backpack on scene switch"
+        // bug. ItemStashController.UpdateSaveableInventory saves a slot as empty
+        // when Definitions.GetItemFromObject(slot.HeldItem) returns null, which
+        // happens whenever the prefab's root ItemInformation component is either
+        // missing or has an unassigned/mismatched `item` reference.
+        [Test]
+        public void EveryItemPrefabRootHasItemInformationPointingAtItself()
+        {
+            foreach (HarvestDataTypes.Item item in itemDatabase.items)
+            {
+                if (item.prefab == null)
+                {
+                    continue;
+                }
+
+                GameObject spawnedItem = Definitions.InstantiateItemNew(item.prefab);
+                try
+                {
+                    ItemInformation itemInformation = spawnedItem.GetComponent<ItemInformation>();
+                    Assert.IsNotNull(
+                        itemInformation,
+                        $"Item '{item.itemId}' (prefab '{spawnedItem.name}') has no ItemInformation component on its root. " +
+                        "Without it, Definitions.GetItemFromObject returns null and the item will be lost on scene switch."
+                    );
+
+                    Assert.IsNotNull(
+                        itemInformation.item,
+                        $"Item '{item.itemId}' (prefab '{spawnedItem.name}') has an ItemInformation component with a MISSING item reference. " +
+                        "Assign the matching Item ScriptableObject in the prefab, or the item will be lost on scene switch."
+                    );
+
+                    Assert.AreEqual(
+                        item,
+                        itemInformation.item,
+                        $"Item '{item.itemId}' (prefab '{spawnedItem.name}') points at the wrong Item " +
+                        $"('{itemInformation.item.itemId}'). Save/load will treat it as a different item."
+                    );
+                }
+                finally
+                {
+                    Object.DestroyImmediate(spawnedItem);
+                }
+            }
+        }
+
         [Test]
         public void ItHasScale1AndRot0AndPos0ForPrefabItems()
         {

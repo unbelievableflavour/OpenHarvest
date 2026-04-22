@@ -5,13 +5,10 @@ namespace HarvestDataTypes
     public class StoreProduct
     {
         public string id;
-        public string ownedCountId;
-        public string unlockableId;
         public string displayName;
         public string description;
         public GameObject prefab;
         public int buyPrice;
-        public bool isUnlockable;
         public int maximumTimesOwned;
         public string dependsOnId;
         public Item sourceItem;
@@ -25,23 +22,15 @@ namespace HarvestDataTypes
                 return null;
             }
 
-            string resolvedUnlockableId = item.itemId;
-            string resolvedDependsOnId = item.DependsOnBeforeBuyingItem != null ? item.DependsOnBeforeBuyingItem.itemId : string.Empty;
-            int resolvedMaximumTimesOwned = item.maximumTimesOwned;
-            bool resolvedIsUnlockable = item.isUnlockable;
-
             return new StoreProduct
             {
                 id = item.itemId,
-                ownedCountId = resolvedUnlockableId,
-                unlockableId = resolvedUnlockableId,
                 displayName = item.name,
                 description = item.description,
                 prefab = item.prefab,
                 buyPrice = item.buyPrice,
-                isUnlockable = resolvedIsUnlockable,
-                maximumTimesOwned = resolvedMaximumTimesOwned,
-                dependsOnId = resolvedDependsOnId,
+                maximumTimesOwned = item.maximumTimesOwned,
+                dependsOnId = item.DependsOnBeforeBuyingItem != null ? item.DependsOnBeforeBuyingItem.itemId : string.Empty,
                 sourceItem = item,
                 sourcePlaceableObject = null,
                 sourceUnlockableDefinition = null
@@ -58,13 +47,10 @@ namespace HarvestDataTypes
             return new StoreProduct
             {
                 id = placeableObject.placeableObjectId,
-                ownedCountId = placeableObject.placeableObjectId,
-                unlockableId = string.Empty,
                 displayName = placeableObject.name,
                 description = placeableObject.description,
                 prefab = null,
                 buyPrice = placeableObject.buyPrice,
-                isUnlockable = true,
                 maximumTimesOwned = 0,
                 dependsOnId = string.Empty,
                 sourceItem = null,
@@ -87,16 +73,13 @@ namespace HarvestDataTypes
             return new StoreProduct
             {
                 id = unlockable.unlockableId,
-                ownedCountId = unlockable.unlockableId,
-                unlockableId = unlockable.unlockableId,
                 displayName = resolvedDisplayName,
                 description = unlockable.description,
-                prefab = null,
+                prefab = unlockable.linkedItem?.prefab,
                 buyPrice = unlockable.buyPrice,
-                isUnlockable = true,
                 maximumTimesOwned = unlockable.maximumTimesOwned,
                 dependsOnId = unlockable.dependsOnId,
-                sourceItem = null,
+                sourceItem = unlockable.linkedItem,
                 sourcePlaceableObject = null,
                 sourceUnlockableDefinition = unlockable
             };

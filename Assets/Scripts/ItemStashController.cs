@@ -78,16 +78,6 @@ public class ItemStashController : MonoBehaviour
                 newItemGrabbable = grabbableIsNotParent.grabbable;
             }
 
-            if (newItemGrabbable)
-            {
-                if (item.isUnlockable && !GameState.Instance.isUnlocked(item.itemId))
-                {
-                    Destroy(spawnedItem);
-                    index++;
-                    continue;
-                }
-            }
-
             var itemStack = newItemGrabbable.GetComponent<ItemStack>();
             if (itemStack)
             {

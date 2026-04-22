@@ -54,14 +54,12 @@ public class BuyAnimalController : MonoBehaviour
 
     public bool hasBoughtMaximum()
     {
-        string ownedCountKey = GetOwnedCountKey(item);
-        return GameState.Instance.ownsMaximumNumber(ownedCountKey, item.maximumTimesOwned);
+        return GameState.Instance.ownsMaximumNumber(item.id, item.maximumTimesOwned);
     }
 
     private bool isAlreadyUnlocked()
     {
-        string ownedCountKey = GetOwnedCountKey(item);
-        return GameState.Instance.isUnlocked(ownedCountKey);
+        return GameState.Instance.isUnlocked(item.id);
     }
 
     private void setButtonToDependsOnOtherItem(string dependsOnId)
@@ -125,20 +123,5 @@ public class BuyAnimalController : MonoBehaviour
         button.interactable = false;
         var newText = buttonLabel;
         newText.text = "Pickup bought item first";
-    }
-
-    private static string GetOwnedCountKey(HarvestDataTypes.StoreProduct product)
-    {
-        if (product == null)
-        {
-            return string.Empty;
-        }
-
-        if (!string.IsNullOrWhiteSpace(product.ownedCountId))
-        {
-            return product.ownedCountId;
-        }
-
-        return string.IsNullOrWhiteSpace(product.unlockableId) ? product.id : product.unlockableId;
     }
 }
