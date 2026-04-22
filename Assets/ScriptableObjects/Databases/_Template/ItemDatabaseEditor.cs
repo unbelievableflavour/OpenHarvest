@@ -9,7 +9,7 @@ namespace HarvestDataTypes
     public class ItemDatabaseEditor : Editor
     {
         private List<string> includedFolders = new List<string>() {
-            "Assets/ScriptableObjects/Items/"
+            "Assets/Items/"
         };
 
         public override void OnInspectorGUI()
