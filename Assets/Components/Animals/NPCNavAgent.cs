@@ -2,15 +2,18 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /// <summary>
-/// Shared movement/AI base for farm animals. Drives a <see cref="NavMeshAgent"/> to either
-/// wander randomly around a spawn anchor or follow a target transform (e.g. the player).
+/// Shared NavMesh wandering/follow behaviour for farm animals, store NPCs, or any character
+/// that should idle, roam inside an area, or follow a transform.
 ///
 /// Requires a baked NavMesh in the scene. The agent is auto-added via
 /// <see cref="RequireComponent"/>, so existing prefabs only need to be re-saved once the
 /// NavMesh is baked for the farm terrain.
+///
+/// For NPCs in enclosed spaces, set <see cref="movesWhenFurtherAwayThen"/> to 0 so they keep
+/// wandering while the player is nearby.
 /// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
-public class AnimalNavAgent : MonoBehaviour
+public class NPCNavAgent : MonoBehaviour
 {
     [Header("Animation")]
     public Animator animator;
@@ -47,6 +50,7 @@ public class AnimalNavAgent : MonoBehaviour
     float nextWanderAt;
     float nextFollowRefreshAt;
     bool isActive = true;
+    bool movementSuppressed;
 
     protected virtual void Awake()
     {
@@ -85,6 +89,11 @@ public class AnimalNavAgent : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (movementSuppressed)
+        {
+            return;
+        }
+
         UpdateActiveState();
         if (!isActive)
         {
@@ -225,5 +234,27 @@ public class AnimalNavAgent : MonoBehaviour
         spawnAnchor = transform.position;
         ScheduleNextWander();
         StopMoving();
+    }
+
+    /// <summary>
+    /// When true, navigation and wander/follow logic are frozen (e.g. while the player is
+    /// interacting). The agent stops on the NavMesh until released.
+    /// </summary>
+    public void SetMovementSuppressed(bool suppressed)
+    {
+        if (movementSuppressed == suppressed)
+        {
+            return;
+        }
+
+        movementSuppressed = suppressed;
+        if (suppressed)
+        {
+            StopMoving();
+        }
+        else
+        {
+            nextWanderAt = Time.time + 0.25f;
+        }
     }
 }

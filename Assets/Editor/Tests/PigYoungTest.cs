@@ -13,7 +13,7 @@ namespace Tests
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Animals/Pig/Young/PigYoungAnimated.prefab");
             prefab = GameObject.Instantiate(prefab);
 
-            Assert.AreNotEqual(null, prefab.GetComponent<AnimalNavAgent>().animator);
+            Assert.AreNotEqual(null, prefab.GetComponent<NPCNavAgent>().animator);
             Assert.AreNotEqual(0, prefab.GetComponent<PetSound>().soundsToPlay.Length);
 
             var firstMesh = prefab.GetComponentInChildren<SkinnedMeshRenderer>();

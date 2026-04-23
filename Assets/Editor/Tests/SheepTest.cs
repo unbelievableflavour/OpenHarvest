@@ -19,7 +19,7 @@ namespace Tests
         [Test]
         public void ItChecksIfAllRequiredFieldsAreNotEmpty()
         {
-            Assert.AreNotEqual(null, animal.GetComponent<AnimalNavAgent>().animator);
+            Assert.AreNotEqual(null, animal.GetComponent<NPCNavAgent>().animator);
             Assert.AreNotEqual(0, animal.GetComponent<PetSound>().soundsToPlay.Length);
 
             var firstMesh = animal.GetComponentInChildren<SkinnedMeshRenderer>();
