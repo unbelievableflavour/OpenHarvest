@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HarvestDataTypes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,11 +30,22 @@ public class WeatherController : MonoBehaviour
 
     void Start()
     {
-        int sceneIndex = SceneManager.GetActiveScene().buildIndex;
-        currentSceneUsesWeather = SceneInformationManager.getSceneDetailsByIndex(sceneIndex).usesWeather;
+        currentSceneUsesWeather = ResolveCurrentSceneUsesWeather();
 
         TimeController.Instance.ListenToDayChange(handleNewDayStarted);
         SetWeather(weatherToday);
+    }
+
+    static bool ResolveCurrentSceneUsesWeather()
+    {
+        if (DatabaseManager.Instance == null || DatabaseManager.Instance.scenes == null)
+        {
+            return false;
+        }
+
+        Scene activeScene = SceneManager.GetActiveScene();
+        SceneSettings sceneSettings = DatabaseManager.Instance.scenes.FindByScene(activeScene.name, activeScene.buildIndex);
+        return sceneSettings != null && sceneSettings.usesWeather;
     }
 
     void UpdateSeason()
