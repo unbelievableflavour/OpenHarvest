@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 5511621073356121409}
   - component: {fileID: 5511621073356121423}
   - component: {fileID: 4654559686332356762}
+  - component: {fileID: 7494212117046449152}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -253,6 +254,18 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RaycastTriggerInteraction: 1
+--- !u!114 &7494212117046449152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2354905666044874137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 367798ae3b3b241e9b852c1bac5a31fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2776461358333291419
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,6 +994,31 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2354905666044874128}
     m_Modifications:
+    - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7494212117046449152}
+    - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SendEvent
+      objectReference: {fileID: 0}
+    - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIEventSender, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: recipes
+      objectReference: {fileID: 0}
     - target: {fileID: 2989350505565729479, guid: c0b654465becb1e42b3c45934fd93154,
         type: 3}
       propertyPath: m_Name
@@ -1172,10 +1210,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - eventID: 11
-    callback:
-      m_PersistentCalls:
-        m_Calls: []
 --- !u!224 &7710268115620765704 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7536635929478876101, guid: c0b654465becb1e42b3c45934fd93154,
@@ -1343,17 +1377,27 @@ PrefabInstance:
     - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7494212117046449152}
     - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: 
+      value: SendEvent
+      objectReference: {fileID: 0}
+    - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIEventSender, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: settings
       objectReference: {fileID: 0}
     - target: {fileID: 907147223800592918, guid: c0b654465becb1e42b3c45934fd93154,
         type: 3}
@@ -1561,10 +1605,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - eventID: 11
-    callback:
-      m_PersistentCalls:
-        m_Calls: []
 --- !u!224 &8747751467300248762 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7536635929478876101, guid: c0b654465becb1e42b3c45934fd93154,
@@ -1834,17 +1874,27 @@ PrefabInstance:
     - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7494212117046449152}
     - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: 
+      value: SendEvent
+      objectReference: {fileID: 0}
+    - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIEventSender, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 611533263986575422, guid: c0b654465becb1e42b3c45934fd93154,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: quests
       objectReference: {fileID: 0}
     - target: {fileID: 2989350505565729479, guid: c0b654465becb1e42b3c45934fd93154,
         type: 3}
@@ -2043,10 +2093,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - eventID: 11
-    callback:
-      m_PersistentCalls:
-        m_Calls: []
 --- !u!1001 &7985713557976698202
 PrefabInstance:
   m_ObjectHideFlags: 0

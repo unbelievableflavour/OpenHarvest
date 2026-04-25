@@ -12,9 +12,8 @@ namespace Tests
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Interfaces/RecipesUI/RecipeMenu.prefab");
             prefab = GameObject.Instantiate(prefab);
 
-            Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().listView);
+            Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().viewSwitcher);
             Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().recipeList);
-            Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().detailsView);
             Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().recipeRow);
             Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().detailsHeader);
             //Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().detailsDescription);

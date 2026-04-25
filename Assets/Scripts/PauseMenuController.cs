@@ -1,13 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PauseMenuController : MonoBehaviour
 {
-    public GameObject MainMenuUI;
-    public GameObject SettingsUI;
+    [SerializeField] private ViewSwitcher viewSwitcher;
+    [SerializeField] private string menuViewId = "menu";
+    [SerializeField] private string gameplayViewId = "default";
 
-    private bool isOpen = false;
+    private bool IsMenuViewActive =>
+        viewSwitcher?.currentView?.id == menuViewId;
 
     public void OnEnable() {
         HarvestInputManager.Instance.OnMenuButton += ToggleMenu;
@@ -18,7 +18,7 @@ public class PauseMenuController : MonoBehaviour
     }
 
     public void ToggleMenu() {
-        if( isOpen) {
+        if (IsMenuViewActive) {
             CloseMainMenu();
         } else {
             OpenMainMenu();
@@ -27,14 +27,11 @@ public class PauseMenuController : MonoBehaviour
 
     public void OpenMainMenu()
     {
-        isOpen = true;
-        MainMenuUI.SetActive(true);
+        viewSwitcher.setActiveView(menuViewId);
     }
 
     public void CloseMainMenu()
     {
-        isOpen = false;
-        MainMenuUI.SetActive(false);
-        SettingsUI.SetActive(false);
+        viewSwitcher.setActiveView(gameplayViewId);
     }
 }

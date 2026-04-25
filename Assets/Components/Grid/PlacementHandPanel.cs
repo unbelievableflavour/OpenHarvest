@@ -8,12 +8,9 @@ using System.Collections.Generic;
 
 public class PlacementHandPanel : MonoBehaviour
 {
-    private const string DefaultPanelPrefabPath = "UI/PlacementHandPanelUI";
     private const string EmptyOwnedItemsText = "No owned placeables";
-    public static bool IsPcPanelInteractionActive { get; private set; }
 
     private PlacementSystem placementSystem;
-    private GameObject panelRoot;
     private Text itemLabel;
     private ScrollRect itemListScroll;
     private RectTransform itemListContent;
@@ -24,27 +21,19 @@ public class PlacementHandPanel : MonoBehaviour
     private Button buttonDelete;
     private Button buttonMove;
     private ViewSwitcher viewSwitcher;
-    private GameObject placeViewRoot;
-    private GameObject moveViewRoot;
-    private GameObject deleteViewRoot;
-    private Text moveViewHelpText;
-    private Text deleteViewHelpText;
     private readonly List<Button> runtimeItemButtons = new List<Button>();
     private readonly List<Text> runtimeItemLabels = new List<Text>();
     private readonly List<int> runtimeItemIndices = new List<int>();
     private bool isBoundToPlacementSystem;
 
-    [SerializeField]
-    private GameObject placementPanelPrefab;
+    [Header("Optional ViewSwitcher visibility")]
+    [SerializeField] private ViewSwitcher panelVisibilityViewSwitcher;
+    [SerializeField] private string panelVisibleViewId = "build";
+    [SerializeField] private string panelHiddenViewId = "default";
 
-    [SerializeField]
-    private Vector3 panelLocalPosition = new Vector3(0.06f, 0.02f, 0.08f);
-
-    [SerializeField]
-    private Vector3 panelLocalEulerAngles = new Vector3(20f, 180f, 0f);
-
-    [SerializeField]
-    private Vector3 panelLocalScale = new Vector3(0.0008f, 0.0008f, 0.0008f);
+    [Header("Panel UI (required)")]
+    [Tooltip("Drag the `PlacementHandPanelUI` root here. This component may live elsewhere on the player.")]
+    [SerializeField] private GameObject panelUiRoot;
 
     [Header("Visibility")]
     [SerializeField]
@@ -54,28 +43,23 @@ public class PlacementHandPanel : MonoBehaviour
     private bool enableKeyboardTabToggle = false;
 
     private bool isPanelVisibleOverride = true;
-    private FirstPersonController cachedFpsController;
-    private bool cachedControllerState;
-    private bool cachedCameraCanMove = true;
-    private bool cachedPlayerCanMove = true;
-    private CursorLockMode cachedCursorLockMode = CursorLockMode.Locked;
-    private bool cachedCursorVisible = false;
+    private bool isPanelUiWired;
 
     private void Awake()
     {
         isPanelVisibleOverride = autoShowInBuildMode;
         TryResolvePlacementSystem();
-        EnsurePanelExists();
+        TryInitializePanelUi();
     }
 
     private void OnEnable()
     {
+        TryInitializePanelUi();
         TryBindToPlacementSystem();
     }
 
     private void OnDisable()
     {
-        ApplyPcInteractionState(false);
         UnbindFromPlacementSystem();
     }
 
@@ -90,8 +74,31 @@ public class PlacementHandPanel : MonoBehaviour
             Keyboard.current != null &&
             Keyboard.current.tabKey.wasPressedThisFrame)
         {
+            if (GameState.Instance == null)
+            {
+                return;
+            }
+
+            if (GameState.Instance.GetMode() != "build")
+            {
+                GameState.Instance.SwitchToMode("build");
+            }
             TogglePanelVisibilityFromKeyboard();
         }
+    }
+
+    private void TryInitializePanelUi()
+    {
+        if (isPanelUiWired)
+        {
+            return;
+        }
+
+        CachePanelReferences();
+        EnsurePointerUiInfrastructure();
+        ConfigurePanelCanvasForPointerInput();
+        SetPanelVisible(false);
+        isPanelUiWired = true;
     }
 
     private bool TryResolvePlacementSystem()
@@ -144,13 +151,13 @@ public class PlacementHandPanel : MonoBehaviour
 
     private void HandlePlacementModeChanged(bool isActive)
     {
-        if (panelRoot == null)
+        if (panelVisibilityViewSwitcher == null)
         {
             return;
         }
 
-        panelRoot.SetActive(ShouldShowPanel(isActive));
-        ApplyPcInteractionState(panelRoot.activeSelf);
+        bool shouldShow = ShouldShowPanel(isActive);
+        SetPanelVisible(shouldShow);
         if (isActive)
         {
             RebuildItemList();
@@ -158,6 +165,11 @@ public class PlacementHandPanel : MonoBehaviour
             RefreshItemButtonHighlights();
             RefreshModeViews();
         }
+    }
+
+    private void SetPanelVisible(bool visible)
+    {
+        panelVisibilityViewSwitcher.setActiveView(visible ? panelVisibleViewId : panelHiddenViewId);
     }
 
     private void HandlePlacementSelectionChanged(string selectedItemName)
@@ -183,72 +195,14 @@ public class PlacementHandPanel : MonoBehaviour
         RefreshModeViews();
     }
 
-    private void EnsurePanelExists()
-    {
-        if (panelRoot == gameObject)
-        {
-            panelRoot = null;
-        }
-
-        if (panelRoot == null)
-        {
-            panelRoot = transform.Find("PlacementSelectionPanel")?.gameObject;
-        }
-
-        if (panelRoot == null)
-        {
-            if (placementPanelPrefab == null)
-            {
-                placementPanelPrefab = Resources.Load<GameObject>(DefaultPanelPrefabPath);
-            }
-
-            if (placementPanelPrefab == null)
-            {
-                Debug.LogWarning("[PlacementHandPanel] Missing placement panel prefab at Resources/" + DefaultPanelPrefabPath);
-                return;
-            }
-
-            panelRoot = Instantiate(placementPanelPrefab, transform);
-            panelRoot.name = "PlacementSelectionPanel";
-            panelRoot.transform.localPosition = panelLocalPosition;
-            panelRoot.transform.localRotation = Quaternion.Euler(panelLocalEulerAngles);
-            panelRoot.transform.localScale = panelLocalScale;
-        }
-
-        CachePanelReferences();
-        EnsurePointerUiInfrastructure();
-        ConfigurePanelCanvasForPointerInput();
-        panelRoot.SetActive(false);
-    }
-
     public void ConfigureVisibilityForPcToggle()
     {
-        EnsurePanelExists();
+        TryInitializePanelUi();
         autoShowInBuildMode = false;
         enableKeyboardTabToggle = true;
         isPanelVisibleOverride = false;
         ConfigureCanvasForPcToggle();
-        if (panelRoot != null)
-        {
-            panelRoot.SetActive(false);
-        }
-        ApplyPcInteractionState(false);
-    }
-
-    public void ConfigurePanelLocalTransform(Vector3 localPosition, Vector3 localEulerAngles, Vector3 localScale)
-    {
-        panelLocalPosition = localPosition;
-        panelLocalEulerAngles = localEulerAngles;
-        panelLocalScale = localScale;
-
-        if (panelRoot == null)
-        {
-            return;
-        }
-
-        panelRoot.transform.localPosition = panelLocalPosition;
-        panelRoot.transform.localRotation = Quaternion.Euler(panelLocalEulerAngles);
-        panelRoot.transform.localScale = panelLocalScale;
+        SetPanelVisible(false);
     }
 
     private bool ShouldShowPanel(bool isBuildModeActive)
@@ -268,7 +222,7 @@ public class PlacementHandPanel : MonoBehaviour
 
     private void TogglePanelVisibilityFromKeyboard()
     {
-        if (placementSystem == null || panelRoot == null)
+        if (placementSystem == null || panelVisibilityViewSwitcher == null)
         {
             return;
         }
@@ -276,89 +230,27 @@ public class PlacementHandPanel : MonoBehaviour
         if (!placementSystem.IsPlacementModeActive())
         {
             isPanelVisibleOverride = false;
-            panelRoot.SetActive(false);
+            SetPanelVisible(false);
             return;
         }
 
         isPanelVisibleOverride = !isPanelVisibleOverride;
-        panelRoot.SetActive(isPanelVisibleOverride);
-        ApplyPcInteractionState(isPanelVisibleOverride);
+        SetPanelVisible(isPanelVisibleOverride);
         if (isPanelVisibleOverride)
         {
             RebuildItemList();
         }
     }
 
-    private void ApplyPcInteractionState(bool panelVisible)
-    {
-        if (!enableKeyboardTabToggle)
-        {
-            IsPcPanelInteractionActive = false;
-            return;
-        }
-
-        if (panelVisible)
-        {
-            if (!cachedControllerState)
-            {
-                cachedCursorLockMode = Cursor.lockState;
-                cachedCursorVisible = Cursor.visible;
-                cachedFpsController = GetComponentInParent<FirstPersonController>();
-                if (cachedFpsController != null)
-                {
-                    cachedCameraCanMove = cachedFpsController.cameraCanMove;
-                    cachedPlayerCanMove = cachedFpsController.playerCanMove;
-                }
-                cachedControllerState = true;
-            }
-
-            if (cachedFpsController != null)
-            {
-                cachedFpsController.cameraCanMove = false;
-                cachedFpsController.playerCanMove = false;
-            }
-
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            IsPcPanelInteractionActive = true;
-            return;
-        }
-
-        if (cachedFpsController != null && cachedControllerState)
-        {
-            cachedFpsController.cameraCanMove = cachedCameraCanMove;
-            cachedFpsController.playerCanMove = cachedPlayerCanMove;
-        }
-
-        if (cachedControllerState)
-        {
-            Cursor.lockState = cachedCursorLockMode;
-            Cursor.visible = cachedCursorVisible;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-
-        cachedControllerState = false;
-        IsPcPanelInteractionActive = false;
-    }
-
     private void ConfigurePanelCanvasForPointerInput()
     {
-        if (panelRoot == null)
-        {
-            return;
-        }
-
         Camera eventCamera = GetComponentInParent<Camera>();
         if (eventCamera == null)
         {
             eventCamera = Camera.main;
         }
 
-        Canvas[] canvases = panelRoot.GetComponentsInChildren<Canvas>(true);
+        Canvas[] canvases = panelUiRoot.GetComponentsInChildren<Canvas>(true);
         for (int i = 0; i < canvases.Length; i++)
         {
             Canvas canvas = canvases[i];
@@ -381,18 +273,13 @@ public class PlacementHandPanel : MonoBehaviour
 
     private void ConfigureCanvasForPcToggle()
     {
-        if (panelRoot == null)
-        {
-            return;
-        }
-
         Camera eventCamera = GetComponentInParent<Camera>();
         if (eventCamera == null)
         {
             eventCamera = Camera.main;
         }
 
-        Canvas[] canvases = panelRoot.GetComponentsInChildren<Canvas>(true);
+        Canvas[] canvases = panelUiRoot.GetComponentsInChildren<Canvas>(true);
         for (int i = 0; i < canvases.Length; i++)
         {
             Canvas canvas = canvases[i];
@@ -420,36 +307,21 @@ public class PlacementHandPanel : MonoBehaviour
         {
             eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
         }
-
-        StandaloneInputModule legacyModule = eventSystem.GetComponent<StandaloneInputModule>();
-        if (legacyModule != null)
-        {
-            legacyModule.enabled = false;
-        }
     }
 
     private void CachePanelReferences()
     {
-        if (panelRoot == null)
-        {
-            return;
-        }
-
-        itemLabel = FindTextByName(panelRoot.transform, "CurrentItemLabel");
-        itemListScroll = FindScrollRectByName(panelRoot.transform, "ItemListScroll");
-        itemListContent = FindRectTransformByName(panelRoot.transform, "ItemListContent");
-        itemTemplateButton = FindButtonByName(panelRoot.transform, "ItemTemplateButton");
-        buttonPlace = FindButtonByName(panelRoot.transform, "ButtonPlace");
-        buttonPrev = FindButtonByName(panelRoot.transform, "ButtonPrev");
-        buttonNext = FindButtonByName(panelRoot.transform, "ButtonNext");
-        buttonDelete = FindButtonByName(panelRoot.transform, "ButtonDelete");
-        buttonMove = FindButtonByName(panelRoot.transform, "ButtonMove");
-        viewSwitcher = panelRoot.GetComponent<ViewSwitcher>();
-        placeViewRoot = FindGameObjectByName(panelRoot.transform, "PlaceView");
-        moveViewRoot = FindGameObjectByName(panelRoot.transform, "MoveView");
-        deleteViewRoot = FindGameObjectByName(panelRoot.transform, "DeleteView");
-        moveViewHelpText = FindTextByName(panelRoot.transform, "MoveViewHelpText");
-        deleteViewHelpText = FindTextByName(panelRoot.transform, "DeleteViewHelpText");
+        var root = panelUiRoot.transform;
+        itemLabel = FindTextByName(root, "CurrentItemLabel");
+        itemListScroll = FindScrollRectByName(root, "ItemListScroll");
+        itemListContent = FindRectTransformByName(root, "ItemListContent");
+        itemTemplateButton = FindButtonByName(root, "ItemTemplateButton");
+        buttonPlace = FindButtonByName(root, "ButtonPlace");
+        buttonPrev = FindButtonByName(root, "ButtonPrev");
+        buttonNext = FindButtonByName(root, "ButtonNext");
+        buttonDelete = FindButtonByName(root, "ButtonDelete");
+        buttonMove = FindButtonByName(root, "ButtonMove");
+        viewSwitcher = panelUiRoot.GetComponent<ViewSwitcher>();
         EnsureActionButtons();
     }
 
@@ -682,25 +554,6 @@ public class PlacementHandPanel : MonoBehaviour
         return null;
     }
 
-    private static GameObject FindGameObjectByName(Transform root, string name)
-    {
-        if (root == null || string.IsNullOrWhiteSpace(name))
-        {
-            return null;
-        }
-
-        Transform[] children = root.GetComponentsInChildren<Transform>(true);
-        for (int i = 0; i < children.Length; i++)
-        {
-            if (children[i] != null && children[i].name == name)
-            {
-                return children[i].gameObject;
-            }
-        }
-
-        return null;
-    }
-
     private static ScrollRect FindScrollRectByName(Transform root, string name)
     {
         ScrollRect[] scrollRects = root.GetComponentsInChildren<ScrollRect>(true);
@@ -858,53 +711,18 @@ public class PlacementHandPanel : MonoBehaviour
             return;
         }
 
+        if (viewSwitcher == null || viewSwitcher.views == null || viewSwitcher.views.Count == 0)
+        {
+            return;
+        }
+
         PlacementSystem.PlacementToolMode activeMode = placementSystem.GetCurrentPlacementToolMode();
-        bool isPlaceMode = activeMode == PlacementSystem.PlacementToolMode.Place;
-        bool isMoveMode = activeMode == PlacementSystem.PlacementToolMode.Move;
-        bool isDeleteMode = activeMode == PlacementSystem.PlacementToolMode.Delete;
-
-        // Prefer shared ViewSwitcher pattern when available.
-        if (viewSwitcher != null && viewSwitcher.views != null && viewSwitcher.views.Count > 0)
-        {
-            string targetViewId = isMoveMode ? "move" : isDeleteMode ? "delete" : "place";
-            viewSwitcher.setActiveView(targetViewId);
-        }
-        // If dedicated views exist in prefab but no switcher, drive manually.
-        else if (placeViewRoot != null || moveViewRoot != null || deleteViewRoot != null)
-        {
-            if (placeViewRoot != null)
-            {
-                placeViewRoot.SetActive(isPlaceMode);
-            }
-
-            if (moveViewRoot != null)
-            {
-                moveViewRoot.SetActive(isMoveMode);
-            }
-
-            if (deleteViewRoot != null)
-            {
-                deleteViewRoot.SetActive(isDeleteMode);
-            }
-        }
-        else
-        {
-            // Fallback: no separate view roots defined, so hide list outside Place mode.
-            if (itemListScroll != null)
-            {
-                itemListScroll.gameObject.SetActive(isPlaceMode);
-            }
-        }
-
-        if (moveViewHelpText != null)
-        {
-            moveViewHelpText.text = "Click an object to pick it up, then click again to place it.";
-        }
-
-        if (deleteViewHelpText != null)
-        {
-            deleteViewHelpText.text = "Click a placed object to remove it and refund one item.";
-        }
+        string targetViewId = activeMode == PlacementSystem.PlacementToolMode.Move
+            ? "move"
+            : activeMode == PlacementSystem.PlacementToolMode.Delete
+                ? "delete"
+                : "place";
+        viewSwitcher.setActiveView(targetViewId);
     }
 
     private static void ApplyToolButtonColor(Button button, bool isActive)

@@ -5,7 +5,7 @@ using static Definitions;
 
 public class QuestMenuController : MonoBehaviour
 {
-    public GameObject QuestUI;
+    public ViewSwitcher viewSwitcher;
     public GameObject QuestRow;
     public Transform QuestList;
 
@@ -16,7 +16,7 @@ public class QuestMenuController : MonoBehaviour
 
     public void RefreshView()
     {
-        QuestUI.SetActive(true);
+        viewSwitcher.setActiveView("quests");
         fillQuestsList();
     }
 

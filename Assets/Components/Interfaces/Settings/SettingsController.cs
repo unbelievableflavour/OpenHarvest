@@ -24,6 +24,11 @@ public class SettingsController : MonoBehaviour
     public Toggle useShadows;
     public Toggle useFog;
 
+    private void OnEnable()
+    {
+        UpdateSettingsWithPrefs();
+    }
+
     public void UpdateSettingsWithPrefs() {
         UpdateSettingsInCanvas(GameState.Instance.settings);
     }

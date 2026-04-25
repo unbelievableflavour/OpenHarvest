@@ -6,9 +6,8 @@ using System.Collections.Generic;
 public class RecipeMenuController : MonoBehaviour
 {
     public RecipeDatabase recipeDatabase;
-    public GameObject listView;
+    public ViewSwitcher viewSwitcher;
     public Transform recipeList;
-    public GameObject detailsView;
     public GameObject recipeRow;
 
     public Text detailsHeader;
@@ -30,16 +29,14 @@ public class RecipeMenuController : MonoBehaviour
     public void RefreshView()
     {
         if (view == "list") {
-            listView.SetActive(true);
-            detailsView.SetActive(false);
+            viewSwitcher.setActiveView(view);
             fillRecipeList();
             return;
         }
 
-        if (view == "detail")
+        if (view == "details")
         {
-            detailsView.SetActive(true);
-            listView.SetActive(false);
+            viewSwitcher.setActiveView(view);
 
             var recipe = recipeDatabase.recipes[currentRecipeIndex];
             string ingredientsString = string.Join(" + ", recipe.ingredients);
@@ -78,7 +75,7 @@ public class RecipeMenuController : MonoBehaviour
 
     public void SetDetailView(int newDetailViewIndex)
     {
-        view = "detail";
+        view = "details";
         currentRecipeIndex = newDetailViewIndex;
         RefreshView();
     }
