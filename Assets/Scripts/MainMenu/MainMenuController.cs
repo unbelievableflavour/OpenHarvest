@@ -173,7 +173,7 @@ public class MainMenuController : MonoBehaviour
         var progressCanvasController = progressCanvas.GetComponent<ProgressCanvasController>();
         progressCanvasController.UpdateProgressCanvasWithSave(saveGame);
 
-        var settingsController = settingsCanvas.GetComponent<SettingsController>();
+        var settingsController = settingsCanvas.GetComponentInChildren<SettingsController>();
         settingsController.UpdateSettingsWithPrefs();
 
         DisableAllCanvas();
