@@ -68,6 +68,7 @@ GameObject:
   - component: {fileID: 7153164265335700226}
   - component: {fileID: 6946015750815684350}
   - component: {fileID: 6332889850046326724}
+  - component: {fileID: 8554210232195108486}
   m_Layer: 0
   m_Name: PigYoungAnimated
   m_TagString: Untagged
@@ -112,9 +113,8 @@ MonoBehaviour:
   wanderMaxInterval: 15
   firstWanderDelay: 1
   followTarget: {fileID: 0}
-  followStopDistance: 2
-  followRefreshInterval: 0.25
   movesWhenFurtherAwayThen: 5
+  interactionAimRotationSpeed: 8
 --- !u!54 &7153164265335700226
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -185,6 +185,20 @@ NavMeshAgent:
   m_BaseOffset: 0.6
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &8554210232195108486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9150592291865004670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a72d5bdb8c74222b071b9bc0c942053, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  definition: {fileID: 11400000, guid: 5c66a1478e6084e979b4bc7a5c217e0b, type: 2}
+  maxDistance: 3
 --- !u!1001 &2175723587199893738
 PrefabInstance:
   m_ObjectHideFlags: 0

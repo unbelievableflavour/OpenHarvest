@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3371040123852997247}
   - component: {fileID: 6703611681229377699}
   - component: {fileID: 6696743136031527947}
+  - component: {fileID: 1022158825953517454}
   m_Layer: 12
   m_Name: SheepYoungAnimated
   m_TagString: Untagged
@@ -57,9 +58,8 @@ MonoBehaviour:
   wanderMaxInterval: 15
   firstWanderDelay: 1
   followTarget: {fileID: 0}
-  followStopDistance: 2
-  followRefreshInterval: 0.25
   movesWhenFurtherAwayThen: 5
+  interactionAimRotationSpeed: 8
 --- !u!54 &3371040123852997247
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -128,6 +128,21 @@ NavMeshAgent:
   m_BaseOffset: 0.42
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1022158825953517454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3706494469349602051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a72d5bdb8c74222b071b9bc0c942053, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  definition: {fileID: 11400000, guid: a5cc0c5df6ad4f868b81b36753b51718, type: 2}
+  maxDistance: 3
+  useFKeyInteraction: 1
 --- !u!1 &8203048637407440985
 GameObject:
   m_ObjectHideFlags: 0

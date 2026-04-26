@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6669756957651422914}
   - component: {fileID: 4848812024854692830}
   - component: {fileID: 7542850206994039514}
+  - component: {fileID: 1074526816934218368}
   m_Layer: 12
   m_Name: SheepAnimated
   m_TagString: Untagged
@@ -100,8 +101,6 @@ MonoBehaviour:
   wanderMaxInterval: 15
   firstWanderDelay: 1
   followTarget: {fileID: 0}
-  followStopDistance: 2
-  followRefreshInterval: 0.25
   movesWhenFurtherAwayThen: 5
 --- !u!114 &6228355521185345502
 MonoBehaviour:
@@ -175,6 +174,20 @@ NavMeshAgent:
   m_BaseOffset: 0.53
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1074526816934218368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2477920441206668226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a72d5bdb8c74222b071b9bc0c942053, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  definition: {fileID: 11400000, guid: a5cc0c5df6ad4f868b81b36753b51718, type: 2}
+  maxDistance: 3
 --- !u!1001 &588704284456354665
 PrefabInstance:
   m_ObjectHideFlags: 0

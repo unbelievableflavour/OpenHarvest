@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 8877816787198476116}
   - component: {fileID: 8385502592510222828}
   - component: {fileID: 422753190939126518}
+  - component: {fileID: 7563797744028705794}
   m_Layer: 0
   m_Name: PigAnimated
   m_TagString: Untagged
@@ -90,9 +91,8 @@ MonoBehaviour:
   wanderMaxInterval: 15
   firstWanderDelay: 1
   followTarget: {fileID: 0}
-  followStopDistance: 2
-  followRefreshInterval: 0.25
   movesWhenFurtherAwayThen: 5
+  interactionAimRotationSpeed: 8
 --- !u!54 &349766969020772057
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -176,6 +176,20 @@ NavMeshAgent:
   m_BaseOffset: 0.86
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7563797744028705794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829258601772179365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a72d5bdb8c74222b071b9bc0c942053, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  definition: {fileID: 11400000, guid: 5c66a1478e6084e979b4bc7a5c217e0b, type: 2}
+  maxDistance: 3
 --- !u!1 &2171412069793552646
 GameObject:
   m_ObjectHideFlags: 0

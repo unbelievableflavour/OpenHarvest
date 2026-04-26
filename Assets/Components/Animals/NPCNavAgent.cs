@@ -15,6 +15,11 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class NPCNavAgent : MonoBehaviour
 {
+    const float FollowStopDistance = 2f;
+    const float FollowRefreshInterval = 0.25f;
+    const float FollowMoveSpeed = 5f;
+    const float FollowAcceleration = 10f;
+
     [Header("Animation")]
     public Animator animator;
     [Tooltip("Animator state name to play while moving.")]
@@ -33,16 +38,16 @@ public class NPCNavAgent : MonoBehaviour
     public float firstWanderDelay = 1f;
 
     [Header("Follow")]
-    [Tooltip("If set, the animal will follow this transform instead of wandering.")]
+    [Tooltip("If set, the animal will follow this transform instead of wandering (speed/stop/refresh are fixed in code).")]
     public Transform followTarget;
-    [Tooltip("How close to the follow target before stopping.")]
-    public float followStopDistance = 2f;
-    [Tooltip("How often (seconds) the follow destination is refreshed.")]
-    public float followRefreshInterval = 0.25f;
 
     [Header("Activity Culling")]
     [Tooltip("Only move when the main camera is further away than this distance. Set to 0 to disable culling.")]
     public float movesWhenFurtherAwayThen = 5f;
+
+    [Header("Interaction")]
+    [Tooltip("How fast the NPC yaws toward the player while the interaction menu is open.")]
+    [SerializeField] private float interactionAimRotationSpeed = 8f;
 
     NavMeshAgent agent;
     Transform mainCam;
@@ -51,16 +56,35 @@ public class NPCNavAgent : MonoBehaviour
     float nextFollowRefreshAt;
     bool isActive = true;
     bool movementSuppressed;
+    Transform interactionAimTarget;
+    static NPCNavAgent s_activeInteractionNav;
+    bool _restoreNavAgentUpdateRotation;
+    float _defaultNavAgentSpeed;
+    float _defaultNavAgentAcceleration;
 
     protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        _defaultNavAgentSpeed = agent.speed;
+        _defaultNavAgentAcceleration = agent.acceleration;
 
         // NavMeshAgent writes to transform directly; any attached Rigidbody must be kinematic
         // to avoid fighting the agent's position updates.
         if (TryGetComponent<Rigidbody>(out var rb))
         {
             rb.isKinematic = true;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (s_activeInteractionNav == this)
+        {
+            s_activeInteractionNav = null;
+            if (agent != null)
+            {
+                agent.updateRotation = _restoreNavAgentUpdateRotation;
+            }
         }
     }
 
@@ -89,20 +113,27 @@ public class NPCNavAgent : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (interactionAimTarget != null)
+        {
+            TickInteractionAim();
+        }
+
         if (movementSuppressed)
         {
+            return;
+        }
+
+        // Follow must not be blocked by activity culling (wander) or the agent never
+        // receives destinations / StartMoving() and the walk anim won't play while close.
+        if (followTarget != null)
+        {
+            TickFollow();
             return;
         }
 
         UpdateActiveState();
         if (!isActive)
         {
-            return;
-        }
-
-        if (followTarget != null)
-        {
-            TickFollow();
             return;
         }
 
@@ -159,17 +190,17 @@ public class NPCNavAgent : MonoBehaviour
         {
             return;
         }
-        nextFollowRefreshAt = Time.time + followRefreshInterval;
+        nextFollowRefreshAt = Time.time + FollowRefreshInterval;
 
         float distanceToTarget = Vector3.Distance(transform.position, followTarget.position);
-        if (distanceToTarget <= followStopDistance)
+        if (distanceToTarget <= FollowStopDistance)
         {
             StopMoving();
             return;
         }
 
         StartMoving();
-        agent.stoppingDistance = followStopDistance;
+        agent.stoppingDistance = FollowStopDistance;
         agent.SetDestination(followTarget.position);
     }
 
@@ -225,12 +256,23 @@ public class NPCNavAgent : MonoBehaviour
     {
         followTarget = target;
         nextFollowRefreshAt = 0f;
+        if (agent != null)
+        {
+            agent.speed = FollowMoveSpeed;
+            agent.acceleration = FollowAcceleration;
+        }
     }
 
     /// <summary>Stop following and resume wandering around the current position.</summary>
     public void StopFollowing()
     {
         followTarget = null;
+        if (agent != null)
+        {
+            agent.speed = _defaultNavAgentSpeed;
+            agent.acceleration = _defaultNavAgentAcceleration;
+        }
+
         spawnAnchor = transform.position;
         ScheduleNextWander();
         StopMoving();
@@ -256,5 +298,87 @@ public class NPCNavAgent : MonoBehaviour
         {
             nextWanderAt = Time.time + 0.25f;
         }
+    }
+
+    void TickInteractionAim()
+    {
+        Transform t = interactionAimTarget;
+        if (t == null)
+        {
+            return;
+        }
+
+        Vector3 d = t.position - transform.position;
+        d.y = 0f;
+        if (d.sqrMagnitude < 0.0001f)
+        {
+            return;
+        }
+
+        Quaternion look = Quaternion.LookRotation(d.normalized, Vector3.up);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            look,
+            Time.deltaTime * interactionAimRotationSpeed);
+    }
+
+    /// <summary>
+    /// Face the player (or a view target) and stop moving while the interaction UI is open.
+    /// Replaces any other NPC currently in this state.
+    /// </summary>
+    public void BeginInteractionAim(Transform lookAt)
+    {
+        if (s_activeInteractionNav != null && s_activeInteractionNav != this)
+        {
+            s_activeInteractionNav.EndInteractionAim();
+        }
+
+        s_activeInteractionNav = this;
+        interactionAimTarget = lookAt;
+        if (agent != null)
+        {
+            _restoreNavAgentUpdateRotation = agent.updateRotation;
+            agent.updateRotation = false;
+        }
+
+        SetMovementSuppressed(true);
+    }
+
+    /// <summary>Stop aiming and resume normal navigation.</summary>
+    public void EndInteractionAim()
+    {
+        if (s_activeInteractionNav == this)
+        {
+            s_activeInteractionNav = null;
+        }
+
+        interactionAimTarget = null;
+        if (agent != null)
+        {
+            agent.updateRotation = _restoreNavAgentUpdateRotation;
+        }
+
+        SetMovementSuppressed(false);
+    }
+
+    public static void EndAnyInteractionAim()
+    {
+        s_activeInteractionNav?.EndInteractionAim();
+    }
+
+    public static Transform ResolvePlayerLookAtTransform()
+    {
+        if (Camera.main != null)
+        {
+            return Camera.main.transform;
+        }
+
+        return GameState.Instance != null ? GameState.Instance.currentPlayerPosition : null;
+    }
+
+    /// <summary>Rig to follow: prefers <see cref="CurrentGameState.currentPlayerPosition"/>, then <c>Camera.main</c>.</summary>
+    public static Transform ResolvePlayerFollowTarget()
+    {
+        return GameState.Instance?.currentPlayerPosition ?? Camera.main?.transform;
     }
 }

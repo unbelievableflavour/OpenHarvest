@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6534446251164433332}
   - component: {fileID: 5854681019198591224}
   - component: {fileID: 1000667960705059139}
+  - component: {fileID: 610065195904934268}
   m_Layer: 12
   m_Name: ChickenAnimated
   m_TagString: Untagged
@@ -56,9 +57,8 @@ MonoBehaviour:
   wanderMaxInterval: 15
   firstWanderDelay: 1
   followTarget: {fileID: 0}
-  followStopDistance: 2
-  followRefreshInterval: 0.25
   movesWhenFurtherAwayThen: 5
+  interactionAimRotationSpeed: 8
 --- !u!54 &6534446251164433332
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -128,6 +128,20 @@ NavMeshAgent:
   m_BaseOffset: 0.15
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &610065195904934268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5122648913443637960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a72d5bdb8c74222b071b9bc0c942053, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  definition: {fileID: 11400000, guid: 98801d9a95e9f4fe5a270fa5e56b9217, type: 2}
+  maxDistance: 3
 --- !u!1001 &4629401243921551678
 PrefabInstance:
   m_ObjectHideFlags: 0
