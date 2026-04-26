@@ -1,30 +1,21 @@
 using UnityEngine;
 
-#if UNITY_EDITOR
-    using UnityEditor;
-#endif
-
 public class HardwareController : MonoBehaviour
-{    
+{
     public HarvestSettings HarvestSettings;
     public GameObject VRPlayerObject;
     public GameObject PCPlayerObject;
 
-#if UNITY_EDITOR
-    void Start()
+    void Awake()
     {
-        if (HarvestSettings.playerMode == PlayerMode.FPS)
+        if (HarvestSettings.playerMode == PlayerMode.VR)
         {
-            GetComponent<HeadsetDetector>().enabled = false;
-            VRPlayerObject.SetActive(false);
-            Instantiate(PCPlayerObject);
+            Instantiate(VRPlayerObject);
         }
 
-        if (HarvestSettings.playerMode == PlayerMode.Showcase)
+        if (HarvestSettings.playerMode == PlayerMode.FPS)
         {
-            GetComponent<HeadsetDetector>().enabled = false;
-            VRPlayerObject.SetActive(false);
+            Instantiate(PCPlayerObject);
         }
     }
-#endif
 }
