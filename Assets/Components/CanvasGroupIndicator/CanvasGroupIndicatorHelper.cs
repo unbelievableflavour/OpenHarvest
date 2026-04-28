@@ -21,13 +21,11 @@ public class CanvasGroupIndicatorHelper : MonoBehaviour
     private float _currentOpacity;
 
     Transform mainCam;
-    Vector3 transformPos;
     bool showCanvasGroup;
     // Start is called before the first frame update
     void Start()
     {
-        mainCam = Camera.main.transform;
-        transformPos = transform.position; // storing the transform here saves about 10ms in performance;
+        mainCam = Camera.main?.transform;
 
         _maxOpacity = canvasGroup.alpha;
         _minOpacity = 0;
@@ -40,8 +38,18 @@ public class CanvasGroupIndicatorHelper : MonoBehaviour
 
     void Update()
     {
+        if (mainCam == null && Camera.main?.transform != null)
+        {
+            mainCam = Camera.main?.transform;
+        }
+
+        if (mainCam == null)
+        {
+            return;
+        }
+
         // Show if within range
-        float currentDistance = Vector3.Distance(transformPos, mainCam.position);
+        float currentDistance = Vector3.Distance(transform.position, mainCam.position);
         showCanvasGroup = currentDistance <= maxShowDistance;
 
         if (!showCanvasGroup && _currentOpacity == _minOpacity)
