@@ -10,7 +10,7 @@ public class NpcProximityInteractable : MonoBehaviour
     [SerializeField] private NpcInteractableDefinition definition;
 
     [Header("Proximity")]
-    [SerializeField] private float maxDistance = 3f;
+    [SerializeField] private float maxDistance = 2f;
 
     public NpcInteractableDefinition Definition => definition;
     public bool IsInRange { get; private set; }
