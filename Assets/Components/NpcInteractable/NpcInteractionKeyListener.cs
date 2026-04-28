@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 /// F-key enabled, opens the <c>interaction</c> <see cref="ViewSwitcher"/> view (closest NPC wins
 /// if several overlap; view id is not per-NPC).
 /// </summary>
-public class NpcInteractionFKeyView : MonoBehaviour
+public class NpcInteractionKeyListener : MonoBehaviour
 {
     private const string InteractionViewId = "interaction";
 
@@ -27,6 +27,8 @@ public class NpcInteractionFKeyView : MonoBehaviour
         {
             viewSwitcher.OnViewChanged += OnViewIdChanged;
         }
+
+        HarvestInputManager.Instance.OnAButton += TryOpenClosestNpcInteraction;
     }
 
     private void OnDisable()
@@ -35,6 +37,8 @@ public class NpcInteractionFKeyView : MonoBehaviour
         {
             viewSwitcher.OnViewChanged -= OnViewIdChanged;
         }
+
+        HarvestInputManager.Instance.OnAButton -= TryOpenClosestNpcInteraction;
     }
 
     private void OnViewIdChanged(string viewId)
@@ -48,6 +52,16 @@ public class NpcInteractionFKeyView : MonoBehaviour
     private void Update()
     {
         if (Keyboard.current == null || !Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            return;
+        }
+
+        TryOpenClosestNpcInteraction();
+    }
+
+    private void TryOpenClosestNpcInteraction()
+    {
+        if (GameState.Instance?.GetMode() == "build")
         {
             return;
         }
@@ -98,4 +112,5 @@ public class NpcInteractionFKeyView : MonoBehaviour
         NPCNavAgent nav = best.GetComponentInParent<NPCNavAgent>();
         nav?.BeginInteractionAim(NPCNavAgent.ResolvePlayerLookAtTransform());
     }
+
 }
