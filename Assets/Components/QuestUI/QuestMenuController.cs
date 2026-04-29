@@ -5,9 +5,13 @@ using static Definitions;
 
 public class QuestMenuController : MonoBehaviour
 {
-    public GameObject QuestUI;
     public GameObject QuestRow;
     public Transform QuestList;
+
+    private void OnEnable()
+    {
+        ActivateUI();
+    }
 
     public void ActivateUI()
     {
@@ -16,7 +20,6 @@ public class QuestMenuController : MonoBehaviour
 
     public void RefreshView()
     {
-        QuestUI.SetActive(true);
         fillQuestsList();
     }
 

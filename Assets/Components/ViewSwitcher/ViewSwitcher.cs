@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 [System.Serializable]
@@ -12,6 +13,8 @@ public class ViewSwitcher : MonoBehaviour
 {
     public List<View> views = new List<View>();
     public View currentView;
+
+    public event Action<string> OnViewChanged;
 
     void Start()
     {
@@ -30,6 +33,7 @@ public class ViewSwitcher : MonoBehaviour
             }
             currentView = view;
             view.view.SetActive(true);
+            OnViewChanged?.Invoke(id);
         }
     }
 }

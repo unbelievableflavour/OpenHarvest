@@ -37,6 +37,7 @@ namespace Tests
             Assert.AreNotEqual(null, spawnersItemLister.itemRowPrefab);
             Assert.AreNotEqual(null, spawnersItemLister.functionalScrollViewContent);
             Assert.AreNotEqual(null, spawnersItemLister.spawnController);
+            Assert.AreNotEqual(null, spawnersItemLister.harvestSettings);
         }
 
         [Test]

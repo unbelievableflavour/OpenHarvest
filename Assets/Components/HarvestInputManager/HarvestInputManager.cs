@@ -63,6 +63,12 @@ public class HarvestInputManager : MonoBehaviour
             OnMenuButton?.Invoke();
         }
 
+        // keyboard fallback (e.g. FPS mode on desktop)
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            OnMenuButton?.Invoke();
+        }
+
 #if UNITY_EDITOR
         if (harvestSettings.playerMode == PlayerMode.FPS)
         {

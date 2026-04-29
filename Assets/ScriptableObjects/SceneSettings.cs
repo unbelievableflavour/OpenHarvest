@@ -23,5 +23,9 @@ namespace HarvestDataTypes
         [Header("Build Mode")]
         [Tooltip("If disabled, hide build mode entry points in scene UI.")]
         public bool allowBuildMode = true;
+
+        [Header("Weather")]
+        [Tooltip("If enabled, the WeatherController drives weather particles in this scene.")]
+        public bool usesWeather = false;
     }
 }
