@@ -20,6 +20,11 @@ public class RecipeMenuController : MonoBehaviour
     private int currentRecipeIndex;
     private string view = "list";
 
+    private void OnEnable()
+    {
+        ActivateRecipeUI();
+    }
+
     public void ActivateRecipeUI()
     {
         view = "list";
