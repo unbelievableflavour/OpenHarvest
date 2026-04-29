@@ -1,5 +1,9 @@
 # OpenHarvest
 
+<p align="center">
+  <img src="Assets/Settings/logo_definitive.png" alt="OpenHarvest logo" width="320" />
+</p>
+
 # How to install
 1. Install the required unity version: 6000.0.58f1
 2. Download this project.
