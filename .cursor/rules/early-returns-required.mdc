@@ -1,0 +1,30 @@
+---
+description: Prefer early returns in C# control flow
+alwaysApply: true
+---
+
+# Early Returns Required
+
+- Applies to `.cs` source changes.
+- Prefer early returns to reduce nesting and keep the main execution path clear.
+- Handle guard conditions first and return immediately when prerequisites are not met.
+- Avoid `else` blocks when the `if` branch already exits via `return`, `continue`, or `break`.
+- Keep methods flat and readable by using explicit guard clauses for invalid or edge-case input.
+
+## Examples
+
+```text
+Instead of:
+if (condition)
+{
+    // main logic
+}
+
+Prefer:
+if (!condition)
+{
+    return;
+}
+
+// main logic
+```

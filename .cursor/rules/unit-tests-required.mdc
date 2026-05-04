@@ -1,0 +1,20 @@
+---
+description: Require unit tests for all C# code changes
+alwaysApply: true
+---
+
+# Unit Tests Required
+
+- Applies to `.cs` source changes.
+- Add or update unit tests for every new behavior change, bug fix, or code path added in C# code.
+- Treat code as incomplete until tests cover the intended behavior.
+- Prefer focused unit tests close to the changed C# logic.
+- Include negative and edge-case coverage when behavior has branches.
+- If a C# change cannot be unit tested, explicitly state why and propose the nearest automated test level.
+
+## Examples
+
+```text
+Code change (.cs): Add input validation for NPC interaction range.
+Test change: Add unit tests that verify valid ranges pass and invalid ranges fail.
+```
