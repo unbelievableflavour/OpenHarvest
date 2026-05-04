@@ -225,6 +225,11 @@ public class InteractionUIController : MonoBehaviour
 
     public void ShowInstancedOptionContent(GameObject prefab)
     {
+        ShowInstancedOptionContent(prefab, null);
+    }
+
+    public void ShowInstancedOptionContent(GameObject prefab, Action<GameObject> afterInstantiate)
+    {
         if (prefab == null)
         {
             return;
@@ -234,6 +239,7 @@ public class InteractionUIController : MonoBehaviour
         ClearCurrentInteractionChildren();
         Transform targetParent = currentInteractionRoot != null ? currentInteractionRoot : transform;
         _spawnedOptionContent = Instantiate(prefab, targetParent, false);
+        afterInstantiate?.Invoke(_spawnedOptionContent);
     }
 
     private void HandleInteractionUiToMain()
