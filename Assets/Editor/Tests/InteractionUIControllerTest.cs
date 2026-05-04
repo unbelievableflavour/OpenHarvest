@@ -48,6 +48,42 @@ namespace Tests
             Object.DestroyImmediate(definition);
         }
 
+        [Test]
+        public void SetDefinition_AppliesSubtitleFromDefinition()
+        {
+            InteractionUIController ui = CreateUi(out _, out _, out _, out _, out Text subtitleText);
+            ui.enabled = false;
+
+            var definition = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            definition.subtitle = "  Need anything?  ";
+
+            ui.SetDefinition(definition);
+
+            Assert.AreEqual("Need anything?", subtitleText.text);
+            Assert.IsTrue(subtitleText.gameObject.activeSelf);
+
+            Object.DestroyImmediate(definition);
+        }
+
+        [Test]
+        public void SetDefinition_EmptySubtitle_HidesSubtitleField()
+        {
+            InteractionUIController ui = CreateUi(out _, out _, out _, out _, out Text subtitleText);
+            ui.enabled = false;
+            subtitleText.gameObject.SetActive(true);
+            subtitleText.text = "stale";
+
+            var definition = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            definition.subtitle = "   ";
+
+            ui.SetDefinition(definition);
+
+            Assert.AreEqual(string.Empty, subtitleText.text);
+            Assert.IsFalse(subtitleText.gameObject.activeSelf);
+
+            Object.DestroyImmediate(definition);
+        }
+
         [UnityTest]
         public System.Collections.IEnumerator SetDefinition_CreatesOneRowPerValidOptionPlusGoodbye()
         {
@@ -84,7 +120,7 @@ namespace Tests
         [UnityTest]
         public System.Collections.IEnumerator SetDefinition_OptionRowClick_ExecutesContractsAction()
         {
-            InteractionUIController ui = CreateUi(out _, out ScrollRect scrollRect, out _, out ViewSwitcher viewSwitcher);
+            InteractionUIController ui = CreateUi(out _, out ScrollRect scrollRect, out _, out ViewSwitcher viewSwitcher, out _);
             ui.enabled = false;
 
             GameObject mainViewGo = new GameObject("main_view");
@@ -131,7 +167,7 @@ namespace Tests
         [UnityTest]
         public System.Collections.IEnumerator ShowInstancedOptionContent_SwitchesToCurrentInteractionView()
         {
-            InteractionUIController ui = CreateUi(out _, out _, out _, out ViewSwitcher viewSwitcher);
+            InteractionUIController ui = CreateUi(out _, out _, out _, out ViewSwitcher viewSwitcher, out _);
             ui.enabled = false;
 
             GameObject mainViewGo = new GameObject("main_view");
@@ -160,7 +196,7 @@ namespace Tests
 
         private InteractionUIController CreateUi(out Text npcNameText, out ScrollRect scrollRect, out Button optionButtonTemplate)
         {
-            return CreateUi(out npcNameText, out scrollRect, out optionButtonTemplate, out _);
+            return CreateUi(out npcNameText, out scrollRect, out optionButtonTemplate, out _, out _);
         }
 
         private InteractionUIController CreateUi(
@@ -168,6 +204,16 @@ namespace Tests
             out ScrollRect scrollRect,
             out Button optionButtonTemplate,
             out ViewSwitcher viewSwitcher)
+        {
+            return CreateUi(out npcNameText, out scrollRect, out optionButtonTemplate, out viewSwitcher, out _);
+        }
+
+        private InteractionUIController CreateUi(
+            out Text npcNameText,
+            out ScrollRect scrollRect,
+            out Button optionButtonTemplate,
+            out ViewSwitcher viewSwitcher,
+            out Text npcSubtitleText)
         {
             _root = new GameObject("InteractionUIControllerTestRoot");
             _root.SetActive(false);
@@ -177,6 +223,10 @@ namespace Tests
             var npcNameGo = new GameObject("NpcNameText", typeof(Text));
             npcNameGo.transform.SetParent(_root.transform, false);
             npcNameText = npcNameGo.GetComponent<Text>();
+
+            var npcSubtitleGo = new GameObject("NpcSubtitleText", typeof(Text));
+            npcSubtitleGo.transform.SetParent(_root.transform, false);
+            npcSubtitleText = npcSubtitleGo.GetComponent<Text>();
 
             var scrollGo = new GameObject("ScrollRect", typeof(ScrollRect));
             scrollGo.transform.SetParent(_root.transform, false);
@@ -206,6 +256,7 @@ namespace Tests
             currentInteractionRoot.SetParent(viewSwitcherGo.transform, false);
 
             SetPrivateField(ui, "npcNameText", npcNameText);
+            SetPrivateField(ui, "npcSubtitleText", npcSubtitleText);
             SetPrivateField(ui, "scrollRect", scrollRect);
             SetPrivateField(ui, "optionButtonTemplate", optionButtonTemplate);
             SetPrivateField(ui, "viewSwitcher", viewSwitcher);

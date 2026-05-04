@@ -31,6 +31,10 @@ public class NpcInteractableDefinition : ScriptableObject
     [Tooltip("Display name of this character.")]
     public string npcName = "NPC";
 
+    [TextArea(1, 4)]
+    [Tooltip("Optional line under the name; shown on the interaction panel and spoken when the panel opens (requires NPCVoice on this NPC).")]
+    public string subtitle = "";
+
     [Tooltip("If true and this NPC has an NPCNavAgent, show Follow / Stop following above Goodbye.")]
     public bool showFollowToggle = true;
 

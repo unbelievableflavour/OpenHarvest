@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c6700b10bbdd494899377f6cdefd333, type: 3}
+  m_Name: Chat Graph
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: node_5e25a7f2
+    body: Sure what do you wanna talk about?
+    choices:
+    - label: Do you move your cart here everyday?
+      nextNodeId: node_59f1d07e
+    - label: Where did you come from, you where suddenly just here..
+      nextNodeId: node_e33a859e
+    graphPosition: {x: 0, y: 0}
+  - id: node_e33a859e
+    body: Who knows.... Maybe I'm an alien! No just kidding. I live in a village
+      close by.
+    choices: []
+    graphPosition: {x: 0, y: 0}
+  - id: node_59f1d07e
+    body: Looks like it yeah. You could do it for me if you like..
+    choices: []
+    graphPosition: {x: 0, y: 0}
+  - id: node_2a6759c3
+    body: New line
+    choices:
+    - label: Next
+      nextNodeId: 
+    graphPosition: {x: 0, y: 0}

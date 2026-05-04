@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Fills a scroll list with one button per <see cref="NpcInteractionOption"/> on a
-/// <see cref="NpcInteractableDefinition"/>, then a final <b>Goodbye</b> button.
+/// Shows NPC name and optional subtitle from <see cref="NpcInteractableDefinition"/>, fills a scroll list with one
+/// button per <see cref="NpcInteractionOption"/>, then a final <b>Goodbye</b> button.
 /// </summary>
 public class InteractionUIController : MonoBehaviour
 {
@@ -17,6 +17,7 @@ public class InteractionUIController : MonoBehaviour
     private const string InteractionUiToMainEventName = "interactionUIToMain";
 
     [SerializeField] private Text npcNameText;
+    [SerializeField] private Text npcSubtitleText;
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Button optionButtonTemplate;
     [SerializeField, Tooltip("ViewSwitcher used by this interaction UI (must contain a 'main' view).")]
@@ -27,7 +28,6 @@ public class InteractionUIController : MonoBehaviour
     private UIEventSender uiEventSender;
 
     private readonly List<Button> _spawnedButtons = new List<Button>();
-    private GameObject _spawnedOptionContent;
 
     public event Action OnGoodbye;
 
@@ -53,6 +53,18 @@ public class InteractionUIController : MonoBehaviour
                 ? definition.npcName
                 : "—";
         }
+
+        string subtitle = definition != null && !string.IsNullOrWhiteSpace(definition.subtitle)
+            ? definition.subtitle.Trim()
+            : string.Empty;
+
+        if (npcSubtitleText != null)
+        {
+            npcSubtitleText.text = subtitle;
+            npcSubtitleText.gameObject.SetActive(subtitle.Length > 0);
+        }
+
+        TrySpeakSubtitle(subtitle, interactable);
 
         if (definition != null && definition.options != null)
         {
@@ -94,6 +106,34 @@ public class InteractionUIController : MonoBehaviour
 
         _spawnedButtons.Clear();
         ClearCurrentInteractionChildren();
+
+        if (npcSubtitleText != null)
+        {
+            npcSubtitleText.text = string.Empty;
+            npcSubtitleText.gameObject.SetActive(false);
+        }
+    }
+
+    private static void TrySpeakSubtitle(string subtitle, NpcProximityInteractable interactable)
+    {
+        if (string.IsNullOrEmpty(subtitle) || interactable == null)
+        {
+            return;
+        }
+
+        NPCController npc = interactable.GetComponentInParent<NPCController>();
+        if (npc == null)
+        {
+            return;
+        }
+
+        NPCVoice voice = npc.GetComponent<NPCVoice>();
+        if (voice == null)
+        {
+            return;
+        }
+
+        voice.Speak(subtitle);
     }
 
     private void AddRow(string label, Action onClick)
@@ -232,8 +272,8 @@ public class InteractionUIController : MonoBehaviour
         viewSwitcher?.setActiveView(CurrentInteractionViewId);
         ClearCurrentInteractionChildren();
         Transform targetParent = currentInteractionRoot != null ? currentInteractionRoot : transform;
-        _spawnedOptionContent = Instantiate(prefab, targetParent, false);
-        afterInstantiate?.Invoke(_spawnedOptionContent);
+        GameObject instance = Instantiate(prefab, targetParent, false);
+        afterInstantiate?.Invoke(instance);
     }
 
     private void HandleInteractionUiToMain()
@@ -255,13 +295,9 @@ public class InteractionUIController : MonoBehaviour
             Transform child = parent.GetChild(i);
             if (child != null)
             {
-                // Spawned option UI should disappear immediately when returning to main; Destroy() defers
-                // (breaks Play Mode tests and feels laggy). Same pattern as explicit teardown of owned instances.
                 DestroyImmediate(child.gameObject);
             }
         }
-
-        _spawnedOptionContent = null;
     }
 
     /// <summary>
