@@ -5,15 +5,24 @@ using UnityEngine;
 [Serializable]
 public class NpcInteractionOption
 {
-    [Tooltip("Stable id for code, events, or saves (e.g. shop, quest_greeting).")]
-    public string optionId;
-
     [Tooltip("Text shown to the player for this choice.")]
-    public string displayName;
+    public string displayName = "Option";
 
-    [TextArea(2, 6)]
-    [Tooltip("Optional extra line for tooltips or dialogue previews.")]
-    public string details;
+    [Tooltip("Polymorphic behavior asset for this option.")]
+    public NpcInteractionOptionAction action;
+
+    public bool IsValid()
+    {
+        return !string.IsNullOrWhiteSpace(displayName)
+            && action != null
+            && action.IsValid(this);
+    }
+
+    public void OnSelected(InteractionUIController interactionUI, NpcProximityInteractable interactable)
+    {
+        if (interactionUI == null || action == null) return;
+        action.Execute(interactionUI, interactable, this);
+    }
 }
 
 [CreateAssetMenu(fileName = "New Npc Interactable", menuName = "OpenHarvest/NPC/Interactable Definition", order = 0)]

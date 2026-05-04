@@ -12,20 +12,35 @@ public class InteractionUIController : MonoBehaviour
     private const string GoodbyeLabel = "Goodbye";
     private const string FollowStartLabel = "Follow me";
     private const string FollowStopLabel = "Stop following";
+    private const string MainViewId = "main";
+    private const string CurrentInteractionViewId = "currentInteraction";
+    private const string InteractionUiToMainEventName = "interactionUIToMain";
 
     [SerializeField] private Text npcNameText;
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Button optionButtonTemplate;
+    [SerializeField, Tooltip("ViewSwitcher used by this interaction UI (must contain a 'main' view).")]
+    private ViewSwitcher viewSwitcher;
+    [SerializeField, Tooltip("Container for spawned option content (your 'currentInteraction' view root/content).")]
+    private Transform currentInteractionRoot;
     [SerializeField, Tooltip("Optional. If null, uses a UIEventSender on this object or a parent. Goodbye still emits \"default\" via EventManager if none.")]
     private UIEventSender uiEventSender;
 
     private readonly List<Button> _spawnedButtons = new List<Button>();
+    private GameObject _spawnedOptionContent;
 
     public event Action<string> OnOptionChosen;
     public event Action OnGoodbye;
 
+    private void OnEnable()
+    {
+        EventManager.Subscribe(InteractionUiToMainEventName, HandleInteractionUiToMain);
+    }
+
     private void OnDisable()
     {
+        EventManager.Unsubscribe(InteractionUiToMainEventName, HandleInteractionUiToMain);
+
         ClearOptions();
     }
 
@@ -45,21 +60,13 @@ public class InteractionUIController : MonoBehaviour
             for (int i = 0; i < definition.options.Count; i++)
             {
                 NpcInteractionOption option = definition.options[i];
-                if (option == null)
+                if (option == null || !option.IsValid())
                 {
                     continue;
                 }
 
-                string label = !string.IsNullOrEmpty(option.displayName)
-                    ? option.displayName
-                    : option.optionId;
-                if (string.IsNullOrEmpty(label))
-                {
-                    continue;
-                }
-
-                string optionId = option.optionId;
-                AddRow(label, () => OnOptionChosen?.Invoke(optionId));
+                NpcInteractionOption selectedOption = option;
+                AddRow(selectedOption.displayName, () => selectedOption.OnSelected(this, interactable));
             }
         }
 
@@ -87,6 +94,7 @@ public class InteractionUIController : MonoBehaviour
         }
 
         _spawnedButtons.Clear();
+        ClearCurrentInteractionChildren();
     }
 
     private void AddRow(string label, Action onClick)
@@ -208,5 +216,49 @@ public class InteractionUIController : MonoBehaviour
         }
 
         OnGoodbye?.Invoke();
+    }
+
+    public void NotifyOptionChosen(string optionId)
+    {
+        OnOptionChosen?.Invoke(optionId);
+    }
+
+    public void ShowInstancedOptionContent(GameObject prefab)
+    {
+        if (prefab == null)
+        {
+            return;
+        }
+
+        viewSwitcher?.setActiveView(CurrentInteractionViewId);
+        ClearCurrentInteractionChildren();
+        Transform targetParent = currentInteractionRoot != null ? currentInteractionRoot : transform;
+        _spawnedOptionContent = Instantiate(prefab, targetParent, false);
+    }
+
+    private void HandleInteractionUiToMain()
+    {
+        ClearCurrentInteractionChildren();
+        viewSwitcher?.setActiveView(MainViewId);
+    }
+
+    private void ClearCurrentInteractionChildren()
+    {
+        Transform parent = currentInteractionRoot != null ? currentInteractionRoot : null;
+        if (parent == null)
+        {
+            return;
+        }
+
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            Transform child = parent.GetChild(i);
+            if (child != null)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        _spawnedOptionContent = null;
     }
 }
