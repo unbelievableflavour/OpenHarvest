@@ -57,27 +57,21 @@ public class NpcStoreInteractionOptionAction : NpcInteractionOptionAction
 
     private void ApplyStoreConfiguration(GameObject instantiatedStore, NPCController npc)
     {
-        Debug.Log("ApplyStoreConfiguration: " + instantiatedStore.name);
         if (instantiatedStore == null)
         {
-            Debug.Log("ApplyStoreConfiguration: instantiatedStore is null");
             return;
         }
-        Debug.Log("ApplyStoreConfiguration: instantiatedStore is not null");
 
         Store store = instantiatedStore.GetComponentInChildren<Store>();
         if (store != null)
         {
-            Debug.Log("ApplyStoreConfiguration: store is not null");
             if (store.storeTitleLabel != null)
             {
-                Debug.Log("ApplyStoreConfiguration: store.storeTitleLabel is not null");
                 store.storeTitleLabel.ResetText(storeName);
             }
 
             if (store.storeDescriptionLabel != null)
             {
-                Debug.Log("ApplyStoreConfiguration: store.storeDescriptionLabel is not null");
                 store.storeDescriptionLabel.ResetText(storeDescription);
             }
         }
@@ -85,21 +79,17 @@ public class NpcStoreInteractionOptionAction : NpcInteractionOptionAction
         StoreItemsLister storeItemsLister = instantiatedStore.GetComponentInChildren<StoreItemsLister>();
         if (storeItemsLister == null)
         {
-            Debug.Log("ApplyStoreConfiguration: storeItemsLister is null");
             return;
         }
 
-        Debug.Log("ApplyStoreConfiguration: storeItemsLister is not null");
         storeItemsLister.SetStoreNameFunctional(storeIdFunctional);
         storeItemsLister.SetStoreNameDecorational(storeIdDecorational);
 
         if (npc == null)
         {
-            Debug.Log("ApplyStoreConfiguration: npc is null");
             return;
         }
 
-        Debug.Log("ApplyStoreConfiguration: npc is not null");
         storeItemsLister.SetupStore(npc);
     }
 }

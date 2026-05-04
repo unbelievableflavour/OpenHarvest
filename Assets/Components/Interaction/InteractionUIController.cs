@@ -29,7 +29,6 @@ public class InteractionUIController : MonoBehaviour
     private readonly List<Button> _spawnedButtons = new List<Button>();
     private GameObject _spawnedOptionContent;
 
-    public event Action<string> OnOptionChosen;
     public event Action OnGoodbye;
 
     private void OnEnable()
@@ -89,7 +88,7 @@ public class InteractionUIController : MonoBehaviour
         {
             if (_spawnedButtons[i] != null)
             {
-                Destroy(_spawnedButtons[i].gameObject);
+                DestroyOwnedObject(_spawnedButtons[i].gameObject);
             }
         }
 
@@ -218,11 +217,6 @@ public class InteractionUIController : MonoBehaviour
         OnGoodbye?.Invoke();
     }
 
-    public void NotifyOptionChosen(string optionId)
-    {
-        OnOptionChosen?.Invoke(optionId);
-    }
-
     public void ShowInstancedOptionContent(GameObject prefab)
     {
         ShowInstancedOptionContent(prefab, null);
@@ -261,10 +255,31 @@ public class InteractionUIController : MonoBehaviour
             Transform child = parent.GetChild(i);
             if (child != null)
             {
-                Destroy(child.gameObject);
+                // Spawned option UI should disappear immediately when returning to main; Destroy() defers
+                // (breaks Play Mode tests and feels laggy). Same pattern as explicit teardown of owned instances.
+                DestroyImmediate(child.gameObject);
             }
         }
 
         _spawnedOptionContent = null;
+    }
+
+    /// <summary>
+    /// Spawned list rows: deferred destroy in play mode; immediate in Edit Mode / editor-not-playing.
+    /// </summary>
+    private static void DestroyOwnedObject(UnityEngine.Object obj)
+    {
+        if (obj == null)
+        {
+            return;
+        }
+
+        if (Application.isPlaying)
+        {
+            Destroy(obj);
+            return;
+        }
+
+        DestroyImmediate(obj);
     }
 }
