@@ -17,7 +17,7 @@ namespace ProjectSettings
         [Test]
         public void ItHasTheURPPipelineConfigured()
         {
-            Assert.AreEqual("UniversalRenderPipelineAsset", GraphicsSettings.defaultRenderPipeline.name);
+            Assert.AreEqual("UniversalRP-HighQuality", GraphicsSettings.defaultRenderPipeline.name);
         }
 
         [Test]
@@ -33,9 +33,9 @@ namespace ProjectSettings
         }
 
         [Test]
-        public void ItHasSRPBatcherDisabled()
+        public void ItHasSRPBatcherEnabled()
         {
-            Assert.AreEqual(false, GraphicsSettings.useScriptableRenderPipelineBatching);
+            Assert.IsTrue(GraphicsSettings.useScriptableRenderPipelineBatching);
         }
     }
 }
