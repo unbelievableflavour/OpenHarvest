@@ -23,6 +23,8 @@ public class SaveGame
 
     public Dictionary<string, RespawningObject> respawningObjects;
     public Dictionary<Quests, Quest> questList;
+    [OptionalField]
+    public Dictionary<string, QuestRuntimeProgressState> questRuntimeStates;
 
     public string name;
     public string farmName;

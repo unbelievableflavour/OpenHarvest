@@ -107,6 +107,7 @@ public class CurrentGameState {
     public Dictionary<string, int> unlockables = new Dictionary<string, int> { };
 
     public Dictionary<Quests, Quest> questList = new Dictionary<Quests, Quest> { };
+    public Dictionary<string, QuestRuntimeProgressState> questRuntimeStates = new Dictionary<string, QuestRuntimeProgressState>();
 
     public void InitializeUnlockablesAndQuests()
     {
@@ -196,4 +197,12 @@ public class CurrentGameState {
         currentMode = newMode;
         GameState.Instance.OnToggleMode?.Invoke();
     }
+}
+
+[Serializable]
+public class QuestRuntimeProgressState
+{
+    public int currentNodeIndex = -1;
+    public int pendingGiftNodeIndex = -1;
+    public bool isCompleted;
 }

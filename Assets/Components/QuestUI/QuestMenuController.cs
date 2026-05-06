@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static Definitions;
 
 public class QuestMenuController : MonoBehaviour
 {
@@ -30,23 +29,42 @@ public class QuestMenuController : MonoBehaviour
             Destroy(child.gameObject);
         }
 
+        if (QuestRuntimeService.Instance != null)
+        {
+            List<QuestRuntimeMenuEntry> entries = QuestRuntimeService.Instance.GetQuestMenuEntries();
+            for (int i = 0; i < entries.Count; i++)
+            {
+                QuestRuntimeMenuEntry entry = entries[i];
+                if (entry == null)
+                {
+                    continue;
+                }
+
+                string progress = entry.isCompleted ? "done" : "in progress";
+                GameObject row = Instantiate(QuestRow);
+                row.SetActive(true);
+                var text = row.GetComponentInChildren<Text>();
+                text.text = entry.displayName + " (" + progress + ")";
+                row.transform.SetParent(QuestList, false);
+            }
+
+            return;
+        }
+
+        // Fallback for scenes still running legacy quest flow.
         foreach (var item in GameState.Instance.questList)
         {
             Quest quest = item.Value;
-            if(quest.currentProgress == Progress.NotStarted)
+            if (quest.currentProgress == Progress.NotStarted)
             {
                 continue;
             }
 
-            var progress = "in progress";
-            if(quest.currentProgress == Progress.Done)
-            {
-                progress = "done";
-            }
+            string progress = quest.currentProgress == Progress.Done ? "done" : "in progress";
             GameObject row = Instantiate(QuestRow);
             row.SetActive(true);
             var text = row.GetComponentInChildren<Text>();
-            text.text = quest.title + " ("+ progress + ")";
+            text.text = quest.title + " (" + progress + ")";
             row.transform.SetParent(QuestList, false);
         }
     }

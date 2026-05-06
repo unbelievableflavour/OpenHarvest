@@ -2,6 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public class QuestRuntimeMenuEntry
+{
+    public string questId;
+    public string displayName;
+    public bool isCompleted;
+}
+
 public class QuestRuntimeService : MonoBehaviour
 {
     private sealed class QuestState
@@ -23,6 +31,7 @@ public class QuestRuntimeService : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
             InitializeFromDatabase();
             return;
         }
@@ -65,6 +74,28 @@ public class QuestRuntimeService : MonoBehaviour
         return nodes;
     }
 
+    public List<QuestRuntimeMenuEntry> GetQuestMenuEntries()
+    {
+        var entries = new List<QuestRuntimeMenuEntry>();
+        for (int i = 0; i < _states.Count; i++)
+        {
+            QuestState state = _states[i];
+            if (state == null || state.Graph == null)
+            {
+                continue;
+            }
+
+            entries.Add(new QuestRuntimeMenuEntry
+            {
+                questId = state.Graph.questId,
+                displayName = string.IsNullOrWhiteSpace(state.Graph.displayName) ? "Quest" : state.Graph.displayName.Trim(),
+                isCompleted = state.IsCompleted
+            });
+        }
+
+        return entries;
+    }
+
     public void RunNodeAction(QuestNodeBase node, InteractionUIController interactionUI, NpcProximityInteractable interactable)
     {
         if (node == null)
@@ -81,6 +112,7 @@ public class QuestRuntimeService : MonoBehaviour
         if (node is QuestGiftNode giftNode)
         {
             state.PendingGiftNode = giftNode;
+            SaveState(state);
             giftNode.RunAction(interactionUI, interactable, state.Graph);
             PromptNpcGiftHandoff(interactable);
             OnGenericGiftRequested?.Invoke(interactable);
@@ -222,17 +254,36 @@ public class QuestRuntimeService : MonoBehaviour
                 continue;
             }
 
-            _states.Add(new QuestState
+            QuestRuntimeProgressState saved = null;
+            if (GameState.Instance != null && GameState.Instance.questRuntimeStates != null && !string.IsNullOrWhiteSpace(graph.questId))
+            {
+                GameState.Instance.questRuntimeStates.TryGetValue(graph.questId, out saved);
+            }
+
+            var state = new QuestState
             {
                 Graph = graph,
-                CurrentNode = graph.GetEntryNode(),
-                PendingGiftNode = null,
-                IsCompleted = false,
-            });
+                CurrentNode = saved != null ? GetNodeAtIndex(graph, saved.currentNodeIndex) : graph.GetEntryNode(),
+                PendingGiftNode = saved != null ? GetNodeAtIndex(graph, saved.pendingGiftNodeIndex) as QuestGiftNode : null,
+                IsCompleted = saved != null && saved.isCompleted,
+            };
+
+            if (!state.IsCompleted && state.CurrentNode == null)
+            {
+                state.CurrentNode = graph.GetEntryNode();
+            }
+
+            if (saved == null)
+            {
+                PlayQuestStartedSound();
+            }
+
+            _states.Add(state);
+            SaveState(state);
         }
     }
 
-    private static void AdvanceState(QuestState state, QuestNodeBase fromNode)
+    private void AdvanceState(QuestState state, QuestNodeBase fromNode)
     {
         if (state == null || fromNode == null)
         {
@@ -243,6 +294,9 @@ public class QuestRuntimeService : MonoBehaviour
         {
             state.IsCompleted = true;
             state.CurrentNode = null;
+            state.PendingGiftNode = null;
+            PlayQuestFinishedSound();
+            SaveState(state);
             return;
         }
 
@@ -251,10 +305,88 @@ public class QuestRuntimeService : MonoBehaviour
         {
             state.IsCompleted = true;
             state.CurrentNode = null;
+            state.PendingGiftNode = null;
+            PlayQuestFinishedSound();
+            SaveState(state);
             return;
         }
 
         state.CurrentNode = next;
+        state.PendingGiftNode = null;
+        PlayQuestUpdatedSound();
+        SaveState(state);
+    }
+
+    private static QuestNodeBase GetNodeAtIndex(QuestGraph graph, int nodeIndex)
+    {
+        if (graph == null || graph.nodes == null || nodeIndex < 0 || nodeIndex >= graph.nodes.Count)
+        {
+            return null;
+        }
+
+        return graph.nodes[nodeIndex] as QuestNodeBase;
+    }
+
+    private static int GetNodeIndex(QuestGraph graph, QuestNodeBase node)
+    {
+        if (graph == null || graph.nodes == null || node == null)
+        {
+            return -1;
+        }
+
+        for (int i = 0; i < graph.nodes.Count; i++)
+        {
+            if (graph.nodes[i] == node)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private void SaveState(QuestState state)
+    {
+        if (state == null || state.Graph == null || string.IsNullOrWhiteSpace(state.Graph.questId) || GameState.Instance == null)
+        {
+            return;
+        }
+
+        if (GameState.Instance.questRuntimeStates == null)
+        {
+            GameState.Instance.questRuntimeStates = new Dictionary<string, QuestRuntimeProgressState>();
+        }
+
+        GameState.Instance.questRuntimeStates[state.Graph.questId] = new QuestRuntimeProgressState
+        {
+            currentNodeIndex = GetNodeIndex(state.Graph, state.CurrentNode),
+            pendingGiftNodeIndex = GetNodeIndex(state.Graph, state.PendingGiftNode),
+            isCompleted = state.IsCompleted
+        };
+    }
+
+    private static void PlayQuestStartedSound()
+    {
+        if (GeneralQuestController.Instance != null)
+        {
+            GeneralQuestController.Instance.PlayQuestStartedSound();
+        }
+    }
+
+    private static void PlayQuestUpdatedSound()
+    {
+        if (GeneralQuestController.Instance != null)
+        {
+            GeneralQuestController.Instance.PlayQuestUpdatedSound();
+        }
+    }
+
+    private static void PlayQuestFinishedSound()
+    {
+        if (GeneralQuestController.Instance != null)
+        {
+            GeneralQuestController.Instance.PlayQuestFinishedSound();
+        }
     }
 
     private QuestState FindStateByNode(QuestNodeBase node)

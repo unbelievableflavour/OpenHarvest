@@ -140,6 +140,34 @@ namespace Tests
         }
 
         [Test]
+        public void GetQuestMenuEntries_ReturnsQuestDisplayNameAndProgress()
+        {
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            graph.questId = "q_menu";
+            graph.displayName = "Menu Quest";
+
+            QuestChatNode node = graph.AddNode<QuestChatNode>();
+            if (node == null)
+            {
+                node = ScriptableObject.CreateInstance<QuestChatNode>();
+                node.graph = graph;
+                graph.nodes.Add(node);
+            }
+
+            graph.entryNode = node;
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+
+            var entries = service.GetQuestMenuEntries();
+            Assert.AreEqual(1, entries.Count);
+            Assert.AreEqual("q_menu", entries[0].questId);
+            Assert.AreEqual("Menu Quest", entries[0].displayName);
+            Assert.IsFalse(entries[0].isCompleted);
+
+            Object.DestroyImmediate(graph);
+        }
+
+        [Test]
         public void RunNodeAction_OnGiftNode_ShowsGiftPromptInChatUi()
         {
             var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();

@@ -29,20 +29,35 @@ public class GeneralQuestController : MonoBehaviour
 
     public void StartQuest(Quests questId)
     {
-        playSound(soundOnQuestStarted);
+        PlayQuestStartedSound();
         GameState.Instance.questList[questId].currentProgress = Progress.InProgress;
     }
 
     public void UpdateQuest()
     {
-        playSound(soundOnQuestUpdated);
+        PlayQuestUpdatedSound();
     }
 
     public void FinishQuest(Quests questId)
     {
-        playSound(soundOnQuestFinished);
+        PlayQuestFinishedSound();
         GameState.Instance.questList[questId].currentProgress = Progress.Done;
         questsChanged?.Invoke(this, null);
+    }
+
+    public void PlayQuestStartedSound()
+    {
+        playSound(soundOnQuestStarted);
+    }
+
+    public void PlayQuestUpdatedSound()
+    {
+        playSound(soundOnQuestUpdated);
+    }
+
+    public void PlayQuestFinishedSound()
+    {
+        playSound(soundOnQuestFinished);
     }
 
     private void playSound(AudioClip clip)

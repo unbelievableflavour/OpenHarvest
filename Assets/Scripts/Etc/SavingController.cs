@@ -34,6 +34,7 @@ public class SavingController : MonoBehaviour
         save.itemsOfTheWeek = GameState.Instance.itemsOfTheWeek;
         save.contractsOfTheWeek = GameState.Instance.contractsOfTheWeek.ToSaveable();
         save.questList = GameState.Instance.questList;
+        save.questRuntimeStates = GameState.Instance.questRuntimeStates;
 
         save.money = GameState.Instance.getTotalAmount();
 
@@ -96,6 +97,8 @@ public class SavingController : MonoBehaviour
 
         foreach (var quest in save.questList)
             GameState.Instance.questList[quest.Key] = quest.Value;
+
+        GameState.Instance.questRuntimeStates = save.questRuntimeStates ?? new Dictionary<string, QuestRuntimeProgressState>();
 
         GameState.Instance.name = save.name;
         GameState.Instance.farmName = save.farmName;
@@ -162,6 +165,11 @@ public class SavingController : MonoBehaviour
         if (save.questList == null)
         {
             save.questList = GameState.Instance.questList;
+        }
+
+        if (save.questRuntimeStates == null)
+        {
+            save.questRuntimeStates = new Dictionary<string, QuestRuntimeProgressState>();
         }
 
         if (save.name == null)
