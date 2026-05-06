@@ -65,7 +65,7 @@ public class InteractionUIController : MonoBehaviour
         NpcProximityInteractable interactable,
         bool speakSubtitle)
     {
-        viewSwitcher?.setActiveView(MainViewId);
+        SetMainViewIfReady();
         ClearOptions();
         _activeDefinition = definition;
         _activeInteractable = interactable;
@@ -334,12 +334,22 @@ public class InteractionUIController : MonoBehaviour
     {
         ClearCurrentInteractionChildren();
         SetNpcToIdle(_activeInteractable);
-        viewSwitcher?.setActiveView(MainViewId);
+        SetMainViewIfReady();
 
         if (_activeDefinition != null)
         {
             SetDefinitionInternal(_activeDefinition, _activeInteractable, speakSubtitle: false);
         }
+    }
+
+    private void SetMainViewIfReady()
+    {
+        if (viewSwitcher == null || viewSwitcher.views == null || viewSwitcher.views.Count == 0 || viewSwitcher.currentView == null)
+        {
+            return;
+        }
+
+        viewSwitcher.setActiveView(MainViewId);
     }
 
     private static void SetNpcToIdle(NpcProximityInteractable interactable)

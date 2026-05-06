@@ -1,8 +1,10 @@
+using System;
 using System.Reflection;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace Tests
 {
@@ -169,6 +171,7 @@ namespace Tests
         [Test]
         public void RunNodeAction_OnGiftNode_ShowsGiftPromptInChatUi()
         {
+            GameState.Reset();
             var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
             QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
             EnsureGraphNodeList(graph);
@@ -203,7 +206,9 @@ namespace Tests
             SetPrivateField(interactable, "definition", npcDef);
 
             QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
-            service.RunNodeAction(giftNode, ui, interactable);
+            List<QuestNodeBase> visibleNodes = service.GetVisibleNodesForNpc(interactable);
+            Assert.AreEqual(1, visibleNodes.Count);
+            service.RunNodeAction(visibleNodes[0], ui, interactable);
 
             Assert.AreEqual(1, uiGo.transform.childCount);
             NpcChatTreePresenter spawnedPresenter = uiGo.transform.GetChild(0).GetComponentInChildren<NpcChatTreePresenter>(true);
@@ -304,11 +309,22 @@ namespace Tests
 
         private QuestRuntimeService BuildServiceWithSingleQuest(QuestGraph graph)
         {
+            if (QuestRuntimeService.Instance != null)
+            {
+                Object.DestroyImmediate(QuestRuntimeService.Instance.gameObject);
+            }
+
             _dbGo = new GameObject("DatabaseManager");
             var dbManager = _dbGo.AddComponent<DatabaseManager>();
             var questDb = ScriptableObject.CreateInstance<QuestDatabase>();
-            graph.questId = "q1";
-            graph.displayName = "Quest";
+            if (string.IsNullOrWhiteSpace(graph.questId))
+            {
+                graph.questId = $"q_{Guid.NewGuid():N}";
+            }
+            if (string.IsNullOrWhiteSpace(graph.displayName))
+            {
+                graph.displayName = "Quest";
+            }
             questDb.quests.Add(graph);
             dbManager.quests = questDb;
             DatabaseManager.Instance = dbManager;

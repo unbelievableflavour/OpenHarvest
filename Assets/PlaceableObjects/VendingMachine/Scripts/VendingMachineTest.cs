@@ -1,4 +1,5 @@
-﻿using BNG;
+#if UNITY_EDITOR
+using BNG;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -56,3 +57,4 @@ namespace Tests
         }
     }
 }
+#endif
