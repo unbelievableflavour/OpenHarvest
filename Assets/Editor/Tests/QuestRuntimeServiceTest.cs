@@ -70,16 +70,15 @@ namespace Tests
             giftNode.requiredItem = required;
             giftNode.requiredAmount = 2;
 
-            QuestChatNode doneNode = graph.AddNode<QuestChatNode>();
+            QuestFinishNode doneNode = graph.AddNode<QuestFinishNode>();
             if (doneNode == null)
             {
-                doneNode = ScriptableObject.CreateInstance<QuestChatNode>();
+                doneNode = ScriptableObject.CreateInstance<QuestFinishNode>();
                 doneNode.graph = graph;
                 graph.nodes.Add(doneNode);
             }
 
             doneNode.targetNpc = npcDef;
-            doneNode.completesQuest = true;
 
             giftNode.GetOutputPort("next").Connect(doneNode.GetInputPort("inFlow"));
             graph.entryNode = giftNode;
@@ -218,6 +217,47 @@ namespace Tests
             Object.DestroyImmediate(npcDef);
             Object.DestroyImmediate(graph);
             Object.DestroyImmediate(presenterPrefab);
+        }
+
+        [Test]
+        public void RunNodeAction_OnFinishNode_AwardsCoinsAndCompletesQuest()
+        {
+            GameState.Reset();
+            int beforeCoins = GameState.Instance.getTotalAmount();
+
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+
+            QuestFinishNode finishNode = graph.AddNode<QuestFinishNode>();
+            if (finishNode == null)
+            {
+                finishNode = ScriptableObject.CreateInstance<QuestFinishNode>();
+                finishNode.graph = graph;
+                graph.nodes.Add(finishNode);
+            }
+
+            finishNode.targetNpc = npcDef;
+            finishNode.coinReward = 25;
+            graph.entryNode = finishNode;
+
+            var npcGo = new GameObject("Npc");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            SetPrivateField(interactable, "definition", npcDef);
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            service.RunNodeAction(finishNode, interactionUI: null, interactable);
+
+            Assert.AreEqual(beforeCoins + 25, GameState.Instance.getTotalAmount());
+            Assert.AreEqual(0, service.GetVisibleNodesForNpc(interactable).Count);
+
+            List<QuestRuntimeMenuEntry> entries = service.GetQuestMenuEntries();
+            Assert.AreEqual(1, entries.Count);
+            Assert.IsTrue(entries[0].isCompleted);
+
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
         }
 
         private QuestNodeBase BuildSingleNodeQuest(

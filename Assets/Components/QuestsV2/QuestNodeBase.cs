@@ -3,16 +3,12 @@ using XNode;
 
 public abstract class QuestNodeBase : Node
 {
-    [Input(ShowBackingValue.Never)] public bool inFlow;
-    [Output(ShowBackingValue.Never)] public bool next;
+    [HideInInspector, Input(ShowBackingValue.Never)] public bool inFlow;
+    [HideInInspector, Output(ShowBackingValue.Never)] public bool next;
 
     [Header("Availability")]
     [Tooltip("Only show this quest action on this NPC interaction definition.")]
     public NpcInteractableDefinition targetNpc;
-
-    [Header("Progression")]
-    [Tooltip("Mark this node as the end of this quest.")]
-    public bool completesQuest;
 
     public override object GetValue(NodePort port)
     {

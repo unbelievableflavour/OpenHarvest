@@ -27,6 +27,11 @@ public class QuestGraphEditor : Editor
         {
             AddNode<QuestGiftNode>(graph);
         }
+
+        if (GUILayout.Button("Add Finish Node"))
+        {
+            AddNode<QuestFinishNode>(graph);
+        }
     }
 
     private static void AddNode<TNode>(QuestGraph graph) where TNode : QuestNodeBase

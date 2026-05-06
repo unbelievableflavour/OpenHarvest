@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: QuestNode_2
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 424, y: -56}
+  position: {x: 904, y: -440}
   ports:
     keys:
     - inFlow
@@ -46,7 +46,6 @@ MonoBehaviour:
   inFlow: 0
   next: 0
   targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
-  completesQuest: 0
   giftPrompt: An apple pie please!
   requiredItem: {fileID: 11400000, guid: 32765fbc9dfacea4fa2a0f2386ac7eeb, type: 2}
   requiredAmount: 1
@@ -67,6 +66,7 @@ MonoBehaviour:
   - {fileID: -2097151476968089956}
   - {fileID: 1971351533383644618}
   - {fileID: 8883759579405063285}
+  - {fileID: 7043492455507440262}
   questId: stevens_hungry
   displayName: Stevens Hungry
   chatUIPrefab: {fileID: 1000, guid: 399b5284a57df47908efaec1c04b7cdb, type: 3}
@@ -84,7 +84,7 @@ MonoBehaviour:
   m_Name: QuestNode_3
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 872, y: -56}
+  position: {x: 456, y: -40}
   ports:
     keys:
     - inFlow
@@ -106,6 +106,53 @@ MonoBehaviour:
       _node: {fileID: 1971351533383644618}
       _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
         PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 7043492455507440262}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
+  body: Munch munch munch, thank you so much!
+--- !u!114 &7043492455507440262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 427a07f6770dc4fc3848453c7855fdb6, type: 3}
+  m_Name: QuestNode_5
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 888, y: -40}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 7043492455507440262}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 1971351533383644618}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 7043492455507440262}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
       connections: []
       _direction: 1
       _connectionType: 0
@@ -114,8 +161,8 @@ MonoBehaviour:
   inFlow: 0
   next: 0
   targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
-  completesQuest: 1
-  body: Munch munch munch, thank you so much!
+  coinReward: 300
+  handRewardItem: {fileID: 0}
 --- !u!114 &8883759579405063285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,7 +176,7 @@ MonoBehaviour:
   m_Name: QuestNode_4
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -40, y: -88}
+  position: {x: 456, y: -456}
   ports:
     keys:
     - inFlow
@@ -162,7 +209,6 @@ MonoBehaviour:
   inFlow: 0
   next: 0
   targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
-  completesQuest: 0
   body: Ouch my belly hurts. Can you give me an apple pie please? FAMIIISHED.
 --- !u!114 &8937473542252578893
 MonoBehaviour:
@@ -177,7 +223,7 @@ MonoBehaviour:
   m_Name: QuestNode_1
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: -536, y: -104}
+  position: {x: -24, y: -456}
   ports:
     keys:
     - inFlow
@@ -207,5 +253,4 @@ MonoBehaviour:
   inFlow: 0
   next: 0
   targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
-  completesQuest: 0
   body: Ohhh I'm so hungry...

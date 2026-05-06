@@ -290,7 +290,7 @@ public class QuestRuntimeService : MonoBehaviour
             return;
         }
 
-        if (fromNode.completesQuest)
+        if (fromNode is QuestFinishNode)
         {
             state.IsCompleted = true;
             state.CurrentNode = null;

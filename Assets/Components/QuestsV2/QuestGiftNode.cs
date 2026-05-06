@@ -13,11 +13,6 @@ public class QuestGiftNode : QuestNodeBase
     [Tooltip("Required stack amount for this gift step.")]
     public int requiredAmount = 1;
 
-    private void OnValidate()
-    {
-        completesQuest = false;
-    }
-
     public override void RunAction(InteractionUIController interactionUI, NpcProximityInteractable interactable, QuestGraph graph)
     {
         if (interactionUI == null || graph == null || graph.chatUIPrefab == null)
