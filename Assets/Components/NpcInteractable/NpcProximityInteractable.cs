@@ -8,11 +8,14 @@ using UnityEngine;
 public class NpcProximityInteractable : MonoBehaviour
 {
     [SerializeField] private NpcInteractableDefinition definition;
+    [SerializeField, Tooltip("Optional NPC-local root where interaction option UIs should be spawned.")]
+    private Transform currentInteractionRoot;
 
     [Header("Proximity")]
     [SerializeField] private float maxDistance = 2f;
 
     public NpcInteractableDefinition Definition => definition;
+    public Transform CurrentInteractionRoot => currentInteractionRoot;
     public bool IsInRange { get; private set; }
     public float MaxDistance => maxDistance;
     public bool UseFKeyInteraction => true;

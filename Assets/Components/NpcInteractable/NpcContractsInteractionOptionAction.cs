@@ -26,6 +26,6 @@ public class NpcContractsInteractionOptionAction : NpcInteractionOptionAction
             return;
         }
 
-        interactionUI.ShowInstancedOptionContent(contractsPrefab);
+        interactionUI.ShowInstancedOptionContent(contractsPrefab, interactable, null);
     }
 }

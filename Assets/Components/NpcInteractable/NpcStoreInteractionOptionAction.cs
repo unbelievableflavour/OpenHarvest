@@ -49,7 +49,7 @@ public class NpcStoreInteractionOptionAction : NpcInteractionOptionAction
             ? interactable.GetComponentInParent<NPCController>()
             : null;
 
-        interactionUI.ShowInstancedOptionContent(storePrefab, instantiatedStore =>
+        interactionUI.ShowInstancedOptionContent(storePrefab, interactable, instantiatedStore =>
         {
             ApplyStoreConfiguration(instantiatedStore, npc);
         });

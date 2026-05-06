@@ -28,6 +28,7 @@ public class InteractionUIController : MonoBehaviour
     private UIEventSender uiEventSender;
 
     private readonly List<Button> _spawnedButtons = new List<Button>();
+    private NpcProximityInteractable _activeInteractable;
 
     public event Action OnGoodbye;
 
@@ -46,6 +47,7 @@ public class InteractionUIController : MonoBehaviour
     public void SetDefinition(NpcInteractableDefinition definition, NpcProximityInteractable interactable = null)
     {
         ClearOptions();
+        _activeInteractable = interactable;
 
         if (npcNameText != null)
         {
@@ -259,10 +261,18 @@ public class InteractionUIController : MonoBehaviour
 
     public void ShowInstancedOptionContent(GameObject prefab)
     {
-        ShowInstancedOptionContent(prefab, null);
+        ShowInstancedOptionContent(prefab, _activeInteractable, null);
     }
 
     public void ShowInstancedOptionContent(GameObject prefab, Action<GameObject> afterInstantiate)
+    {
+        ShowInstancedOptionContent(prefab, _activeInteractable, afterInstantiate);
+    }
+
+    public void ShowInstancedOptionContent(
+        GameObject prefab,
+        NpcProximityInteractable interactable,
+        Action<GameObject> afterInstantiate)
     {
         if (prefab == null)
         {
@@ -271,7 +281,7 @@ public class InteractionUIController : MonoBehaviour
 
         viewSwitcher?.setActiveView(CurrentInteractionViewId);
         ClearCurrentInteractionChildren();
-        Transform targetParent = currentInteractionRoot != null ? currentInteractionRoot : transform;
+        Transform targetParent = ResolveOptionContentParent(interactable);
         GameObject instance = Instantiate(prefab, targetParent, false);
         afterInstantiate?.Invoke(instance);
     }
@@ -284,7 +294,25 @@ public class InteractionUIController : MonoBehaviour
 
     private void ClearCurrentInteractionChildren()
     {
-        Transform parent = currentInteractionRoot != null ? currentInteractionRoot : null;
+        DestroyChildren(currentInteractionRoot);
+        if (_activeInteractable != null)
+        {
+            DestroyChildren(_activeInteractable.CurrentInteractionRoot);
+        }
+    }
+
+    private Transform ResolveOptionContentParent(NpcProximityInteractable interactable)
+    {
+        if (interactable != null && interactable.CurrentInteractionRoot != null)
+        {
+            return interactable.CurrentInteractionRoot;
+        }
+
+        return currentInteractionRoot != null ? currentInteractionRoot : transform;
+    }
+
+    private static void DestroyChildren(Transform parent)
+    {
         if (parent == null)
         {
             return;
@@ -293,10 +321,12 @@ public class InteractionUIController : MonoBehaviour
         for (int i = parent.childCount - 1; i >= 0; i--)
         {
             Transform child = parent.GetChild(i);
-            if (child != null)
+            if (child == null)
             {
-                DestroyImmediate(child.gameObject);
+                continue;
             }
+
+            DestroyImmediate(child.gameObject);
         }
     }
 

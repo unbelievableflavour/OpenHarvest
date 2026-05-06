@@ -35,7 +35,7 @@ public class NpcChatInteractionOptionAction : NpcInteractionOptionAction
             ? interactable.GetComponentInParent<NPCController>()
             : null;
 
-        interactionUI.ShowInstancedOptionContent(chatUIPrefab, go =>
+        interactionUI.ShowInstancedOptionContent(chatUIPrefab, interactable, go =>
         {
             NpcChatTreePresenter presenter = go.GetComponentInChildren<NpcChatTreePresenter>(true);
             if (presenter == null)
