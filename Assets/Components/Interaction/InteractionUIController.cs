@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Serializable]
+public class InteractionOptionIconMapping
+{
+    [Tooltip("Type name key, e.g. NpcGiftInteractionOptionAction or QuestGiftNode.")]
+    public string actionType;
+    public Sprite icon;
+}
+
 /// <summary>
 /// Shows NPC name and optional subtitle from <see cref="NpcInteractableDefinition"/>, fills a scroll list with one
 /// button per <see cref="NpcInteractionOption"/>, then a final <b>Goodbye</b> button.
@@ -13,6 +21,7 @@ public class InteractionUIController : MonoBehaviour
     private const string MainViewId = "main";
     private const string CurrentInteractionViewId = "currentInteraction";
     private const string InteractionUiToMainEventName = "interactionUIToMain";
+    private const string QuestOptionIconKey = "NpcQuestInteractableOptionAction";
 
     [SerializeField] private Text npcNameText;
     [SerializeField] private Text npcSubtitleText;
@@ -24,8 +33,11 @@ public class InteractionUIController : MonoBehaviour
     private Transform currentInteractionRoot;
     [SerializeField, Tooltip("Optional. If null, uses a UIEventSender on this object or a parent. Goodbye still emits \"default\" via EventManager if none.")]
     private UIEventSender uiEventSender;
+    [SerializeField, Tooltip("Maps action/node type names to option button icons.")]
+    private List<InteractionOptionIconMapping> optionIconMappings = new List<InteractionOptionIconMapping>();
 
     private readonly List<Button> _spawnedButtons = new List<Button>();
+    private NpcInteractableDefinition _activeDefinition;
     private NpcProximityInteractable _activeInteractable;
 
     public event Action OnGoodbye;
@@ -44,8 +56,18 @@ public class InteractionUIController : MonoBehaviour
 
     public void SetDefinition(NpcInteractableDefinition definition, NpcProximityInteractable interactable = null)
     {
+        SetDefinitionInternal(definition, interactable, speakSubtitle: true);
+    }
+
+    private void SetDefinitionInternal(
+        NpcInteractableDefinition definition,
+        NpcProximityInteractable interactable,
+        bool speakSubtitle)
+    {
         ClearOptions();
+        _activeDefinition = definition;
         _activeInteractable = interactable;
+        SetNpcToIdle(interactable);
 
         if (npcNameText != null)
         {
@@ -64,7 +86,10 @@ public class InteractionUIController : MonoBehaviour
             npcSubtitleText.gameObject.SetActive(subtitle.Length > 0);
         }
 
-        TrySpeakSubtitle(subtitle, interactable);
+        if (speakSubtitle)
+        {
+            TrySpeakSubtitle(subtitle, interactable);
+        }
 
         if (definition != null && definition.options != null)
         {
@@ -77,7 +102,11 @@ public class InteractionUIController : MonoBehaviour
                 }
 
                 NpcInteractionOption selectedOption = option;
-                AddRow(selectedOption.GetDisplayName(interactable), () => selectedOption.OnSelected(this, interactable));
+                string iconKey = selectedOption.action != null ? selectedOption.action.GetType().Name : null;
+                AddRow(
+                    selectedOption.GetDisplayName(interactable),
+                    () => selectedOption.OnSelected(this, interactable),
+                    iconKey);
             }
         }
 
@@ -133,7 +162,7 @@ public class InteractionUIController : MonoBehaviour
         voice.Speak(subtitle);
     }
 
-    private void AddRow(string label, Action onClick)
+    private void AddRow(string label, Action onClick, string iconKey = null)
     {
         if (optionButtonTemplate == null || scrollRect?.content == null)
         {
@@ -159,6 +188,7 @@ public class InteractionUIController : MonoBehaviour
             text.text = label;
         }
 
+        ApplyRowIcon(row, iconKey);
         _spawnedButtons.Add(row);
     }
 
@@ -179,9 +209,80 @@ public class InteractionUIController : MonoBehaviour
             }
 
             string label = node.GetDisplayLabel();
-            AddRow(label, () => QuestRuntimeService.Instance.RunNodeAction(node, this, interactable));
+            AddRow(label, () => QuestRuntimeService.Instance.RunNodeAction(node, this, interactable), QuestOptionIconKey);
         }
     }
+
+    private void ApplyRowIcon(Button row, string iconKey)
+    {
+        if (row == null)
+        {
+            return;
+        }
+
+        Image iconImage = ResolveIconImage(row);
+        if (iconImage == null)
+        {
+            return;
+        }
+
+        Sprite icon = ResolveIcon(iconKey);
+        if (icon == null)
+        {
+            iconImage.sprite = null;
+            iconImage.enabled = false;
+            return;
+        }
+
+        iconImage.sprite = icon;
+        iconImage.enabled = true;
+    }
+
+    private static Image ResolveIconImage(Button row)
+    {
+        if (row == null)
+        {
+            return null;
+        }
+
+        Image buttonImage = row.GetComponent<Image>();
+        Image[] images = row.GetComponentsInChildren<Image>(true);
+        for (int i = 0; i < images.Length; i++)
+        {
+            Image image = images[i];
+            if (image == null || image == buttonImage)
+            {
+                continue;
+            }
+
+            return image;
+        }
+
+        return null;
+    }
+
+    private Sprite ResolveIcon(string iconKey)
+    {
+        if (string.IsNullOrWhiteSpace(iconKey) || optionIconMappings == null)
+        {
+            return null;
+        }
+        for (int i = 0; i < optionIconMappings.Count; i++)
+        {
+            InteractionOptionIconMapping mapping = optionIconMappings[i];
+            if (mapping == null || mapping.icon == null || string.IsNullOrWhiteSpace(mapping.actionType))
+            {
+                continue;
+            }
+
+            if (string.Equals(mapping.actionType.Trim(), iconKey, StringComparison.Ordinal))
+            {
+                return mapping.icon;
+            }
+        }
+        return null;
+    }
+
 
     private void OnGoodbyeClicked()
     {
@@ -230,7 +331,34 @@ public class InteractionUIController : MonoBehaviour
     private void HandleInteractionUiToMain()
     {
         ClearCurrentInteractionChildren();
+        SetNpcToIdle(_activeInteractable);
         viewSwitcher?.setActiveView(MainViewId);
+
+        if (_activeDefinition != null)
+        {
+            SetDefinitionInternal(_activeDefinition, _activeInteractable, speakSubtitle: false);
+        }
+    }
+
+    private static void SetNpcToIdle(NpcProximityInteractable interactable)
+    {
+        if (interactable == null)
+        {
+            return;
+        }
+
+        NPCController npc = interactable.GetComponentInParent<NPCController>();
+        if (npc == null)
+        {
+            npc = interactable.GetComponent<NPCController>();
+        }
+
+        if (npc == null)
+        {
+            return;
+        }
+
+        npc.BackToIdle();
     }
 
     private void ClearCurrentInteractionChildren()

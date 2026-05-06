@@ -25,7 +25,11 @@ public class QuestChatNode : QuestNodeBase
                 return;
             }
 
-            presenter.BeginSingleLine(body, npc);
+            presenter.BeginSingleLine(
+                body,
+                npc,
+                showContinue: true,
+                onContinueOverride: () => QuestRuntimeService.Instance.ContinueQuestChatForNpc(interactable, interactionUI));
         });
     }
 }

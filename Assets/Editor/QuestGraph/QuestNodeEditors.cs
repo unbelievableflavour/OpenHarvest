@@ -81,6 +81,7 @@ public class QuestGiftNodeEditor : NodeEditor
     private void DrawDefaultNodeFields()
     {
         EditorGUILayout.PropertyField(serializedObject.FindProperty("targetNpc"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("giftPrompt"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("requiredItem"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("requiredAmount"));
     }

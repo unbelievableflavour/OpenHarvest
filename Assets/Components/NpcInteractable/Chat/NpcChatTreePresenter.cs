@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using XNode;
 
 public class NpcChatTreePresenter : MonoBehaviour
 {
@@ -14,6 +16,8 @@ public class NpcChatTreePresenter : MonoBehaviour
     private NPCController _npc;
     private bool _singleLinePending;
     private string _singleLineBody;
+    private bool _singleLineShowContinue;
+    private Func<bool> _singleLineContinueOverride;
 
     private void Awake()
     {
@@ -33,12 +37,18 @@ public class NpcChatTreePresenter : MonoBehaviour
         _npc = npc;
         _singleLinePending = false;
         _singleLineBody = string.Empty;
+        _singleLineShowContinue = false;
+        _singleLineContinueOverride = null;
         _session = new NpcChatSession(startNode);
         gameObject.SetActive(true);
         RefreshView();
     }
 
-    public void BeginSingleLine(string body, NPCController npc)
+    public void BeginSingleLine(
+        string body,
+        NPCController npc,
+        bool showContinue = true,
+        Func<bool> onContinueOverride = null)
     {
         HideChoiceTemplate();
 
@@ -46,6 +56,8 @@ public class NpcChatTreePresenter : MonoBehaviour
         _session = null;
         _singleLinePending = true;
         _singleLineBody = body ?? string.Empty;
+        _singleLineShowContinue = showContinue;
+        _singleLineContinueOverride = onContinueOverride;
         gameObject.SetActive(true);
         RefreshView();
     }
@@ -75,7 +87,10 @@ public class NpcChatTreePresenter : MonoBehaviour
             }
 
             SpeakLine(_singleLineBody);
-            AddChoiceRow("Continue", OnSingleLineContinue);
+            if (_singleLineShowContinue)
+            {
+                AddChoiceRow("Continue", OnSingleLineContinue);
+            }
             RebuildChatLayout();
             return;
         }
@@ -101,7 +116,12 @@ public class NpcChatTreePresenter : MonoBehaviour
 
         if (node.ChoiceCount == 0)
         {
-            AddChoiceRow("Continue", () => OnLeafContinue());
+            NodePort nextPort = node.GetOutputPort("choices");
+            bool hasNext = nextPort != null && nextPort.IsConnected;
+            if (hasNext)
+            {
+                AddChoiceRow("Continue", () => OnLeafContinue());
+            }
         }
         else
         {
@@ -156,6 +176,15 @@ public class NpcChatTreePresenter : MonoBehaviour
     {
         _singleLinePending = false;
         _singleLineBody = string.Empty;
+        _singleLineShowContinue = false;
+
+        Func<bool> continueOverride = _singleLineContinueOverride;
+        _singleLineContinueOverride = null;
+        if (continueOverride != null && continueOverride.Invoke())
+        {
+            return;
+        }
+
         CloseChat();
     }
 
@@ -229,4 +258,5 @@ public class NpcChatTreePresenter : MonoBehaviour
 
         voice.Speak(line);
     }
+
 }

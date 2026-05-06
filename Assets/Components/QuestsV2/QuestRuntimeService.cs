@@ -81,7 +81,15 @@ public class QuestRuntimeService : MonoBehaviour
         if (node is QuestGiftNode giftNode)
         {
             state.PendingGiftNode = giftNode;
+            giftNode.RunAction(interactionUI, interactable, state.Graph);
+            PromptNpcGiftHandoff(interactable);
             OnGenericGiftRequested?.Invoke(interactable);
+            return;
+        }
+
+        if (node is QuestChatNode)
+        {
+            node.RunAction(interactionUI, interactable, state.Graph);
             return;
         }
 
@@ -137,7 +145,64 @@ public class QuestRuntimeService : MonoBehaviour
 
     public void RequestGenericGift(NpcProximityInteractable interactable)
     {
+        PromptNpcGiftHandoff(interactable);
         OnGenericGiftRequested?.Invoke(interactable);
+    }
+
+    public bool ContinueQuestChatForNpc(NpcProximityInteractable interactable, InteractionUIController interactionUI)
+    {
+        if (interactable == null)
+        {
+            return false;
+        }
+
+        List<QuestNodeBase> nodes = GetVisibleNodesForNpc(interactable);
+        if (nodes.Count == 0 || nodes[0] == null)
+        {
+            return false;
+        }
+
+        QuestNodeBase currentNode = nodes[0];
+        QuestState state = FindStateByNode(currentNode);
+        if (state == null || state.IsCompleted || state.CurrentNode == null)
+        {
+            return false;
+        }
+
+        AdvanceState(state, state.CurrentNode);
+        if (state.IsCompleted || state.CurrentNode == null)
+        {
+            return false;
+        }
+
+        if (!state.CurrentNode.CanRenderFor(interactable))
+        {
+            return false;
+        }
+
+        RunNodeAction(state.CurrentNode, interactionUI, interactable);
+        return true;
+    }
+
+    private static void PromptNpcGiftHandoff(NpcProximityInteractable interactable)
+    {
+        if (interactable == null)
+        {
+            return;
+        }
+
+        NPCController npc = interactable.GetComponentInParent<NPCController>();
+        if (npc == null)
+        {
+            npc = interactable.GetComponent<NPCController>();
+        }
+
+        if (npc == null)
+        {
+            return;
+        }
+
+        npc.HoldOutHand();
     }
 
     private void InitializeFromDatabase()

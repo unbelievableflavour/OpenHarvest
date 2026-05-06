@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -113,6 +114,59 @@ namespace Tests
             Object.DestroyImmediate(definition);
             Object.DestroyImmediate(contractsAction);
             Object.DestroyImmediate(contractsPrefab);
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public System.Collections.IEnumerator SetDefinition_WithMappedActionIcon_AssignsIconOnOptionButton()
+        {
+            InteractionUIController ui = CreateUi(out _, out ScrollRect scrollRect, out Button optionButtonTemplate);
+            ui.enabled = false;
+
+            var iconGo = new GameObject("Icon", typeof(Image));
+            iconGo.transform.SetParent(optionButtonTemplate.transform, false);
+            var iconImageTemplate = iconGo.GetComponent<Image>();
+            iconImageTemplate.enabled = false;
+
+            var texture = new Texture2D(2, 2);
+            Sprite mappedSprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f));
+            var mappings = new List<InteractionOptionIconMapping>
+            {
+                new InteractionOptionIconMapping
+                {
+                    actionType = nameof(NpcContractsInteractionOptionAction),
+                    icon = mappedSprite,
+                }
+            };
+
+            SetPrivateField(ui, "optionIconMappings", mappings);
+
+            var contractsAction = ScriptableObject.CreateInstance<NpcContractsInteractionOptionAction>();
+            var contractsPrefab = new GameObject("ContractsPrefab");
+            SetPrivateField(contractsAction, "contractsPrefab", contractsPrefab);
+
+            var definition = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            definition.options.Add(new NpcInteractionOption
+            {
+                displayName = "Contracts",
+                action = contractsAction,
+            });
+
+            ui.SetDefinition(definition);
+
+            Button optionButton = FindButtonByLabelText(scrollRect.content, "Contracts");
+            Assert.IsNotNull(optionButton);
+            Image iconImage = optionButton.transform.Find("Icon")?.GetComponent<Image>();
+            Assert.IsNotNull(iconImage);
+            Assert.IsTrue(iconImage.enabled);
+            Assert.AreEqual(mappedSprite, iconImage.sprite);
+
+            Object.DestroyImmediate(definition);
+            Object.DestroyImmediate(contractsAction);
+            Object.DestroyImmediate(contractsPrefab);
+            Object.DestroyImmediate(mappedSprite);
+            Object.DestroyImmediate(texture);
 
             yield return null;
         }
@@ -309,6 +363,28 @@ namespace Tests
             Object.DestroyImmediate(settings);
 
             yield return null;
+        }
+
+        [Test]
+        public void SetDefinition_WithInteractable_SetsNpcBackToIdle()
+        {
+            InteractionUIController ui = CreateUi(out _, out _, out _);
+            ui.enabled = false;
+
+            var npcGo = new GameObject("Npc");
+            var npcController = npcGo.AddComponent<NPCController>();
+            npcController.handSlot = new GameObject("HandSlot");
+            npcController.handSlot.SetActive(true);
+
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+
+            var definition = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            ui.SetDefinition(definition, interactable);
+
+            Assert.IsFalse(npcController.handSlot.activeSelf);
+
+            Object.DestroyImmediate(definition);
+            Object.DestroyImmediate(npcGo);
         }
 
         private InteractionUIController CreateUi(out Text npcNameText, out ScrollRect scrollRect, out Button optionButtonTemplate)

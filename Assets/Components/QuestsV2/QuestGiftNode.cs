@@ -3,6 +3,10 @@ using UnityEngine;
 [CreateNodeMenu("OpenHarvest/Quests/Gift Node")]
 public class QuestGiftNode : QuestNodeBase
 {
+    [TextArea(2, 6)]
+    [Tooltip("Message shown in chat-style UI when this gift step is requested.")]
+    public string giftPrompt = "Could you give me this item?";
+
     [Tooltip("Required item for this gift step. Leave empty to accept any item.")]
     public HarvestDataTypes.Item requiredItem;
     [Min(1)]
@@ -16,7 +20,25 @@ public class QuestGiftNode : QuestNodeBase
 
     public override void RunAction(InteractionUIController interactionUI, NpcProximityInteractable interactable, QuestGraph graph)
     {
-        // Gift handling is managed by QuestRuntimeService pending-gift flow.
+        if (interactionUI == null || graph == null || graph.chatUIPrefab == null)
+        {
+            return;
+        }
+
+        NPCController npc = interactable != null
+            ? interactable.GetComponentInParent<NPCController>()
+            : null;
+
+        interactionUI.ShowInstancedOptionContent(graph.chatUIPrefab, interactable, go =>
+        {
+            NpcChatTreePresenter presenter = go.GetComponentInChildren<NpcChatTreePresenter>(true);
+            if (presenter == null)
+            {
+                return;
+            }
+
+            presenter.BeginSingleLine(giftPrompt ?? string.Empty, npc, showContinue: false);
+        });
     }
 
     public override bool IsGiftMatch(string itemId)

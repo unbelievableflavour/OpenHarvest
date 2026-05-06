@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Tests
 {
@@ -103,6 +104,92 @@ namespace Tests
             Object.DestroyImmediate(required);
             Object.DestroyImmediate(npcDef);
             Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void RequestGenericGift_HoldsOutNpcHand()
+        {
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            QuestChatNode node = graph.AddNode<QuestChatNode>();
+            if (node == null)
+            {
+                node = ScriptableObject.CreateInstance<QuestChatNode>();
+                node.graph = graph;
+                graph.nodes.Add(node);
+            }
+
+            graph.entryNode = node;
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            var npcGo = new GameObject("Npc");
+            var controller = npcGo.AddComponent<NPCController>();
+            controller.handSlot = new GameObject("HandSlot");
+            controller.handSlot.SetActive(false);
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            SetPrivateField(interactable, "definition", npcDef);
+
+            service.RequestGenericGift(interactable);
+
+            Assert.IsTrue(controller.handSlot.activeSelf);
+
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void RunNodeAction_OnGiftNode_ShowsGiftPromptInChatUi()
+        {
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+
+            QuestGiftNode giftNode = graph.AddNode<QuestGiftNode>();
+            if (giftNode == null)
+            {
+                giftNode = ScriptableObject.CreateInstance<QuestGiftNode>();
+                giftNode.graph = graph;
+                graph.nodes.Add(giftNode);
+            }
+
+            giftNode.targetNpc = npcDef;
+            giftNode.giftPrompt = "Please hand me one apple.";
+            graph.entryNode = giftNode;
+
+            var presenterPrefab = new GameObject("GiftPromptPrefab");
+            var presenter = presenterPrefab.AddComponent<NpcChatTreePresenter>();
+            var bodyGo = new GameObject("Body", typeof(Text));
+            bodyGo.transform.SetParent(presenterPrefab.transform, false);
+            SetPrivateField(presenter, "bodyText", bodyGo.GetComponent<Text>());
+            graph.chatUIPrefab = presenterPrefab;
+
+            var uiGo = new GameObject("InteractionUi");
+            var ui = uiGo.AddComponent<InteractionUIController>();
+            SetPrivateField(ui, "currentInteractionRoot", uiGo.transform);
+
+            var npcGo = new GameObject("Npc");
+            var controller = npcGo.AddComponent<NPCController>();
+            controller.handSlot = new GameObject("HandSlot");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            SetPrivateField(interactable, "definition", npcDef);
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            service.RunNodeAction(giftNode, ui, interactable);
+
+            Assert.AreEqual(1, uiGo.transform.childCount);
+            NpcChatTreePresenter spawnedPresenter = uiGo.transform.GetChild(0).GetComponentInChildren<NpcChatTreePresenter>(true);
+            Assert.IsNotNull(spawnedPresenter);
+            Text spawnedBody = uiGo.transform.GetChild(0).GetComponentInChildren<Text>(true);
+            Assert.IsNotNull(spawnedBody);
+            Assert.AreEqual("Please hand me one apple.", spawnedBody.text);
+
+            Object.DestroyImmediate(uiGo);
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+            Object.DestroyImmediate(presenterPrefab);
         }
 
         private QuestNodeBase BuildSingleNodeQuest(
