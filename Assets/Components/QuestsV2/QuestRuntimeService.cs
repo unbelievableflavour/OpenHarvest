@@ -127,6 +127,11 @@ public class QuestRuntimeService : MonoBehaviour
 
         node.RunAction(interactionUI, interactable, state.Graph);
         AdvanceState(state, node);
+
+        if (node is QuestFinishNode)
+        {
+            EventManager.Emit("interactionUIToMain");
+        }
     }
 
     public bool TrySubmitGift(
@@ -179,6 +184,23 @@ public class QuestRuntimeService : MonoBehaviour
     {
         PromptNpcGiftHandoff(interactable);
         OnGenericGiftRequested?.Invoke(interactable);
+    }
+
+    public bool RunCurrentNodeForNpc(NpcProximityInteractable interactable, InteractionUIController interactionUI)
+    {
+        if (interactable == null)
+        {
+            return false;
+        }
+
+        List<QuestNodeBase> nodes = GetVisibleNodesForNpc(interactable);
+        if (nodes.Count == 0 || nodes[0] == null)
+        {
+            return false;
+        }
+
+        RunNodeAction(nodes[0], interactionUI, interactable);
+        return true;
     }
 
     public bool ContinueQuestChatForNpc(NpcProximityInteractable interactable, InteractionUIController interactionUI)

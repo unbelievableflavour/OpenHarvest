@@ -388,6 +388,58 @@ namespace Tests
         }
 
         [Test]
+        public void SetDefinition_WithInteractable_ParentsEntireUiToNpcCurrentInteractionRoot()
+        {
+            InteractionUIController ui = CreateUi(out _, out _, out _);
+            ui.enabled = false;
+
+            var npcGo = new GameObject("Npc");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            Transform npcCurrentInteractionRoot = new GameObject("NpcCurrentInteractionRoot").transform;
+            npcCurrentInteractionRoot.SetParent(npcGo.transform, false);
+            SetPrivateField(interactable, "currentInteractionRoot", npcCurrentInteractionRoot);
+
+            var definition = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            ui.SetDefinition(definition, interactable);
+
+            Assert.AreEqual(npcCurrentInteractionRoot, ui.transform.parent);
+
+            Object.DestroyImmediate(definition);
+            Object.DestroyImmediate(npcGo);
+        }
+
+        [Test]
+        public void SetDefinition_WithInteractableInFpsMode_DoesNotParentEntireUiToNpcCurrentInteractionRoot()
+        {
+            InteractionUIController ui = CreateUi(out _, out _, out _);
+            ui.enabled = false;
+
+            Transform originalParent = ui.transform.parent;
+            var inputGo = new GameObject("HarvestInputManager");
+            var inputManager = inputGo.AddComponent<HarvestInputManager>();
+            var settings = ScriptableObject.CreateInstance<HarvestSettings>();
+            settings.playerMode = PlayerMode.FPS;
+            inputManager.harvestSettings = settings;
+
+            var npcGo = new GameObject("Npc");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            Transform npcCurrentInteractionRoot = new GameObject("NpcCurrentInteractionRoot").transform;
+            npcCurrentInteractionRoot.SetParent(npcGo.transform, false);
+            SetPrivateField(interactable, "currentInteractionRoot", npcCurrentInteractionRoot);
+
+            var definition = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            ui.SetDefinition(definition, interactable);
+
+            Assert.AreEqual(originalParent, ui.transform.parent);
+            Assert.AreNotEqual(npcCurrentInteractionRoot, ui.transform.parent);
+
+            Object.DestroyImmediate(definition);
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(inputGo);
+            Object.DestroyImmediate(settings);
+        }
+
+        [Test]
         public void SetDefinition_WhenCurrentInteractionViewIsActive_SwitchesBackToMainView()
         {
             InteractionUIController ui = CreateUi(out _, out _, out _, out ViewSwitcher viewSwitcher);

@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using BNG;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -263,6 +264,123 @@ namespace Tests
             Object.DestroyImmediate(npcGo);
             Object.DestroyImmediate(npcDef);
             Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void RunNodeAction_OnFinishNode_EmitsInteractionUiToMainEvent()
+        {
+            GameState.Reset();
+            bool interactionUiToMainEmitted = false;
+            Action onInteractionUiToMain = () => interactionUiToMainEmitted = true;
+            EventManager.Subscribe("interactionUIToMain", onInteractionUiToMain);
+            try
+            {
+                var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+                QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+                EnsureGraphNodeList(graph);
+
+                QuestFinishNode finishNode = graph.AddNode<QuestFinishNode>();
+                if (finishNode == null)
+                {
+                    finishNode = ScriptableObject.CreateInstance<QuestFinishNode>();
+                    finishNode.graph = graph;
+                    graph.nodes.Add(finishNode);
+                }
+
+                finishNode.targetNpc = npcDef;
+                graph.entryNode = finishNode;
+
+                var npcGo = new GameObject("Npc");
+                var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+                SetPrivateField(interactable, "definition", npcDef);
+
+                QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+                service.RunNodeAction(finishNode, interactionUI: null, interactable);
+
+                Assert.IsTrue(interactionUiToMainEmitted);
+
+                Object.DestroyImmediate(npcGo);
+                Object.DestroyImmediate(npcDef);
+                Object.DestroyImmediate(graph);
+            }
+            finally
+            {
+                EventManager.Unsubscribe("interactionUIToMain", onInteractionUiToMain);
+            }
+        }
+
+        [Test]
+        public void QuestNpcGiftBridge_OnSuccessfulGift_EmitsInteractionUiToMainAndSetsNpcIdle()
+        {
+            GameState.Reset();
+            bool interactionUiToMainEmitted = false;
+            Action onInteractionUiToMain = () => interactionUiToMainEmitted = true;
+            EventManager.Subscribe("interactionUIToMain", onInteractionUiToMain);
+            try
+            {
+                var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+                var requiredItem = ScriptableObject.CreateInstance<HarvestDataTypes.Item>();
+                requiredItem.itemId = "PieApple";
+
+                QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+                EnsureGraphNodeList(graph);
+                QuestGiftNode giftNode = graph.AddNode<QuestGiftNode>();
+                if (giftNode == null)
+                {
+                    giftNode = ScriptableObject.CreateInstance<QuestGiftNode>();
+                    giftNode.graph = graph;
+                    graph.nodes.Add(giftNode);
+                }
+
+                QuestFinishNode finishNode = graph.AddNode<QuestFinishNode>();
+                if (finishNode == null)
+                {
+                    finishNode = ScriptableObject.CreateInstance<QuestFinishNode>();
+                    finishNode.graph = graph;
+                    graph.nodes.Add(finishNode);
+                }
+
+                giftNode.targetNpc = npcDef;
+                giftNode.requiredItem = requiredItem;
+                giftNode.requiredAmount = 1;
+                finishNode.targetNpc = npcDef;
+                giftNode.GetOutputPort("next").Connect(finishNode.GetInputPort("inFlow"));
+                graph.entryNode = giftNode;
+
+                var npcGo = new GameObject("Npc");
+                var npc = npcGo.AddComponent<NPCController>();
+                npc.handSlot = new GameObject("HandSlot");
+                npc.handSlot.transform.SetParent(npcGo.transform, false);
+                npc.handSlot.SetActive(true);
+                var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+                SetPrivateField(interactable, "definition", npcDef);
+                var bridge = npcGo.AddComponent<QuestNpcGiftBridge>();
+                InvokePrivateMethod(bridge, "Awake");
+                InvokePrivateMethod(bridge, "OnEnable");
+
+                QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+                service.RunNodeAction(giftNode, interactionUI: null, interactable);
+
+                var giftedItemGo = new GameObject("GiftedItem");
+                giftedItemGo.AddComponent<ItemInformation>().item = requiredItem;
+                var grabbable = giftedItemGo.AddComponent<Grabbable>();
+
+                npc.NPCGrabbedItem(grabbable);
+
+                Assert.IsTrue(interactionUiToMainEmitted);
+                Assert.IsFalse(npc.handSlot.activeSelf);
+
+                InvokePrivateMethod(bridge, "OnDisable");
+                Object.DestroyImmediate(giftedItemGo);
+                Object.DestroyImmediate(npcGo);
+                Object.DestroyImmediate(requiredItem);
+                Object.DestroyImmediate(npcDef);
+                Object.DestroyImmediate(graph);
+            }
+            finally
+            {
+                EventManager.Unsubscribe("interactionUIToMain", onInteractionUiToMain);
+            }
         }
 
         private QuestNodeBase BuildSingleNodeQuest(

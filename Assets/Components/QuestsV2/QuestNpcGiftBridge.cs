@@ -51,6 +51,19 @@ public class QuestNpcGiftBridge : MonoBehaviour
         }
 
         ConsumeAndDropOverflow(grabbable, stack, requiredAmount);
+
+        if (_npc != null)
+        {
+            _npc.BackToIdle();
+        }
+
+        InteractionUIController interactionUI = FindFirstObjectByType<InteractionUIController>(FindObjectsInactive.Include);
+        if (QuestRuntimeService.Instance.RunCurrentNodeForNpc(_interactable, interactionUI))
+        {
+            return;
+        }
+
+        EventManager.Emit("interactionUIToMain");
     }
 
     private static bool TryResolveGiftData(Grabbable grabbable, out string itemId, out int amount, out ItemStack stack)

@@ -39,8 +39,18 @@ public class InteractionUIController : MonoBehaviour
     private readonly List<Button> _spawnedButtons = new List<Button>();
     private NpcInteractableDefinition _activeDefinition;
     private NpcProximityInteractable _activeInteractable;
+    private bool _hasDefaultUiPlacement;
+    private Transform _defaultUiParent;
+    private Vector3 _defaultUiLocalPosition;
+    private Quaternion _defaultUiLocalRotation;
+    private Vector3 _defaultUiLocalScale;
 
     public event Action OnGoodbye;
+
+    private void Awake()
+    {
+        CaptureDefaultUiPlacementIfNeeded();
+    }
 
     private void OnEnable()
     {
@@ -51,6 +61,7 @@ public class InteractionUIController : MonoBehaviour
     {
         EventManager.Unsubscribe(InteractionUiToMainEventName, HandleInteractionUiToMain);
         SetNpcToIdle(_activeInteractable);
+        RestoreDefaultUiPlacement();
 
         ClearOptions();
     }
@@ -69,6 +80,7 @@ public class InteractionUIController : MonoBehaviour
         ClearOptions();
         _activeDefinition = definition;
         _activeInteractable = interactable;
+        UpdateInteractionUiPlacement(interactable);
         SetNpcToIdle(interactable);
 
         if (npcNameText != null)
@@ -350,6 +362,41 @@ public class InteractionUIController : MonoBehaviour
         }
 
         viewSwitcher.setActiveView(MainViewId);
+    }
+
+    private void CaptureDefaultUiPlacementIfNeeded()
+    {
+        if (_hasDefaultUiPlacement)
+        {
+            return;
+        }
+
+        _defaultUiParent = transform.parent;
+        _defaultUiLocalPosition = transform.localPosition;
+        _defaultUiLocalRotation = transform.localRotation;
+        _defaultUiLocalScale = transform.localScale;
+        _hasDefaultUiPlacement = true;
+    }
+
+    private void UpdateInteractionUiPlacement(NpcProximityInteractable interactable)
+    {
+        CaptureDefaultUiPlacementIfNeeded();
+        if (ShouldUseNpcInteractionRoot() && interactable != null && interactable.CurrentInteractionRoot != null)
+        {
+            transform.SetParent(interactable.CurrentInteractionRoot, false);
+            return;
+        }
+
+        RestoreDefaultUiPlacement();
+    }
+
+    private void RestoreDefaultUiPlacement()
+    {
+        CaptureDefaultUiPlacementIfNeeded();
+        transform.SetParent(_defaultUiParent, false);
+        transform.localPosition = _defaultUiLocalPosition;
+        transform.localRotation = _defaultUiLocalRotation;
+        transform.localScale = _defaultUiLocalScale;
     }
 
     private static void SetNpcToIdle(NpcProximityInteractable interactable)
