@@ -3,6 +3,7 @@ using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
+using XNode;
 
 namespace Tests
 {
@@ -67,35 +68,44 @@ namespace Tests
         private static NpcChatGraph BuildTwoChoiceGraph()
         {
             var graph = ScriptableObject.CreateInstance<NpcChatGraph>();
-
-            var entry = new ChatTreeNodeData
+            if (graph.nodes == null)
             {
-                body = "Hello",
-                choices = new List<ChatChoiceData>
-                {
-                    new ChatChoiceData { label = "One", nextNodeId = "b" },
-                    new ChatChoiceData { label = "Two", nextNodeId = "c" },
-                },
-            };
-            entry.SetId("a");
+                graph.nodes = new List<Node>();
+            }
 
-            var b = new ChatTreeNodeData
+            NpcChatNode entry = graph.AddNode<NpcChatNode>();
+            if (entry == null)
             {
-                body = "B",
-                choices = new List<ChatChoiceData>(),
-            };
-            b.SetId("b");
+                entry = ScriptableObject.CreateInstance<NpcChatNode>();
+                entry.graph = graph;
+                graph.nodes.Add(entry);
+            }
 
-            var c = new ChatTreeNodeData
+            entry.body = "Hello";
+            entry.choices = new List<string> { "One", "Two" };
+
+            NpcChatNode b = graph.AddNode<NpcChatNode>();
+            if (b == null)
             {
-                body = "C",
-                choices = new List<ChatChoiceData>(),
-            };
-            c.SetId("c");
+                b = ScriptableObject.CreateInstance<NpcChatNode>();
+                b.graph = graph;
+                graph.nodes.Add(b);
+            }
 
-            graph.nodes.Add(entry);
-            graph.nodes.Add(b);
-            graph.nodes.Add(c);
+            b.body = "B";
+
+            NpcChatNode c = graph.AddNode<NpcChatNode>();
+            if (c == null)
+            {
+                c = ScriptableObject.CreateInstance<NpcChatNode>();
+                c.graph = graph;
+                graph.nodes.Add(c);
+            }
+
+            c.body = "C";
+
+            Assert.IsNotNull(entry);
+            graph.entryNode = entry;
 
             Assert.IsTrue(graph.TryValidate(out string err), err);
 

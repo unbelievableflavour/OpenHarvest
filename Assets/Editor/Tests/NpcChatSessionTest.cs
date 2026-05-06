@@ -18,24 +18,17 @@ namespace Tests
         public void GraphValidation_SucceedsForSimpleLinearTree()
         {
             var g = ScriptableObject.CreateInstance<NpcChatGraph>();
-            var a = new ChatTreeNodeData
-            {
-                body = "Line a",
-                choices = new System.Collections.Generic.List<ChatChoiceData>
-                {
-                    new ChatChoiceData { label = "Go", nextNodeId = "b" },
-                },
-            };
-            a.SetId("a");
-            g.nodes.Add(a);
+            NpcChatNode a = g.AddNode<NpcChatNode>();
+            a.body = "Line a";
+            a.choices.Add("Go");
 
-            var b = new ChatTreeNodeData
-            {
-                body = "Line b",
-                choices = new System.Collections.Generic.List<ChatChoiceData>(),
-            };
-            b.SetId("b");
-            g.nodes.Add(b);
+            NpcChatNode b = g.AddNode<NpcChatNode>();
+            b.body = "Line b";
+
+            a.UpdatePorts();
+            b.UpdatePorts();
+
+            g.entryNode = a;
 
             Assert.IsTrue(g.TryValidate(out string err), err);
         }
@@ -44,36 +37,32 @@ namespace Tests
         public void Session_FollowsChoiceToNextNode()
         {
             var g = ScriptableObject.CreateInstance<NpcChatGraph>();
-            var a = new ChatTreeNodeData
-            {
-                body = "Line a",
-                choices = new System.Collections.Generic.List<ChatChoiceData>
-                {
-                    new ChatChoiceData { label = "Go", nextNodeId = "b" },
-                },
-            };
-            a.SetId("a");
-            g.nodes.Add(a);
+            NpcChatNode a = g.AddNode<NpcChatNode>();
+            a.body = "Line a";
+            a.choices.Add("Go");
 
-            var b = new ChatTreeNodeData
-            {
-                body = "Line b",
-                choices = new System.Collections.Generic.List<ChatChoiceData>
-                {
-                    new ChatChoiceData { label = "End", nextNodeId = "" },
-                },
-            };
-            b.SetId("b");
-            g.nodes.Add(b);
+            NpcChatNode b = g.AddNode<NpcChatNode>();
+            b.body = "Line b";
+            b.choices.Add("End");
+
+            a.UpdatePorts();
+            b.UpdatePorts();
+
+            var outPort = a.GetOutputPort("choices 0") ?? a.GetOutputPort("choices");
+            var inPort = b.GetInputPort("inFlow");
+            Assert.IsNotNull(outPort, "Expected an output port for choices.");
+            Assert.IsNotNull(inPort, "Expected input port 'inFlow'.");
+            outPort.Connect(inPort);
+            g.entryNode = a;
 
             var session = new NpcChatSession(g);
-            Assert.IsTrue(session.TryGetCurrentNode(out ChatTreeNodeData first));
-            Assert.AreEqual("a", first.Id);
+            Assert.IsTrue(session.TryGetCurrentNode(out NpcChatNode first));
+            Assert.AreEqual(a, first);
 
             Assert.IsTrue(session.TryChoose(0, out bool ended));
             Assert.IsFalse(ended);
-            Assert.IsTrue(session.TryGetCurrentNode(out ChatTreeNodeData second));
-            Assert.AreEqual("b", second.Id);
+            Assert.IsTrue(session.TryGetCurrentNode(out NpcChatNode second));
+            Assert.AreEqual(b, second);
 
             Assert.IsTrue(session.TryChoose(0, out ended));
             Assert.IsTrue(ended);

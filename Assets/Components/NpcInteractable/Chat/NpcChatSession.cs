@@ -1,76 +1,60 @@
-using System;
-
 public sealed class NpcChatSession
 {
     private readonly NpcChatGraph _graph;
-    private string _activeNodeId;
+    private NpcChatNode _activeNode;
 
     public NpcChatSession(NpcChatGraph graph)
     {
         _graph = graph;
-        ChatTreeNodeData entry = graph != null ? graph.GetEntryNode() : null;
-        _activeNodeId = entry != null ? entry.Id : null;
+        _activeNode = graph != null ? graph.GetEntryNode() : null;
     }
 
-    public string ActiveNodeId => _activeNodeId;
+    public NpcChatNode ActiveNode => _activeNode;
 
-    public bool IsFinished => string.IsNullOrEmpty(_activeNodeId);
+    public bool IsFinished => _activeNode == null;
 
-    public bool TryGetCurrentNode(out ChatTreeNodeData node)
+    public bool TryGetCurrentNode(out NpcChatNode node)
     {
         node = null;
-        if (_graph == null || string.IsNullOrEmpty(_activeNodeId))
+        if (_graph == null || _activeNode == null)
         {
             return false;
         }
 
-        node = _graph.FindNode(_activeNodeId);
-        return node != null;
+        node = _activeNode;
+        return true;
     }
 
     public bool TryChoose(int choiceIndex, out bool chatEnded)
     {
         chatEnded = false;
-        if (!TryGetCurrentNode(out ChatTreeNodeData current))
+        if (!TryGetCurrentNode(out NpcChatNode current))
         {
             chatEnded = true;
             return false;
         }
 
-        if (current.choices == null || current.choices.Count == 0)
+        if (current.ChoiceCount == 0)
         {
-            _activeNodeId = null;
-            chatEnded = true;
-            return true;
-        }
-
-        if (choiceIndex < 0 || choiceIndex >= current.choices.Count)
-        {
-            return false;
-        }
-
-        ChatChoiceData choice = current.choices[choiceIndex];
-        if (choice == null)
-        {
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(choice.nextNodeId))
-        {
-            _activeNodeId = null;
+            _activeNode = null;
             chatEnded = true;
             return true;
         }
 
-        ChatTreeNodeData next = _graph.FindNode(choice.nextNodeId);
+        if (choiceIndex < 0 || choiceIndex >= current.ChoiceCount)
+        {
+            return false;
+        }
+
+        NpcChatNode next = current.GetNextNode(choiceIndex);
         if (next == null)
         {
-            _activeNodeId = null;
+            _activeNode = null;
             chatEnded = true;
             return true;
         }
 
-        _activeNodeId = next.Id;
+        _activeNode = next;
         chatEnded = false;
         return true;
     }

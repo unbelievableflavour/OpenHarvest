@@ -1,154 +1,58 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+using XNode;
 
 [CreateAssetMenu(
     fileName = "Npc Chat Graph",
     menuName = "OpenHarvest/NPC/Chat Graph",
     order = 20)]
-public class NpcChatGraph : ScriptableObject
+public class NpcChatGraph : NodeGraph
 {
     public const int MaxBodyLength = 500;
 
-    public List<ChatTreeNodeData> nodes = new List<ChatTreeNodeData>();
+    [Tooltip("First node used when a chat starts.")]
+    public NpcChatNode entryNode;
 
-    private void OnValidate()
+    private void OnEnable()
     {
-        EnsureNodeIds();
         ClampBodyLengths();
-    }
-
-    public ChatTreeNodeData FindNode(string id)
-    {
-        if (string.IsNullOrWhiteSpace(id) || nodes == null)
-        {
-            return null;
-        }
-
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            ChatTreeNodeData n = nodes[i];
-            if (n != null && string.Equals(n.Id, id, StringComparison.Ordinal))
-            {
-                return n;
-            }
-        }
-
-        return null;
     }
 
     public bool TryValidate(out string errorMessage)
     {
-        if (nodes == null || nodes.Count == 0)
+        if (entryNode == null)
         {
-            errorMessage = "No nodes defined.";
+            errorMessage = "Entry node is not assigned.";
             return false;
         }
 
-        var idSet = new HashSet<string>(StringComparer.Ordinal);
-        for (int i = 0; i < nodes.Count; i++)
+        List<NpcChatNode> allNodes = GetNodes();
+        if (allNodes.Count == 0)
         {
-            ChatTreeNodeData n = nodes[i];
-            if (n == null)
-            {
-                errorMessage = $"Node at index {i} is null.";
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(n.Id))
-            {
-                errorMessage = $"Node at index {i} has an empty id.";
-                return false;
-            }
-
-            if (!idSet.Add(n.Id))
-            {
-                errorMessage = $"Duplicate node id '{n.Id}'.";
-                return false;
-            }
-        }
-
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            ChatTreeNodeData n = nodes[i];
-            if (n.choices == null)
-            {
-                continue;
-            }
-
-            for (int c = 0; c < n.choices.Count; c++)
-            {
-                ChatChoiceData ch = n.choices[c];
-                if (ch == null)
-                {
-                    errorMessage = $"Node '{n.Id}' has a null choice.";
-                    return false;
-                }
-
-                if (string.IsNullOrWhiteSpace(ch.nextNodeId))
-                {
-                    continue;
-                }
-
-                if (FindNode(ch.nextNodeId) == null)
-                {
-                    errorMessage = $"Node '{n.Id}' choice '{ch.label}' points to missing node '{ch.nextNodeId}'.";
-                    return false;
-                }
-            }
+            errorMessage = "No chat nodes found in graph.";
+            return false;
         }
 
         errorMessage = null;
         return true;
     }
 
-    public ChatTreeNodeData GetEntryNode()
+    public NpcChatNode GetEntryNode()
     {
-        if (nodes == null || nodes.Count == 0)
-        {
-            return null;
-        }
-
-        return nodes[0];
-    }
-
-    public void EnsureNodeIds()
-    {
-        if (nodes == null)
-        {
-            return;
-        }
-
-        var used = new HashSet<string>(StringComparer.Ordinal);
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            ChatTreeNodeData node = nodes[i];
-            if (node == null)
-            {
-                continue;
-            }
-
-            string current = node.Id;
-            if (string.IsNullOrWhiteSpace(current) || used.Contains(current))
-            {
-                current = "node_" + Guid.NewGuid().ToString("N").Substring(0, 8);
-                node.SetId(current);
-            }
-
-            used.Add(current);
-        }
+        return entryNode;
     }
 
     public void ClampBodyLengths()
     {
-        if (nodes == null)
+        List<NpcChatNode> allNodes = GetNodes();
+        if (allNodes == null)
         {
             return;
         }
 
-        for (int i = 0; i < nodes.Count; i++)
+        for (int i = 0; i < allNodes.Count; i++)
         {
-            ChatTreeNodeData node = nodes[i];
+            NpcChatNode node = allNodes[i];
             if (node == null || string.IsNullOrEmpty(node.body))
             {
                 continue;
@@ -162,4 +66,24 @@ public class NpcChatGraph : ScriptableObject
             node.body = node.body.Substring(0, MaxBodyLength);
         }
     }
+
+    private List<NpcChatNode> GetNodes()
+    {
+        var results = new List<NpcChatNode>();
+        if (nodes == null)
+        {
+            return results;
+        }
+
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            if (nodes[i] is NpcChatNode node)
+            {
+                results.Add(node);
+            }
+        }
+
+        return results;
+    }
+
 }

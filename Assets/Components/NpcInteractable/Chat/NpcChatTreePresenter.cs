@@ -57,7 +57,7 @@ public class NpcChatTreePresenter : MonoBehaviour
             return;
         }
 
-        if (!_session.TryGetCurrentNode(out ChatTreeNodeData node))
+        if (!_session.TryGetCurrentNode(out NpcChatNode node))
         {
             CloseChat();
             return;
@@ -70,19 +70,16 @@ public class NpcChatTreePresenter : MonoBehaviour
 
         SpeakLine(node.body);
 
-        if (node.choices == null || node.choices.Count == 0)
+        if (node.ChoiceCount == 0)
         {
             AddChoiceRow("Continue", () => OnLeafContinue());
         }
         else
         {
-            for (int i = 0; i < node.choices.Count; i++)
+            for (int i = 0; i < node.ChoiceCount; i++)
             {
                 int index = i;
-                ChatChoiceData ch = node.choices[i];
-                string label = ch == null || string.IsNullOrEmpty(ch.label)
-                    ? "…"
-                    : ch.label;
+                string label = node.GetChoiceLabel(i);
                 AddChoiceRow(label, () => OnChose(index));
             }
         }
