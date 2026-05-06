@@ -90,7 +90,12 @@ public class OpenHarvestHingeHelper : MonoBehaviour
 
         if (rigid == null)
         {
-            return true;
+            rigid = GetComponent<Rigidbody>();
+        }
+
+        if (rigid == null)
+        {
+            return false;
         }
 
         if (!rigid.isKinematic && !rigid.IsSleeping())
