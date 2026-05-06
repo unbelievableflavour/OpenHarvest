@@ -50,6 +50,7 @@ public class InteractionUIController : MonoBehaviour
     private void OnDisable()
     {
         EventManager.Unsubscribe(InteractionUiToMainEventName, HandleInteractionUiToMain);
+        SetNpcToIdle(_activeInteractable);
 
         ClearOptions();
     }
@@ -64,6 +65,7 @@ public class InteractionUIController : MonoBehaviour
         NpcProximityInteractable interactable,
         bool speakSubtitle)
     {
+        viewSwitcher?.setActiveView(MainViewId);
         ClearOptions();
         _activeDefinition = definition;
         _activeInteractable = interactable;

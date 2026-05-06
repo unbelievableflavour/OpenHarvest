@@ -387,6 +387,58 @@ namespace Tests
             Object.DestroyImmediate(npcGo);
         }
 
+        [Test]
+        public void SetDefinition_WhenCurrentInteractionViewIsActive_SwitchesBackToMainView()
+        {
+            InteractionUIController ui = CreateUi(out _, out _, out _, out ViewSwitcher viewSwitcher);
+            ui.enabled = false;
+
+            GameObject mainViewGo = new GameObject("main_view");
+            GameObject currentViewGo = new GameObject("current_view");
+            mainViewGo.SetActive(true);
+            currentViewGo.SetActive(true);
+            viewSwitcher.views.Clear();
+            viewSwitcher.views.Add(new View { id = "main", view = mainViewGo });
+            viewSwitcher.views.Add(new View { id = "currentInteraction", view = currentViewGo });
+            viewSwitcher.currentView = viewSwitcher.views[1];
+            currentViewGo.SetActive(true);
+            mainViewGo.SetActive(false);
+
+            var definition = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            ui.SetDefinition(definition);
+
+            Assert.AreEqual("main", viewSwitcher.currentView.id);
+            Assert.IsTrue(mainViewGo.activeSelf);
+            Assert.IsFalse(currentViewGo.activeSelf);
+
+            Object.DestroyImmediate(definition);
+            Object.DestroyImmediate(mainViewGo);
+            Object.DestroyImmediate(currentViewGo);
+        }
+
+        [Test]
+        public void OnDisable_WithInteractable_SetsNpcBackToIdle()
+        {
+            InteractionUIController ui = CreateUi(out _, out _, out _);
+
+            var npcGo = new GameObject("Npc");
+            var npcController = npcGo.AddComponent<NPCController>();
+            npcController.handSlot = new GameObject("HandSlot");
+            npcController.handSlot.SetActive(true);
+
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            var definition = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            ui.SetDefinition(definition, interactable);
+            npcController.handSlot.SetActive(true);
+
+            InvokePrivateMethod(ui, "OnDisable");
+
+            Assert.IsFalse(npcController.handSlot.activeSelf);
+
+            Object.DestroyImmediate(definition);
+            Object.DestroyImmediate(npcGo);
+        }
+
         private InteractionUIController CreateUi(out Text npcNameText, out ScrollRect scrollRect, out Button optionButtonTemplate)
         {
             return CreateUi(out npcNameText, out scrollRect, out optionButtonTemplate, out _, out _);
@@ -483,6 +535,15 @@ namespace Tests
 
             Assert.IsNotNull(field, $"Missing private field '{fieldName}' on {target.GetType().Name}");
             field.SetValue(target, value);
+        }
+
+        private static void InvokePrivateMethod(object target, string methodName)
+        {
+            MethodInfo method = target.GetType().GetMethod(
+                methodName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(method, $"Missing method {methodName}");
+            method.Invoke(target, null);
         }
     }
 }
