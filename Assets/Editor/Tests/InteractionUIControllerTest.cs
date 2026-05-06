@@ -249,6 +249,68 @@ namespace Tests
             yield return null;
         }
 
+        [UnityTest]
+        public System.Collections.IEnumerator SetDefinition_WithInteractableInFpsMode_SpawnsOnUiCurrentInteractionRoot()
+        {
+            InteractionUIController ui = CreateUi(out _, out ScrollRect scrollRect, out _, out ViewSwitcher viewSwitcher, out _);
+            ui.enabled = false;
+            var inputGo = new GameObject("HarvestInputManager");
+            var inputManager = inputGo.AddComponent<HarvestInputManager>();
+            var settings = ScriptableObject.CreateInstance<HarvestSettings>();
+            settings.playerMode = PlayerMode.FPS;
+            inputManager.harvestSettings = settings;
+
+            GameObject mainViewGo = new GameObject("main_view");
+            GameObject currentViewGo = new GameObject("current_view");
+            mainViewGo.SetActive(true);
+            currentViewGo.SetActive(true);
+            viewSwitcher.views.Clear();
+            viewSwitcher.views.Add(new View { id = "main", view = mainViewGo });
+            viewSwitcher.views.Add(new View { id = "currentInteraction", view = currentViewGo });
+            viewSwitcher.currentView = viewSwitcher.views[0];
+
+            Transform currentInteractionRoot = viewSwitcher.transform.Find("CurrentInteractionRoot");
+
+            var contractsPrefab = new GameObject("ContractsPrefab");
+            var contractsAction = ScriptableObject.CreateInstance<NpcContractsInteractionOptionAction>();
+            SetPrivateField(contractsAction, "contractsPrefab", contractsPrefab);
+
+            var definition = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            definition.options.Add(new NpcInteractionOption
+            {
+                displayName = "Contracts",
+                action = contractsAction,
+            });
+
+            var npcGo = new GameObject("Npc");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            Transform npcCurrentInteractionRoot = new GameObject("NpcCurrentInteractionRoot").transform;
+            npcCurrentInteractionRoot.SetParent(npcGo.transform, false);
+            SetPrivateField(interactable, "currentInteractionRoot", npcCurrentInteractionRoot);
+
+            ui.SetDefinition(definition, interactable);
+
+            Button optionButton = FindButtonByLabelText(scrollRect.content, "Contracts");
+            Assert.IsNotNull(optionButton);
+            optionButton.onClick.Invoke();
+
+            Assert.AreEqual(0, npcCurrentInteractionRoot.childCount);
+            Assert.AreEqual(1, currentInteractionRoot.childCount);
+            Assert.IsFalse(mainViewGo.activeSelf);
+            Assert.IsTrue(currentViewGo.activeSelf);
+
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(definition);
+            Object.DestroyImmediate(contractsAction);
+            Object.DestroyImmediate(contractsPrefab);
+            Object.DestroyImmediate(mainViewGo);
+            Object.DestroyImmediate(currentViewGo);
+            Object.DestroyImmediate(inputGo);
+            Object.DestroyImmediate(settings);
+
+            yield return null;
+        }
+
         private InteractionUIController CreateUi(out Text npcNameText, out ScrollRect scrollRect, out Button optionButtonTemplate)
         {
             return CreateUi(out npcNameText, out scrollRect, out optionButtonTemplate, out _, out _);

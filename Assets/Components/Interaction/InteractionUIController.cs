@@ -303,12 +303,26 @@ public class InteractionUIController : MonoBehaviour
 
     private Transform ResolveOptionContentParent(NpcProximityInteractable interactable)
     {
-        if (interactable != null && interactable.CurrentInteractionRoot != null)
+        if (ShouldUseNpcInteractionRoot() && interactable != null && interactable.CurrentInteractionRoot != null)
         {
             return interactable.CurrentInteractionRoot;
         }
 
         return currentInteractionRoot != null ? currentInteractionRoot : transform;
+    }
+
+    private bool ShouldUseNpcInteractionRoot()
+    {
+        HarvestSettings settings = HarvestInputManager.Instance != null
+            ? HarvestInputManager.Instance.harvestSettings
+            : null;
+
+        if (settings != null && settings.playerMode == PlayerMode.FPS)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private static void DestroyChildren(Transform parent)
