@@ -12,7 +12,6 @@ public class NpcChatGraph : NodeGraph
 
     [Tooltip("First node used when a chat starts.")]
     public NpcChatNode entryNode;
-
     private void OnEnable()
     {
         ClampBodyLengths();

@@ -10,8 +10,6 @@ using UnityEngine.UI;
 public class InteractionUIController : MonoBehaviour
 {
     private const string GoodbyeLabel = "Goodbye";
-    private const string FollowStartLabel = "Follow me";
-    private const string FollowStopLabel = "Stop following";
     private const string MainViewId = "main";
     private const string CurrentInteractionViewId = "currentInteraction";
     private const string InteractionUiToMainEventName = "interactionUIToMain";
@@ -79,14 +77,11 @@ public class InteractionUIController : MonoBehaviour
                 }
 
                 NpcInteractionOption selectedOption = option;
-                AddRow(selectedOption.displayName, () => selectedOption.OnSelected(this, interactable));
+                AddRow(selectedOption.GetDisplayName(interactable), () => selectedOption.OnSelected(this, interactable));
             }
         }
 
-        if (ShouldShowFollowToggle(definition, interactable))
-        {
-            AddFollowToggleRow(interactable);
-        }
+        AddQuestRows(interactable);
 
         AddRow(GoodbyeLabel, OnGoodbyeClicked);
         if (scrollRect != null)
@@ -167,79 +162,25 @@ public class InteractionUIController : MonoBehaviour
         _spawnedButtons.Add(row);
     }
 
-    private static bool ShouldShowFollowToggle(NpcInteractableDefinition definition, NpcProximityInteractable interactable)
+    private void AddQuestRows(NpcProximityInteractable interactable)
     {
-        if (interactable == null)
-        {
-            return false;
-        }
-
-        if (interactable.GetComponentInParent<NPCNavAgent>() == null)
-        {
-            return false;
-        }
-
-        if (definition != null && !definition.showFollowToggle)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private void AddFollowToggleRow(NpcProximityInteractable interactable)
-    {
-        if (optionButtonTemplate == null || scrollRect?.content == null)
+        if (interactable == null || QuestRuntimeService.Instance == null)
         {
             return;
         }
 
-        NPCNavAgent nav = interactable.GetComponentInParent<NPCNavAgent>();
-        if (nav == null)
+        List<QuestNodeBase> nodes = QuestRuntimeService.Instance.GetVisibleNodesForNpc(interactable);
+        for (int i = 0; i < nodes.Count; i++)
         {
-            return;
-        }
-
-        Button row = Instantiate(optionButtonTemplate, scrollRect.content);
-        row.gameObject.SetActive(true);
-        row.onClick.RemoveAllListeners();
-
-        if (row.GetComponent<LayoutElement>() == null)
-        {
-            var layout = row.gameObject.AddComponent<LayoutElement>();
-            layout.minHeight = 32f;
-            layout.preferredHeight = 32f;
-            layout.flexibleHeight = 0f;
-        }
-
-        Text text = row.GetComponentInChildren<Text>(true);
-        if (text == null)
-        {
-            return;
-        }
-
-        void UpdateFollowLabel()
-        {
-            text.text = nav.followTarget != null ? FollowStopLabel : FollowStartLabel;
-        }
-
-        UpdateFollowLabel();
-        row.onClick.AddListener(() =>
-        {
-            Transform t = NPCNavAgent.ResolvePlayerFollowTarget();
-            if (nav.followTarget != null)
+            QuestNodeBase node = nodes[i];
+            if (node == null)
             {
-                nav.StopFollowing();
-            }
-            else if (t != null)
-            {
-                nav.Follow(t);
+                continue;
             }
 
-            UpdateFollowLabel();
-        });
-
-        _spawnedButtons.Add(row);
+            string label = node.GetDisplayLabel();
+            AddRow(label, () => QuestRuntimeService.Instance.RunNodeAction(node, this, interactable));
+        }
     }
 
     private void OnGoodbyeClicked()
@@ -313,9 +254,13 @@ public class InteractionUIController : MonoBehaviour
 
     private bool ShouldUseNpcInteractionRoot()
     {
-        HarvestSettings settings = HarvestInputManager.Instance != null
-            ? HarvestInputManager.Instance.harvestSettings
-            : null;
+        HarvestInputManager input = HarvestInputManager.Instance;
+        if (input == null)
+        {
+            input = FindFirstObjectByType<HarvestInputManager>(FindObjectsInactive.Include);
+        }
+
+        HarvestSettings settings = input != null ? input.harvestSettings : null;
 
         if (settings != null && settings.playerMode == PlayerMode.FPS)
         {

@@ -47,7 +47,7 @@ namespace Tests
             _root.SetActive(true);
 
             NpcChatGraph graph = BuildTwoChoiceGraph();
-            presenter.Begin(graph, npc: null);
+            presenter.Begin(graph.entryNode, npc: null);
 
             int activeChoiceButtons = 0;
             for (int i = 0; i < choiceRoot.childCount; i++)

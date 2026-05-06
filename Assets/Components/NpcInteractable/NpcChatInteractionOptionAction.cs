@@ -9,16 +9,22 @@ public class NpcChatInteractionOptionAction : NpcInteractionOptionAction
     [Tooltip("UI root with NpcChatTreePresenter (spawned under current interaction).")]
     [SerializeField] private GameObject chatUIPrefab;
 
-    [SerializeField] private NpcChatGraph chatGraph;
+    [SerializeField] private NpcChatNode chatNode;
 
     public override bool IsValid(NpcInteractionOption option)
     {
-        if (option == null || string.IsNullOrWhiteSpace(option.displayName) || chatUIPrefab == null || chatGraph == null)
+        if (option == null || string.IsNullOrWhiteSpace(option.displayName) || chatUIPrefab == null || chatNode == null)
         {
             return false;
         }
 
-        return chatGraph.TryValidate(out _);
+        NpcChatGraph graph = chatNode.graph as NpcChatGraph;
+        if (graph == null)
+        {
+            return true;
+        }
+
+        return graph.TryValidate(out _);
     }
 
     public override void Execute(
@@ -26,7 +32,7 @@ public class NpcChatInteractionOptionAction : NpcInteractionOptionAction
         NpcProximityInteractable interactable,
         NpcInteractionOption option)
     {
-        if (interactionUI == null || chatUIPrefab == null || chatGraph == null)
+        if (interactionUI == null || chatUIPrefab == null || chatNode == null)
         {
             return;
         }
@@ -43,7 +49,7 @@ public class NpcChatInteractionOptionAction : NpcInteractionOptionAction
                 return;
             }
 
-            presenter.Begin(chatGraph, npc);
+            presenter.Begin(chatNode, npc);
         });
     }
 }

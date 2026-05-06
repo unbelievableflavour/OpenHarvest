@@ -12,6 +12,8 @@ public class NpcChatTreePresenter : MonoBehaviour
     private readonly List<GameObject> _spawnedChoiceRows = new List<GameObject>();
     private NpcChatSession _session;
     private NPCController _npc;
+    private bool _singleLinePending;
+    private string _singleLineBody;
 
     private void Awake()
     {
@@ -24,12 +26,26 @@ public class NpcChatTreePresenter : MonoBehaviour
         }
     }
 
-    public void Begin(NpcChatGraph graph, NPCController npc)
+    public void Begin(NpcChatNode startNode, NPCController npc)
     {
         HideChoiceTemplate();
 
         _npc = npc;
-        _session = new NpcChatSession(graph);
+        _singleLinePending = false;
+        _singleLineBody = string.Empty;
+        _session = new NpcChatSession(startNode);
+        gameObject.SetActive(true);
+        RefreshView();
+    }
+
+    public void BeginSingleLine(string body, NPCController npc)
+    {
+        HideChoiceTemplate();
+
+        _npc = npc;
+        _session = null;
+        _singleLinePending = true;
+        _singleLineBody = body ?? string.Empty;
         gameObject.SetActive(true);
         RefreshView();
     }
@@ -50,6 +66,19 @@ public class NpcChatTreePresenter : MonoBehaviour
     private void RefreshView()
     {
         ClearChoiceRows();
+
+        if (_singleLinePending)
+        {
+            if (bodyText != null)
+            {
+                bodyText.text = _singleLineBody;
+            }
+
+            SpeakLine(_singleLineBody);
+            AddChoiceRow("Continue", OnSingleLineContinue);
+            RebuildChatLayout();
+            return;
+        }
 
         if (_session == null || _session.IsFinished)
         {
@@ -121,6 +150,13 @@ public class NpcChatTreePresenter : MonoBehaviour
         }
 
         RefreshView();
+    }
+
+    private void OnSingleLineContinue()
+    {
+        _singleLinePending = false;
+        _singleLineBody = string.Empty;
+        CloseChat();
     }
 
     private void OnChose(int choiceIndex)

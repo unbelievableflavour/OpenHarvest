@@ -69,6 +69,14 @@ public class NpcChatNodeEditor : NodeEditor
             didChangeChoices = true;
         }
 
+        EditorGUILayout.Space(8f);
+        if (GUILayout.Button("Delete Node"))
+        {
+            DeleteNode(node);
+            serializedObject.ApplyModifiedProperties();
+            return;
+        }
+
         serializedObject.ApplyModifiedProperties();
 
         if (didChangeChoices)
@@ -76,5 +84,30 @@ public class NpcChatNodeEditor : NodeEditor
             node.UpdatePorts();
             EditorUtility.SetDirty(node);
         }
+    }
+
+    private static void DeleteNode(NpcChatNode node)
+    {
+        if (node == null)
+        {
+            return;
+        }
+
+        NpcChatGraph graph = node.graph as NpcChatGraph;
+        if (graph == null)
+        {
+            return;
+        }
+
+        Undo.RecordObject(graph, "Delete chat node");
+        if (graph.entryNode == node)
+        {
+            graph.entryNode = null;
+        }
+
+        graph.RemoveNode(node);
+        Undo.DestroyObjectImmediate(node);
+        EditorUtility.SetDirty(graph);
+        AssetDatabase.SaveAssets();
     }
 }

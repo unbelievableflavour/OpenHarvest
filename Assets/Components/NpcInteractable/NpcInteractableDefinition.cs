@@ -13,9 +13,18 @@ public class NpcInteractionOption
 
     public bool IsValid()
     {
-        return !string.IsNullOrWhiteSpace(displayName)
-            && action != null
+        return action != null
             && action.IsValid(this);
+    }
+
+    public string GetDisplayName(NpcProximityInteractable interactable)
+    {
+        if (action == null)
+        {
+            return string.IsNullOrWhiteSpace(displayName) ? "Option" : displayName.Trim();
+        }
+
+        return action.ResolveDisplayName(this, interactable);
     }
 
     public void OnSelected(InteractionUIController interactionUI, NpcProximityInteractable interactable)
@@ -35,9 +44,7 @@ public class NpcInteractableDefinition : ScriptableObject
     [Tooltip("Optional line under the name; shown on the interaction panel and spoken when the panel opens (requires NPCVoice on this NPC).")]
     public string subtitle = "";
 
-    [Tooltip("If true and this NPC has an NPCNavAgent, show Follow / Stop following above Goodbye.")]
-    public bool showFollowToggle = true;
-
     [Tooltip("Choices offered when the player opens interaction with this NPC.")]
     public List<NpcInteractionOption> options = new List<NpcInteractionOption>();
+
 }

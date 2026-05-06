@@ -55,7 +55,7 @@ namespace Tests
             outPort.Connect(inPort);
             g.entryNode = a;
 
-            var session = new NpcChatSession(g);
+            var session = new NpcChatSession(a);
             Assert.IsTrue(session.TryGetCurrentNode(out NpcChatNode first));
             Assert.AreEqual(a, first);
 

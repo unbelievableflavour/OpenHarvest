@@ -1,12 +1,10 @@
 public sealed class NpcChatSession
 {
-    private readonly NpcChatGraph _graph;
     private NpcChatNode _activeNode;
 
-    public NpcChatSession(NpcChatGraph graph)
+    public NpcChatSession(NpcChatNode startNode)
     {
-        _graph = graph;
-        _activeNode = graph != null ? graph.GetEntryNode() : null;
+        _activeNode = startNode;
     }
 
     public NpcChatNode ActiveNode => _activeNode;
@@ -16,7 +14,7 @@ public sealed class NpcChatSession
     public bool TryGetCurrentNode(out NpcChatNode node)
     {
         node = null;
-        if (_graph == null || _activeNode == null)
+        if (_activeNode == null)
         {
             return false;
         }
