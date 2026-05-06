@@ -9,14 +9,15 @@ namespace Tests
         [Test]
         public void ItChecksIfAllRequiredFieldsAreNotEmpty()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Interfaces/RecipesUI/RecipeMenu.prefab");
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Components/Interfaces/RecipesUI/RecipeUI.prefab");
+
             prefab = GameObject.Instantiate(prefab);
 
             Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().viewSwitcher);
             Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().recipeList);
             Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().recipeRow);
             Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().detailsHeader);
-            //Assert.AreNotEqual(null, prefab.GetComponent<RecipeMenuController>().detailsDescription);
             Assert.AreNotEqual(0, prefab.GetComponent<RecipeMenuController>().GetRecipesCount());
         }
     }
