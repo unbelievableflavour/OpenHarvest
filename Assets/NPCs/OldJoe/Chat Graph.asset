@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NpcChatNode_2
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
-  position: {x: 24, y: -200}
+  position: {x: 40, y: -216}
   ports:
     keys:
     - inFlow
@@ -42,7 +42,51 @@ MonoBehaviour:
       _typeConstraint: 0
       _dynamic: 0
   inFlow: 0
-  body: Looks like it yeah. You could do it for me if you like..
+  body: What am I doing here? What are YOU doing here?
+  choices: []
+--- !u!114 &-1456192173124115180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32859a7625e524e4eac6c27d0e71be1a, type: 3}
+  m_Name: NpcChatNode_3
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 56, y: 56}
+  ports:
+    keys:
+    - inFlow
+    - choices
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: -1456192173124115180}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: choices 1
+        node: {fileID: 619494313931745589}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: choices
+      _node: {fileID: -1456192173124115180}
+      _typeQualifiedName: System.Collections.Generic.List`1[[System.String, mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  body: Nope, completely mined dry. Or my eyesight is getting worse.
   choices: []
 --- !u!114 &11400000
 MonoBehaviour:
@@ -59,7 +103,7 @@ MonoBehaviour:
   nodes:
   - {fileID: 619494313931745589}
   - {fileID: -3994283445494224415}
-  - {fileID: 3419684224072039207}
+  - {fileID: -1456192173124115180}
   entryNode: {fileID: 619494313931745589}
 --- !u!114 &619494313931745589
 MonoBehaviour:
@@ -119,59 +163,14 @@ MonoBehaviour:
         PublicKeyToken=b77a5c561934e089
       connections:
       - fieldName: inFlow
-        node: {fileID: 3419684224072039207}
+        node: {fileID: -1456192173124115180}
         reroutePoints: []
       _direction: 1
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 1
   inFlow: 0
-  body: Humpfff, heavy stuff today!
+  body: Whats up?
   choices:
-  - Do you move your cart here everyday?
-  - Where did you come from, you where suddenly just here..
---- !u!114 &3419684224072039207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32859a7625e524e4eac6c27d0e71be1a, type: 3}
-  m_Name: NpcChatNode_3
-  m_EditorClassIdentifier: 
-  graph: {fileID: 11400000}
-  position: {x: 40, y: 88}
-  ports:
-    keys:
-    - inFlow
-    - choices
-    values:
-    - _fieldName: inFlow
-      _node: {fileID: 3419684224072039207}
-      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-        PublicKeyToken=b77a5c561934e089
-      connections:
-      - fieldName: choices 1
-        node: {fileID: 619494313931745589}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: choices
-      _node: {fileID: 3419684224072039207}
-      _typeQualifiedName: System.Collections.Generic.List`1[[System.String, mscorlib,
-        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
-        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  inFlow: 0
-  body: Who knows.... Maybe I'm an alien! Nah, just kidding. I live in a village
-    close by.
-  choices: []
+  - What are you doing here?
+  - Any luck finding in the mines today?

@@ -425,17 +425,12 @@ public class InteractionUIController : MonoBehaviour
         DestroyChildren(currentInteractionRoot);
         if (_activeInteractable != null)
         {
-            DestroyChildren(_activeInteractable.CurrentInteractionRoot);
+            DestroyChildrenExceptSelf(_activeInteractable.CurrentInteractionRoot);
         }
     }
 
     private Transform ResolveOptionContentParent(NpcProximityInteractable interactable)
     {
-        if (ShouldUseNpcInteractionRoot() && interactable != null && interactable.CurrentInteractionRoot != null)
-        {
-            return interactable.CurrentInteractionRoot;
-        }
-
         return currentInteractionRoot != null ? currentInteractionRoot : transform;
     }
 
@@ -468,6 +463,25 @@ public class InteractionUIController : MonoBehaviour
         {
             Transform child = parent.GetChild(i);
             if (child == null)
+            {
+                continue;
+            }
+
+            DestroyImmediate(child.gameObject);
+        }
+    }
+
+    private void DestroyChildrenExceptSelf(Transform parent)
+    {
+        if (parent == null)
+        {
+            return;
+        }
+
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            Transform child = parent.GetChild(i);
+            if (child == null || child == transform)
             {
                 continue;
             }

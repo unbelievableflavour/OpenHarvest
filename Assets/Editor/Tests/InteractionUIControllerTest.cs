@@ -288,8 +288,8 @@ namespace Tests
             Assert.IsNotNull(optionButton);
             optionButton.onClick.Invoke();
 
-            Assert.AreEqual(1, npcCurrentInteractionRoot.childCount);
-            Assert.AreEqual(0, currentInteractionRoot.childCount);
+            Assert.AreEqual(npcCurrentInteractionRoot, ui.transform.parent);
+            Assert.AreEqual(1, currentInteractionRoot.childCount);
             Assert.IsFalse(mainViewGo.activeSelf);
             Assert.IsTrue(currentViewGo.activeSelf);
 
