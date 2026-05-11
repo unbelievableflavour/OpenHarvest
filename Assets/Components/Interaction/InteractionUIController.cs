@@ -417,6 +417,15 @@ public class InteractionUIController : MonoBehaviour
             return;
         }
 
+        if (npc.handSlot != null)
+        {
+            BNG.SnapZone snapZone = npc.handSlot.GetComponent<BNG.SnapZone>();
+            if (snapZone != null && snapZone.HeldItem != null)
+            {
+                return;
+            }
+        }
+
         npc.BackToIdle();
     }
 
