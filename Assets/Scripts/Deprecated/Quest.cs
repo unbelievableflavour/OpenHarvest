@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using static Definitions;
 
+// Legacy Quest V1 model kept for backward compatibility with old save files.
+// New quest progression should be tracked in Quest V2 runtime state.
 public enum Progress
 {
     NotStarted,

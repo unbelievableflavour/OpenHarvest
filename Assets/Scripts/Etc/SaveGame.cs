@@ -22,6 +22,8 @@ public class SaveGame
     public SaveableWindmill windmill;
 
     public Dictionary<string, RespawningObject> respawningObjects;
+    // Legacy Quest V1 data. Kept optional for loading older saves only.
+    [OptionalField]
     public Dictionary<Quests, Quest> questList;
     [OptionalField]
     public Dictionary<string, QuestRuntimeProgressState> questRuntimeStates;
