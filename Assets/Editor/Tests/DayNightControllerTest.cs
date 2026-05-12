@@ -68,6 +68,19 @@ namespace Tests
             Assert.DoesNotThrow(() => InvokePrivate(controller, "SetNight"));
         }
 
+        [Test]
+        public void Start_InEditMode_DoesNotInstantiateRendererMaterial()
+        {
+            Assume.That(!Application.isPlaying);
+
+            DayNightController controller = CreateController(TimeManipulation.Night);
+            Material sharedBefore = controller.stars.sharedMaterial;
+
+            InvokePrivate(controller, "Start");
+
+            Assert.AreSame(sharedBefore, controller.stars.sharedMaterial);
+        }
+
         private DayNightController CreateController(TimeManipulation forcedTime)
         {
             _controllerGo = new GameObject("DayNightControllerTestRoot");

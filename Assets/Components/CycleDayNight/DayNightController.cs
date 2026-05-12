@@ -30,7 +30,8 @@ public class DayNightController : MonoBehaviour
 
     private void Start()
     {
-        starsMaterial = stars.material;
+        // .material instantiates in edit mode (leaks + error log); tests invoke Start without Play Mode.
+        starsMaterial = Application.isPlaying ? stars.material : stars.sharedMaterial;
         visibleColor = starsMaterial.color;
 
         timer = 5;// Initialize timer to skip the first if in update
