@@ -33,8 +33,7 @@ public class SavingController : MonoBehaviour
         save.animals = GameState.Instance.animals;
         save.itemsOfTheWeek = GameState.Instance.itemsOfTheWeek;
         save.contractsOfTheWeek = GameState.Instance.contractsOfTheWeek.ToSaveable();
-        // Quest V1 progress is legacy-only and no longer written for new saves.
-        save.questList = null;
+
         save.questRuntimeStates = GameState.Instance.questRuntimeStates;
 
         save.money = GameState.Instance.getTotalAmount();
@@ -91,19 +90,6 @@ public class SavingController : MonoBehaviour
         GameState.Instance.contractsOfTheWeek.ImportSaveable(save.contractsOfTheWeek);
         
         GameState.Instance.unlockables = save.unlockables2;
-
-        //Following is set in reset. So it shouldnt be necessary here.
-//        GameState.Instance.questList = new Dictionary<Quests, Quest> { };
-//        LoadQuests();
-
-        if (save.questList != null)
-        {
-            foreach (var quest in save.questList)
-            {
-                GameState.Instance.questList[quest.Key] = quest.Value;
-            }
-        }
-
         GameState.Instance.questRuntimeStates = save.questRuntimeStates ?? new Dictionary<string, QuestRuntimeProgressState>();
 
         GameState.Instance.name = save.name;
@@ -167,8 +153,6 @@ public class SavingController : MonoBehaviour
         {
             save.soilGrids = GameState.Instance.soilGrids;
         }
-
-        // Keep questList as nullable legacy data. We only read it from old saves.
 
         if (save.questRuntimeStates == null)
         {

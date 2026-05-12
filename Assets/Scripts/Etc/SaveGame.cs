@@ -22,9 +22,7 @@ public class SaveGame
     public SaveableWindmill windmill;
 
     public Dictionary<string, RespawningObject> respawningObjects;
-    // Legacy Quest V1 data. Kept optional for loading older saves only.
-    [OptionalField]
-    public Dictionary<Quests, Quest> questList;
+    
     [OptionalField]
     public Dictionary<string, QuestRuntimeProgressState> questRuntimeStates;
 
@@ -44,6 +42,7 @@ public class SaveGame
     public string weatherTomorrow;
 
     //DEPRECATED
+    public Dictionary<Quests, Quest> questList;
     public string unlockables;
     public ItemOfTheWeek plantOfTheWeek = new ItemOfTheWeek();
     public ItemOfTheWeek fishOfTheWeek = new ItemOfTheWeek();

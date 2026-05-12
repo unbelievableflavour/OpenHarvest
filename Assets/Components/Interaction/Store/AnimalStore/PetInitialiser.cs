@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static Definitions;
 
 public class PetInitialiser : MonoBehaviour
 {

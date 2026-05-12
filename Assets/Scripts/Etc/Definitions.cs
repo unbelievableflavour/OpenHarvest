@@ -111,59 +111,6 @@ public static class Definitions
         {"storeCookingTabFunctional", new List<HarvestDataTypes.StoreProduct>()}
     };
 
-    static Definitions()
-    {
-        LoadQuests();
-    }
-
-    static public void LoadQuests()
-    {
-
-        Quest newQuest = new Quest()
-        {
-            id = Quests.SantasLittleHelper,
-            title = "Santa's Little Helper",
-            description = "Hang the christmas baubles in the tree!",
-        };
-        if (!GameState.Instance.questList.ContainsKey(newQuest.id))
-        {
-            GameState.Instance.questList.Add(newQuest.id, newQuest);
-        }
-
-        newQuest = new Quest()
-        {
-            id = Quests.GettingBronzeForTheOldy,
-            title = "Getting Bronze For The Oldy",
-            description = "Hang the christmas baubles in the tree!",
-        };
-        if (!GameState.Instance.questList.ContainsKey(newQuest.id))
-        {
-            GameState.Instance.questList.Add(newQuest.id, newQuest);
-        }
-
-        newQuest = new Quest()
-        {
-            id = Quests.CleanupCrew,
-            title = "Cleanup Crew",
-            description = "Clean that dirty beach.",
-        };
-        if (!GameState.Instance.questList.ContainsKey(newQuest.id))
-        {
-            GameState.Instance.questList.Add(newQuest.id, newQuest);
-        }
-
-        newQuest = new Quest()
-        {
-            id = Quests.ShellFinder,
-            title = "Shell Finder",
-            description = "Collect some awesome shells.",
-        };
-        if (!GameState.Instance.questList.ContainsKey(newQuest.id))
-        {
-            GameState.Instance.questList.Add(newQuest.id, newQuest);
-        }
-    }
-
     public static HarvestDataTypes.Item GetItemFromObject(GameObject itemObject){
         var itemInformation = itemObject.GetComponent<ItemInformation>();
         if (itemInformation == null) {
