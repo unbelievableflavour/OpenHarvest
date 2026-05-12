@@ -32,6 +32,11 @@ public class QuestGraphEditor : Editor
         {
             AddNode<QuestFinishNode>(graph);
         }
+
+        if (GUILayout.Button("Add World Objective Node"))
+        {
+            AddNode<QuestWorldObjectiveNode>(graph);
+        }
     }
 
     private static void AddNode<TNode>(QuestGraph graph) where TNode : QuestNodeBase

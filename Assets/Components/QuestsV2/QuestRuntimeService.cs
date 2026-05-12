@@ -26,6 +26,11 @@ public class QuestRuntimeService : MonoBehaviour
 
     public event Action<NpcProximityInteractable> OnGenericGiftRequested;
 
+    /// <summary>
+    /// Raised after V2 quest progress is written to <see cref="GameState.questRuntimeStates"/> (trimmed quest id).
+    /// </summary>
+    public event Action<string> QuestRuntimeStateChanged;
+
     private void Awake()
     {
         if (Instance == null)
@@ -59,6 +64,11 @@ public class QuestRuntimeService : MonoBehaviour
         {
             QuestState state = _states[i];
             if (state == null || state.IsCompleted || state.CurrentNode == null)
+            {
+                continue;
+            }
+
+            if (state.CurrentNode is QuestWorldObjectiveNode)
             {
                 continue;
             }
@@ -119,6 +129,12 @@ public class QuestRuntimeService : MonoBehaviour
             return;
         }
 
+        if (node is QuestWorldObjectiveNode worldObjectiveNode)
+        {
+            worldObjectiveNode.RunAction(interactionUI, interactable, state.Graph);
+            return;
+        }
+
         if (node is QuestChatNode)
         {
             node.RunAction(interactionUI, interactable, state.Graph);
@@ -174,6 +190,49 @@ public class QuestRuntimeService : MonoBehaviour
             state.PendingGiftNode = null;
             requiredAmount = needed;
             AdvanceState(state, giftedNode);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Advances past a <see cref="QuestWorldObjectiveNode"/> when external gameplay (e.g. tree hang count) is satisfied.
+    /// </summary>
+    public bool TryCompleteWorldObjective(string questId, string objectiveKey)
+    {
+        if (string.IsNullOrWhiteSpace(questId) || string.IsNullOrWhiteSpace(objectiveKey))
+        {
+            return false;
+        }
+
+        string qid = questId.Trim();
+        string ok = objectiveKey.Trim();
+
+        for (int i = 0; i < _states.Count; i++)
+        {
+            QuestState state = _states[i];
+            if (state == null || state.IsCompleted || state.Graph == null || string.IsNullOrWhiteSpace(state.Graph.questId))
+            {
+                continue;
+            }
+
+            if (!string.Equals(state.Graph.questId.Trim(), qid, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (!(state.CurrentNode is QuestWorldObjectiveNode worldNode))
+            {
+                continue;
+            }
+
+            if (!string.Equals(worldNode.ObjectiveKey, ok, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            AdvanceState(state, worldNode);
             return true;
         }
 
@@ -385,6 +444,8 @@ public class QuestRuntimeService : MonoBehaviour
             pendingGiftNodeIndex = GetNodeIndex(state.Graph, state.PendingGiftNode),
             isCompleted = state.IsCompleted
         };
+
+        QuestRuntimeStateChanged?.Invoke(state.Graph.questId);
     }
 
     private static void PlayQuestStartedSound()

@@ -308,6 +308,97 @@ namespace Tests
             }
         }
 
+        [Test]
+        public void GetVisibleNodesForNpc_ExcludesQuestWorldObjectiveNode()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+
+            QuestWorldObjectiveNode worldNode = graph.AddNode<QuestWorldObjectiveNode>();
+            if (worldNode == null)
+            {
+                worldNode = ScriptableObject.CreateInstance<QuestWorldObjectiveNode>();
+                worldNode.graph = graph;
+                graph.nodes.Add(worldNode);
+            }
+
+            worldNode.targetNpc = npcDef;
+            SetPrivateField(worldNode, "objectiveKey", "o1");
+            graph.entryNode = worldNode;
+            graph.questId = "q_visible_world";
+
+            var npcGo = new GameObject("Npc");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            SetPrivateField(interactable, "definition", npcDef);
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            var visible = service.GetVisibleNodesForNpc(interactable);
+
+            Assert.AreEqual(0, visible.Count);
+
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void TryCompleteWorldObjective_AdvancesToNextNode()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            graph.questId = "q_world_obj";
+            graph.displayName = "World Obj Quest";
+
+            QuestWorldObjectiveNode worldNode = graph.AddNode<QuestWorldObjectiveNode>();
+            if (worldNode == null)
+            {
+                worldNode = ScriptableObject.CreateInstance<QuestWorldObjectiveNode>();
+                worldNode.graph = graph;
+                graph.nodes.Add(worldNode);
+            }
+
+            worldNode.targetNpc = npcDef;
+            SetPrivateField(worldNode, "objectiveKey", "tree");
+
+            QuestFinishNode finishNode = graph.AddNode<QuestFinishNode>();
+            if (finishNode == null)
+            {
+                finishNode = ScriptableObject.CreateInstance<QuestFinishNode>();
+                finishNode.graph = graph;
+                graph.nodes.Add(finishNode);
+            }
+
+            finishNode.targetNpc = npcDef;
+
+            worldNode.GetOutputPort("next").Connect(finishNode.GetInputPort("inFlow"));
+            graph.entryNode = worldNode;
+
+            var npcGo = new GameObject("Npc");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            SetPrivateField(interactable, "definition", npcDef);
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+
+            Assert.AreEqual(0, service.GetVisibleNodesForNpc(interactable).Count);
+
+            Assert.IsFalse(service.TryCompleteWorldObjective("q_world_obj", "wrong_key"));
+            Assert.IsTrue(service.TryCompleteWorldObjective("q_world_obj", "tree"));
+
+            var visibleAfter = service.GetVisibleNodesForNpc(interactable);
+            Assert.AreEqual(1, visibleAfter.Count);
+            Assert.AreEqual(finishNode, visibleAfter[0]);
+
+            Assert.IsFalse(service.TryCompleteWorldObjective("q_world_obj", "tree"));
+
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+        }
+
         private QuestNodeBase BuildSingleNodeQuest(
             NpcInteractableDefinition npcDef,
             out QuestGraph graph,

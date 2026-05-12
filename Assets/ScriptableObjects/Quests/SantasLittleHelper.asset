@@ -1,0 +1,261 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c1ed10e13eee437faf7d47594e427e7, type: 3}
+  m_Name: SantasLittleHelper
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 8937473542252578893}
+  - {fileID: 1971351533383644618}
+  - {fileID: 7043492455507440262}
+  - {fileID: 6866325087621814380}
+  - {fileID: 2404639735532932155}
+  questId: santas_little_helper
+  displayName: Santas Little Helper
+  chatUIPrefab: {fileID: 1000, guid: 399b5284a57df47908efaec1c04b7cdb, type: 3}
+  entryNode: {fileID: 8937473542252578893}
+--- !u!114 &1971351533383644618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_3
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 72, y: -152}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 1971351533383644618}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 6866325087621814380}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 1971351533383644618}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 7043492455507440262}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: e3b5ee9e7b37d4c398524209704fc9f6, type: 2}
+  body: 'Thanks! Here''s a little gift from me to you. Also I''ve opened up the shop
+    for you! Hope you like it!
+
+'
+--- !u!114 &2404639735532932155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_6
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -200, y: -472}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 2404639735532932155}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 8937473542252578893}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 2404639735532932155}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 6866325087621814380}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: e3b5ee9e7b37d4c398524209704fc9f6, type: 2}
+  body: 'The baubles should be somewhere around here. I must have dropped them during
+    my stroll. Sorry..
+
+'
+--- !u!114 &6866325087621814380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 411c58c55867492580b22286258a431a, type: 3}
+  m_Name: QuestNode_6
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 264, y: -456}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 6866325087621814380}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 2404639735532932155}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 6866325087621814380}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 1971351533383644618}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: e3b5ee9e7b37d4c398524209704fc9f6, type: 2}
+  objectiveKey: santas_little_helper_recount
+--- !u!114 &7043492455507440262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 427a07f6770dc4fc3848453c7855fdb6, type: 3}
+  m_Name: QuestNode_5
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 520, y: -152}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 7043492455507440262}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 1971351533383644618}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 7043492455507440262}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: e3b5ee9e7b37d4c398524209704fc9f6, type: 2}
+  coinReward: 0
+  handRewardItem: {fileID: 11400000, guid: c798c10a9cdf452eaebbf8161af14b5d, type: 2}
+--- !u!114 &8937473542252578893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_1
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -680, y: -472}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 8937473542252578893}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 8937473542252578893}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 2404639735532932155}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: e3b5ee9e7b37d4c398524209704fc9f6, type: 2}
+  body: Can you help me hang some christmas baubles in the tree? I've a bit of a
+    back problem!
