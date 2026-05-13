@@ -1,0 +1,256 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2097151476968089956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b552c3ec1df4c6c998d906abcbb611, type: 3}
+  m_Name: QuestNode_2
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 904, y: -440}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: -2097151476968089956}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 8883759579405063285}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: -2097151476968089956}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 1971351533383644618}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
+  giftPrompt: An apple pie please!
+  requiredItem: {fileID: 11400000, guid: 32765fbc9dfacea4fa2a0f2386ac7eeb, type: 2}
+  requiredAmount: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c1ed10e13eee437faf7d47594e427e7, type: 3}
+  m_Name: StevensHungry
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 8937473542252578893}
+  - {fileID: -2097151476968089956}
+  - {fileID: 1971351533383644618}
+  - {fileID: 8883759579405063285}
+  - {fileID: 7043492455507440262}
+  questId: stevens_hungry
+  displayName: Stevens Hungry
+  chatUIPrefab: {fileID: 1000, guid: 399b5284a57df47908efaec1c04b7cdb, type: 3}
+  entryNode: {fileID: 8937473542252578893}
+--- !u!114 &1971351533383644618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_3
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 456, y: -40}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 1971351533383644618}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: -2097151476968089956}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 1971351533383644618}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 7043492455507440262}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
+  body: Munch munch munch, thank you so much!
+--- !u!114 &7043492455507440262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 427a07f6770dc4fc3848453c7855fdb6, type: 3}
+  m_Name: QuestNode_5
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 888, y: -40}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 7043492455507440262}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 1971351533383644618}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 7043492455507440262}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
+  coinReward: 300
+  handRewardItem: {fileID: 0}
+--- !u!114 &8883759579405063285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_4
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 456, y: -456}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 8883759579405063285}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 8937473542252578893}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 8883759579405063285}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: -2097151476968089956}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
+  body: Ouch my belly hurts. Can you give me an apple pie please? FAMIIISHED.
+--- !u!114 &8937473542252578893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_1
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -24, y: -456}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 8937473542252578893}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 8937473542252578893}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 8883759579405063285}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: ee7513994f5bb48249ce8bd30920b2e9, type: 2}
+  body: Ohhh I'm so hungry...

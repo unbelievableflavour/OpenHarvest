@@ -8,9 +8,9 @@ namespace Tests
     public class SheepPlateauTest
     {
         [Test]
-        public void ItChecksIfAllRequiredFielsdAreNotEmpty()
+        public void ItChecksIfAllRequiredFieldsAreNotEmpty()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Animals/Sheep/SheepPlateau/SheepPlateau.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/NPCs/Sheep/SheepPlateau/SheepPlateau.prefab");
             prefab = GameObject.Instantiate(prefab);
 
             Assert.AreNotEqual(null, prefab.GetComponent<AnimalInformation>().fedTile);

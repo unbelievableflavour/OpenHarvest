@@ -30,7 +30,8 @@ public class DayNightController : MonoBehaviour
 
     private void Start()
     {
-        starsMaterial = stars.material;
+        // .material instantiates in edit mode (leaks + error log); tests invoke Start without Play Mode.
+        starsMaterial = Application.isPlaying ? stars.material : stars.sharedMaterial;
         visibleColor = starsMaterial.color;
 
         timer = 5;// Initialize timer to skip the first if in update
@@ -46,10 +47,7 @@ public class DayNightController : MonoBehaviour
             moon.CrossFadeAlpha(1.0f, 0.0f, false);
             starsMaterial.color = visibleColor;
 
-            if (daySoundTrack && nightSoundtrack)
-            {
-                AudioManager.Instance.PlayMusic(nightSoundtrack);
-            }
+            TryPlayMusic(nightSoundtrack);
         }
         else
         {
@@ -61,10 +59,7 @@ public class DayNightController : MonoBehaviour
             this.GetComponent<Light>().color = dayColor;
             currentColor = this.GetComponent<Light>().color;
             moon.CrossFadeAlpha(0.0f, 0.0f, false);
-            if (daySoundTrack && nightSoundtrack)
-            {
-                AudioManager.Instance.PlayMusic(daySoundTrack);
-            }
+            TryPlayMusic(daySoundTrack);
             starsMaterial.color = invisibleColor;
         }
     }
@@ -79,10 +74,7 @@ public class DayNightController : MonoBehaviour
         starsCurrentColor = starsMaterial.color;
         starsEndColor = visibleColor;
 
-        if (daySoundTrack && nightSoundtrack)
-        {
-            AudioManager.Instance.PlayMusic(nightSoundtrack);
-        }
+        TryPlayMusic(nightSoundtrack);
 
         currentColor = this.GetComponent<Light>().color;
         endColor = nightColor;
@@ -100,10 +92,7 @@ public class DayNightController : MonoBehaviour
         starsCurrentColor = starsMaterial.color;
         starsEndColor = invisibleColor;
 
-        if (daySoundTrack && nightSoundtrack)
-        {
-            AudioManager.Instance.PlayMusic(daySoundTrack);
-        }
+        TryPlayMusic(daySoundTrack);
 
         currentColor = this.GetComponent<Light>().color;
         endColor = dayColor;
@@ -146,5 +135,25 @@ public class DayNightController : MonoBehaviour
     void FadeFromMoon()
     {
         moon.CrossFadeAlpha(0.0f, fadeTime, false);     
+    }
+
+    private void TryPlayMusic(AudioClip clip)
+    {
+        if (!daySoundTrack || !nightSoundtrack)
+        {
+            return;
+        }
+
+        if (!clip)
+        {
+            return;
+        }
+
+        if (AudioManager.Instance == null)
+        {
+            return;
+        }
+
+        AudioManager.Instance.PlayMusic(clip);
     }
 }

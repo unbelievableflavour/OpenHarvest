@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using static Definitions;
+﻿using UnityEngine;
 
 public class GeneralQuestController : MonoBehaviour
 {
@@ -11,9 +9,6 @@ public class GeneralQuestController : MonoBehaviour
     public AudioClip soundOnQuestUpdated;
     public AudioClip soundOnQuestFinished;
 
-    public event EventHandler questsChanged;
-
-    // Initialize the singleton instance.
     private void Awake()
     {
         if (Instance == null)
@@ -27,22 +22,19 @@ public class GeneralQuestController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    public void StartQuest(Quests questId)
+    public void PlayQuestStartedSound()
     {
         playSound(soundOnQuestStarted);
-        GameState.Instance.questList[questId].currentProgress = Progress.InProgress;
     }
 
-    public void UpdateQuest()
+    public void PlayQuestUpdatedSound()
     {
         playSound(soundOnQuestUpdated);
     }
 
-    public void FinishQuest(Quests questId)
+    public void PlayQuestFinishedSound()
     {
         playSound(soundOnQuestFinished);
-        GameState.Instance.questList[questId].currentProgress = Progress.Done;
-        questsChanged?.Invoke(this, null);
     }
 
     private void playSound(AudioClip clip)

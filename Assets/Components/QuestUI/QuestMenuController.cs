@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static Definitions;
 
 public class QuestMenuController : MonoBehaviour
 {
@@ -30,23 +29,20 @@ public class QuestMenuController : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach (var item in GameState.Instance.questList)
+        List<QuestRuntimeMenuEntry> entries = QuestRuntimeService.Instance.GetQuestMenuEntries();
+        for (int i = 0; i < entries.Count; i++)
         {
-            Quest quest = item.Value;
-            if(quest.currentProgress == Progress.NotStarted)
+            QuestRuntimeMenuEntry entry = entries[i];
+            if (entry == null)
             {
                 continue;
             }
 
-            var progress = "in progress";
-            if(quest.currentProgress == Progress.Done)
-            {
-                progress = "done";
-            }
+            string progress = entry.isCompleted ? "done" : "in progress";
             GameObject row = Instantiate(QuestRow);
             row.SetActive(true);
             var text = row.GetComponentInChildren<Text>();
-            text.text = quest.title + " ("+ progress + ")";
+            text.text = entry.displayName + " (" + progress + ")";
             row.transform.SetParent(QuestList, false);
         }
     }

@@ -12,7 +12,8 @@ namespace Player
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Player/NewCustomPlayerAdvanced Variant.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Player/PC/PCController.prefab");
+            Assert.IsNotNull(prefab, "PC player prefab not found at expected path.");
             player = GameObject.Instantiate(prefab);
         }
 
@@ -20,7 +21,8 @@ namespace Player
         public void ItChecksMatchesTheFieldOfViewOfTheQuest()
         {
             var fpsController = player.GetComponentInChildren<FirstPersonController>(true);
-            Assert.AreEqual(98, fpsController.GetComponentInChildren<FirstPersonController>(true).fov);
+            Assert.IsNotNull(fpsController, "FirstPersonController component is missing on PC player prefab.");
+            Assert.AreEqual(98, fpsController.fov);
         }
 
         [TearDown]

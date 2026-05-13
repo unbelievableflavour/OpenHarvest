@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2644579666559032230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b552c3ec1df4c6c998d906abcbb611, type: 3}
+  m_Name: QuestNode_4
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 56, y: -440}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: -2644579666559032230}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 8937473542252578893}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: -2644579666559032230}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 1971351533383644618}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: 5a43945be48d645a3b878f10ec86cdef, type: 2}
+  giftPrompt: Did ya find enough bronze? I need 20 bronze ores!
+  requiredItem: {fileID: 11400000, guid: b79acb536f145dd49af6451c188f3d75, type: 2}
+  requiredAmount: 20
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c1ed10e13eee437faf7d47594e427e7, type: 3}
+  m_Name: GettingBronzeForTheOldy
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 8937473542252578893}
+  - {fileID: 1971351533383644618}
+  - {fileID: 7043492455507440262}
+  - {fileID: -2644579666559032230}
+  questId: getting_bronze_for_the_oldy
+  displayName: Getting Bronze for the oldy
+  chatUIPrefab: {fileID: 1000, guid: 399b5284a57df47908efaec1c04b7cdb, type: 3}
+  entryNode: {fileID: 8937473542252578893}
+--- !u!114 &1971351533383644618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_3
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 504, y: -440}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 1971351533383644618}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: -2644579666559032230}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 1971351533383644618}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 7043492455507440262}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: 5a43945be48d645a3b878f10ec86cdef, type: 2}
+  body: Thanks! Here, take my old miner hat! I'm retiring.
+--- !u!114 &7043492455507440262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 427a07f6770dc4fc3848453c7855fdb6, type: 3}
+  m_Name: QuestNode_5
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 952, y: -424}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 7043492455507440262}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 1971351533383644618}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 7043492455507440262}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: 5a43945be48d645a3b878f10ec86cdef, type: 2}
+  coinReward: 0
+  handRewardItem: {fileID: 11400000, guid: db8d27a7f6a64916959e2182c5238e29, type: 2}
+--- !u!114 &8937473542252578893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_1
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -392, y: -440}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 8937473542252578893}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 8937473542252578893}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: -2644579666559032230}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: 5a43945be48d645a3b878f10ec86cdef, type: 2}
+  body: Hi there! I'm too old for this crap. Can you get me 20 bronze?

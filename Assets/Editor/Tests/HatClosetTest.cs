@@ -13,8 +13,12 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Configurations/HatCloset.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/PlaceableObjects/HomeCloset/HomeCloset.prefab");
+            Assert.IsNotNull(prefab, "Hat closet prefab not found at expected path.");
             instantiatedPrefab = GameObject.Instantiate(prefab);
+            Assert.IsNotNull(
+                instantiatedPrefab.GetComponentInChildren<HatClosetController>(true),
+                "HatClosetController is missing in HomeCloset prefab hierarchy.");
 
             StartDatabaseManager();
         }
@@ -22,10 +26,11 @@ namespace Tests
         [Test]
         public void ItChecksIfHatsCountEqualsHatSlotCount()
         {
-            HatClosetController hatCloset = instantiatedPrefab.GetComponent<HatClosetController>();
+            HatClosetController hatCloset = instantiatedPrefab.GetComponentInChildren<HatClosetController>(true);
+            Assert.IsNotNull(hatCloset, "HatClosetController not found in instantiated prefab children.");
             int hatCount = DatabaseManager.Instance.items.FindAllByTag("hatCloset").Count;
             
-            Assert.AreEqual(hatCount, 17);
+            Assert.AreEqual(hatCount, 21);
             Assert.AreEqual(hatCount, hatCloset.inventorySlots.childCount);
         }
 
@@ -33,6 +38,7 @@ namespace Tests
         public void Cleanup()
         {
             Object.DestroyImmediate(instantiatedPrefab);
+            Object.DestroyImmediate(databaseManager);
         }
                     
         void StartDatabaseManager()

@@ -5,6 +5,7 @@ public class DatabaseManager : MonoBehaviour
 {
 	public ContractDatabase contracts;
 	public ItemDatabase items;
+    public QuestDatabase quests;
     public PlaceableObjectDatabase placeableObjects;
     public UnlockableDatabase unlockables;
     public SceneDatabase scenes;
@@ -17,6 +18,14 @@ public class DatabaseManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 }

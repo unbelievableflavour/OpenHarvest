@@ -33,7 +33,8 @@ public class SavingController : MonoBehaviour
         save.animals = GameState.Instance.animals;
         save.itemsOfTheWeek = GameState.Instance.itemsOfTheWeek;
         save.contractsOfTheWeek = GameState.Instance.contractsOfTheWeek.ToSaveable();
-        save.questList = GameState.Instance.questList;
+
+        save.questRuntimeStates = GameState.Instance.questRuntimeStates;
 
         save.money = GameState.Instance.getTotalAmount();
 
@@ -89,13 +90,7 @@ public class SavingController : MonoBehaviour
         GameState.Instance.contractsOfTheWeek.ImportSaveable(save.contractsOfTheWeek);
         
         GameState.Instance.unlockables = save.unlockables2;
-
-        //Following is set in reset. So it shouldnt be necessary here.
-//        GameState.Instance.questList = new Dictionary<Quests, Quest> { };
-//        LoadQuests();
-
-        foreach (var quest in save.questList)
-            GameState.Instance.questList[quest.Key] = quest.Value;
+        GameState.Instance.questRuntimeStates = save.questRuntimeStates ?? new Dictionary<string, QuestRuntimeProgressState>();
 
         GameState.Instance.name = save.name;
         GameState.Instance.farmName = save.farmName;
@@ -159,9 +154,9 @@ public class SavingController : MonoBehaviour
             save.soilGrids = GameState.Instance.soilGrids;
         }
 
-        if (save.questList == null)
+        if (save.questRuntimeStates == null)
         {
-            save.questList = GameState.Instance.questList;
+            save.questRuntimeStates = new Dictionary<string, QuestRuntimeProgressState>();
         }
 
         if (save.name == null)

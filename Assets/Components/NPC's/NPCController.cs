@@ -22,8 +22,13 @@ public class NPCController : MonoBehaviour
 
     public void BackToIdle()
     {
-        if (NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("GivingIdle")
-         || NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleToGive")) {
+        if (handSlot == null)
+        {
+            return;
+        }
+
+        if (NPCAnimator != null && (NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("GivingIdle")
+         || NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleToGive"))) {
             NPCAnimator.Play("GiveToIdle");
         } 
 
@@ -32,7 +37,16 @@ public class NPCController : MonoBehaviour
 
     public void HoldOutHand()
     {
-        NPCAnimator.Play("IdleToGive");
+        if (handSlot == null)
+        {
+            return;
+        }
+
+        if (NPCAnimator != null)
+        {
+            NPCAnimator.Play("IdleToGive");
+        }
+
         handSlot.SetActive(true);
     }
 

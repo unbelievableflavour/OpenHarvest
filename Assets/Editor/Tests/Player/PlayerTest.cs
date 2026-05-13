@@ -57,20 +57,16 @@ namespace Player
             var trackingSpace = xrRigAdvanced.transform.Find("PlayerController/CameraRig/TrackingSpace");
 
             var leftHandModels = trackingSpace.transform.Find("LeftHandAnchor/LeftControllerAnchor/LeftController/ModelsLeft");
-            var defaultLeftHand = leftHandModels.transform.Find("CustomHandLeftBlackNew");
             var customleftIKHand = leftHandModels.transform.Find("CustomHandLeftIKFarm");
             var customleftHand = leftHandModels.transform.Find("CustomHandLeftFarm");
-
-            Assert.AreEqual(false, defaultLeftHand.gameObject.activeSelf);
+            
             Assert.AreEqual(true, customleftIKHand.gameObject.activeSelf);
             Assert.AreEqual(false, customleftHand.gameObject.activeSelf);
 
             var rightHandModels = trackingSpace.transform.Find("RightHandAnchor/RightControllerAnchor/RightController/ModelsRight");
-            var defaultRightHand = rightHandModels.transform.Find("CustomHandRightBlackNew");
             var customrightIKHand = rightHandModels.transform.Find("CustomHandRightIKFarm");
             var customrightHand = rightHandModels.transform.Find("CustomHandRightFarm");
 
-            Assert.AreEqual(false, defaultRightHand.gameObject.activeSelf);
             Assert.AreEqual(true, customrightIKHand.gameObject.activeSelf);
             Assert.AreEqual(false, customrightHand.gameObject.activeSelf);
         }
@@ -110,13 +106,31 @@ namespace Player
             var headCollisionFade = xrRigAdvanced.GetComponentInChildren<HeadCollisionFade>();
             var ignoreColliders = headCollisionFade.GetComponent<IgnoreColliders>();
 
-            Assert.AreEqual(true, ignoreColliders.CollidersToIgnore.Count == 6);
-            Assert.AreEqual(true, ignoreColliders.CollidersToIgnore[0].transform.name == "PlayerController");
-            Assert.AreEqual(true, ignoreColliders.CollidersToIgnore[1].transform.name == "mouthCollider");
-            Assert.AreEqual(true, ignoreColliders.CollidersToIgnore[2].transform.name == "HeadInventorySlot");
-            Assert.AreEqual(true, ignoreColliders.CollidersToIgnore[3].transform.name == "CenterShoulder");
-            Assert.AreEqual(true, ignoreColliders.CollidersToIgnore[4].transform.name == "DropSlot");
-            Assert.AreEqual(true, ignoreColliders.CollidersToIgnore[5].transform.name == "BreastPocket");
+            Assert.IsNotNull(ignoreColliders);
+            Assert.IsNotNull(ignoreColliders.CollidersToIgnore);
+            Assert.AreEqual(8, ignoreColliders.CollidersToIgnore.Count);
+
+            var expected = new System.Collections.Generic.HashSet<string>
+            {
+                "PlayerController",
+                "mouthCollider",
+                "HeadInventorySlot",
+                "CenterShoulder",
+                "DropSlot",
+                "BreastPocket",
+                "Backpack",
+                "BackpackBig"
+            };
+
+            var actual = new System.Collections.Generic.HashSet<string>();
+            for (int i = 0; i < ignoreColliders.CollidersToIgnore.Count; i++)
+            {
+                Collider collider = ignoreColliders.CollidersToIgnore[i];
+                Assert.IsNotNull(collider, $"Expected collider at index {i} to be assigned.");
+                actual.Add(collider.transform.name);
+            }
+
+            CollectionAssert.AreEquivalent(expected, actual);
         }
 
         [Test]

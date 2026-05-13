@@ -10,7 +10,7 @@ namespace Tests
         [Test]
         public void ItChecksIfAllRequiredFieldsAreNotEmpty()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Animals/Sheep/Young/SheepYoungAnimated.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/NPCs/Sheep/Young/SheepYoungAnimated.prefab");
             prefab = GameObject.Instantiate(prefab);
 
             Assert.AreNotEqual(null, prefab.GetComponent<NPCNavAgent>().animator);

@@ -1,0 +1,17 @@
+---
+description: Never create scripts solely to generate prefabs
+alwaysApply: true
+---
+
+# No Prefab Generator Scripts
+
+- Do not create or propose one-off/editor/runtime scripts whose purpose is generating prefabs.
+- Prefer direct prefab creation/editing in Unity assets instead of code-driven prefab generation.
+- If a prefab is requested, produce the prefab asset/config directly (or document the exact manual inspector setup) without generator scripts.
+
+## Examples
+
+```text
+Bad: "I wrote an editor script that creates this prefab for you."
+Good: "I created/updated the prefab asset directly and wired its serialized fields."
+```

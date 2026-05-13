@@ -22,7 +22,9 @@ public class SaveGame
     public SaveableWindmill windmill;
 
     public Dictionary<string, RespawningObject> respawningObjects;
-    public Dictionary<Quests, Quest> questList;
+    
+    [OptionalField]
+    public Dictionary<string, QuestRuntimeProgressState> questRuntimeStates;
 
     public string name;
     public string farmName;
@@ -40,6 +42,7 @@ public class SaveGame
     public string weatherTomorrow;
 
     //DEPRECATED
+    public Dictionary<Quests, Quest> questList;
     public string unlockables;
     public ItemOfTheWeek plantOfTheWeek = new ItemOfTheWeek();
     public ItemOfTheWeek fishOfTheWeek = new ItemOfTheWeek();
