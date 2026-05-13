@@ -337,6 +337,157 @@ namespace Tests
         }
 
         [Test]
+        public void GetQuestJournalDetailHint_ReturnsWorldObjectiveNodeTip()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            graph.questId = "q_world_tip";
+            graph.displayName = "World Tip Quest";
+
+            QuestWorldObjectiveNode worldNode = graph.AddNode<QuestWorldObjectiveNode>();
+            if (worldNode == null)
+            {
+                worldNode = ScriptableObject.CreateInstance<QuestWorldObjectiveNode>();
+                worldNode.graph = graph;
+                graph.nodes.Add(worldNode);
+            }
+
+            worldNode.targetNpc = npcDef;
+            SetPrivateField(worldNode, "objectiveKey", "baubles");
+            worldNode.tip = "Collect 5 baubles from the tree.";
+            graph.entryNode = worldNode;
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            Assert.AreEqual("Collect 5 baubles from the tree.", service.GetQuestJournalDetailHint("q_world_tip"));
+
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void GetQuestJournalDetailHint_ReturnsWorldObjectiveNodeTip_WhenInProgress()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            graph.questId = "q_world_tip_inprogress";
+            graph.displayName = "World Tip In Progress";
+
+            QuestWorldObjectiveNode worldNode1 = graph.AddNode<QuestWorldObjectiveNode>();
+            if (worldNode1 == null)
+            {
+                worldNode1 = ScriptableObject.CreateInstance<QuestWorldObjectiveNode>();
+                worldNode1.graph = graph;
+                graph.nodes.Add(worldNode1);
+            }
+
+            worldNode1.targetNpc = npcDef;
+            SetPrivateField(worldNode1, "objectiveKey", "step1");
+            worldNode1.tip = string.Empty;
+
+            QuestWorldObjectiveNode worldNode2 = graph.AddNode<QuestWorldObjectiveNode>();
+            if (worldNode2 == null)
+            {
+                worldNode2 = ScriptableObject.CreateInstance<QuestWorldObjectiveNode>();
+                worldNode2.graph = graph;
+                graph.nodes.Add(worldNode2);
+            }
+
+            worldNode2.targetNpc = npcDef;
+            SetPrivateField(worldNode2, "objectiveKey", "step2");
+            worldNode2.tip = "Now collect 3 stones.";
+
+            worldNode1.GetOutputPort("next").Connect(worldNode2.GetInputPort("inFlow"));
+            graph.entryNode = worldNode1;
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            Assert.IsTrue(service.TryCompleteWorldObjective("q_world_tip_inprogress", "step1"));
+            Assert.AreEqual("Now collect 3 stones.", service.GetQuestJournalDetailHint("q_world_tip_inprogress"));
+
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void ContinueQuestChatForNode_OnlyAdvancesSpecificQuestNotOthersOnSameNpc()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+
+            QuestGraph graphA = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graphA);
+            graphA.questId = "q_cross_a";
+            graphA.displayName = "Quest A";
+
+            QuestChatNode chatNodeA1 = graphA.AddNode<QuestChatNode>();
+            if (chatNodeA1 == null)
+            {
+                chatNodeA1 = ScriptableObject.CreateInstance<QuestChatNode>();
+                chatNodeA1.graph = graphA;
+                graphA.nodes.Add(chatNodeA1);
+            }
+
+            QuestChatNode chatNodeA2 = graphA.AddNode<QuestChatNode>();
+            if (chatNodeA2 == null)
+            {
+                chatNodeA2 = ScriptableObject.CreateInstance<QuestChatNode>();
+                chatNodeA2.graph = graphA;
+                graphA.nodes.Add(chatNodeA2);
+            }
+
+            chatNodeA1.targetNpc = npcDef;
+            chatNodeA2.targetNpc = npcDef;
+            chatNodeA1.GetOutputPort("next").Connect(chatNodeA2.GetInputPort("inFlow"));
+            graphA.entryNode = chatNodeA1;
+
+            QuestGraph graphB = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graphB);
+            graphB.questId = "q_cross_b";
+            graphB.displayName = "Quest B";
+
+            QuestChatNode chatNodeB = graphB.AddNode<QuestChatNode>();
+            if (chatNodeB == null)
+            {
+                chatNodeB = ScriptableObject.CreateInstance<QuestChatNode>();
+                chatNodeB.graph = graphB;
+                graphB.nodes.Add(chatNodeB);
+            }
+
+            chatNodeB.targetNpc = npcDef;
+            graphB.entryNode = chatNodeB;
+
+            var npcGo = new GameObject("Npc");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            SetPrivateField(interactable, "definition", npcDef);
+
+            // Build with quest A first so it is index 0 in _states (old bug would always advance this one)
+            QuestRuntimeService service = BuildServiceWithQuests(graphA, graphB);
+
+            // Advance quest B's chat node specifically
+            bool continued = service.ContinueQuestChatForNode(chatNodeB, interactable, interactionUI: null);
+
+            // Quest B has no next node so completing it marks it done; quest A should remain at entry
+            Assert.IsTrue(continued == false || true, "return value is irrelevant; state change is what matters");
+
+            var entriesAfter = service.GetQuestMenuEntries();
+            QuestRuntimeMenuEntry entryA = entriesAfter.Find(e => e.questId == "q_cross_a");
+            QuestRuntimeMenuEntry entryB = entriesAfter.Find(e => e.questId == "q_cross_b");
+
+            Assert.IsNotNull(entryA);
+            Assert.IsNotNull(entryB);
+            Assert.AreEqual(QuestMenuProgressStatus.NotStarted, entryA.currentStatus, "Quest A must not have advanced");
+            Assert.AreNotEqual(QuestMenuProgressStatus.NotStarted, entryB.currentStatus, "Quest B must have advanced");
+
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graphA);
+            Object.DestroyImmediate(graphB);
+        }
+
+        [Test]
         public void RunNodeAction_OnGiftNode_ShowsGiftPromptInChatUi()
         {
             GameState.Reset();

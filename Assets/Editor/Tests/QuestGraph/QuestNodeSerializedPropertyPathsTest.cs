@@ -71,6 +71,7 @@ namespace OpenHarvest.Editor.Tests.QuestGraph
                 SerializedObject serializedObject = new SerializedObject(node);
                 Assert.IsNotNull(serializedObject.FindProperty("targetNpc"), "targetNpc");
                 Assert.IsNotNull(serializedObject.FindProperty("objectiveKey"), "objectiveKey");
+                Assert.IsNotNull(serializedObject.FindProperty("tip"), "tip");
             }
             finally
             {

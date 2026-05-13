@@ -33,7 +33,7 @@ public class QuestChatNode : QuestNodeBase
                 body,
                 npc,
                 showContinue: true,
-                onContinueOverride: () => QuestRuntimeService.Instance.ContinueQuestChatForNpc(interactable, interactionUI));
+                onContinueOverride: () => QuestRuntimeService.Instance.ContinueQuestChatForNode(this, interactable, interactionUI));
         });
     }
 }

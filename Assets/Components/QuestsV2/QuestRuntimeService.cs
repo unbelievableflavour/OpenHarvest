@@ -374,6 +374,13 @@ public class QuestRuntimeService : MonoBehaviour
                     return chatNode.tip.Trim();
                 }
             }
+            else if (node is QuestWorldObjectiveNode worldNode)
+            {
+                if (!string.IsNullOrWhiteSpace(worldNode.tip))
+                {
+                    return worldNode.tip.Trim();
+                }
+            }
 
             node = node.GetNextNode();
         }
@@ -396,6 +403,11 @@ public class QuestRuntimeService : MonoBehaviour
         if (state.CurrentNode is QuestChatNode chatNode)
         {
             return string.IsNullOrWhiteSpace(chatNode.tip) ? string.Empty : chatNode.tip.Trim();
+        }
+
+        if (state.CurrentNode is QuestWorldObjectiveNode worldNode)
+        {
+            return string.IsNullOrWhiteSpace(worldNode.tip) ? string.Empty : worldNode.tip.Trim();
         }
 
         return string.Empty;
@@ -557,22 +569,15 @@ public class QuestRuntimeService : MonoBehaviour
         return true;
     }
 
-    public bool ContinueQuestChatForNpc(NpcProximityInteractable interactable, InteractionUIController interactionUI)
+    public bool ContinueQuestChatForNode(QuestNodeBase node, NpcProximityInteractable interactable, InteractionUIController interactionUI)
     {
-        if (interactable == null)
+        if (node == null)
         {
             return false;
         }
 
-        List<QuestNodeBase> nodes = GetVisibleNodesForNpc(interactable);
-        if (nodes.Count == 0 || nodes[0] == null)
-        {
-            return false;
-        }
-
-        QuestNodeBase currentNode = nodes[0];
-        QuestState state = FindStateByNode(currentNode);
-        if (state == null || state.IsCompleted || state.CurrentNode == null)
+        QuestState state = FindStateByNode(node);
+        if (state == null || state.IsCompleted || state.CurrentNode == null || state.CurrentNode != node)
         {
             return false;
         }

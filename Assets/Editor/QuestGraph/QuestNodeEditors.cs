@@ -257,6 +257,7 @@ public class QuestWorldObjectiveNodeEditor : NodeEditor
     {
         QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "targetNpc");
         QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "objectiveKey");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "tip");
     }
 
     private static void DrawDeleteButton(QuestNodeBase node)

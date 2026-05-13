@@ -25,9 +25,6 @@ namespace Tests
             NpcChatNode b = g.AddNode<NpcChatNode>();
             b.body = "Line b";
 
-            a.UpdatePorts();
-            b.UpdatePorts();
-
             g.entryNode = a;
 
             Assert.IsTrue(g.TryValidate(out string err), err);
@@ -40,13 +37,12 @@ namespace Tests
             NpcChatNode a = g.AddNode<NpcChatNode>();
             a.body = "Line a";
             a.choices.Add("Go");
+            a.AddDynamicOutput(typeof(string), fieldName: "choices 0");
 
             NpcChatNode b = g.AddNode<NpcChatNode>();
             b.body = "Line b";
             b.choices.Add("End");
-
-            a.UpdatePorts();
-            b.UpdatePorts();
+            b.AddDynamicOutput(typeof(string), fieldName: "choices 0");
 
             var outPort = a.GetOutputPort("choices 0");
             var inPort = b.GetInputPort("inFlow");
