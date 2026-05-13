@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 
@@ -16,14 +16,51 @@ public class ViewSwitcher : MonoBehaviour
 
     public event Action<string> OnViewChanged;
 
+    void Awake()
+    {
+        EnsureDefaultCurrentView();
+    }
+
     void Start()
     {
-        currentView = views[0];
+        EnsureDefaultCurrentView();
+        if (views == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < views.Count; i++)
+        {
+            View view = views[i];
+            if (view.view == null)
+            {
+                continue;
+            }
+
+            view.view.SetActive(view.view == currentView.view);
+        }
+    }
+
+    private void EnsureDefaultCurrentView()
+    {
+        if (views == null || views.Count == 0)
+        {
+            return;
+        }
+
+        if (currentView.view == null)
+        {
+            currentView = views[0];
+        }
     }
 
     public void setActiveView(string id)
     {
-        currentView.view.SetActive(false);
+        EnsureDefaultCurrentView();
+        if (currentView.view != null)
+        {
+            currentView.view.SetActive(false);
+        }
 
         foreach (View view in views)
         {

@@ -3,6 +3,41 @@ using UnityEngine;
 using XNode;
 using XNodeEditor;
 
+internal static class QuestNodeEditorDrawing
+{
+    internal static void EnsureSerializedObjectMatchesTarget(NodeEditor editor)
+    {
+        if (editor == null || editor.target == null)
+        {
+            return;
+        }
+
+        if (editor.serializedObject == null || editor.serializedObject.targetObject != editor.target)
+        {
+            editor.serializedObject = new SerializedObject(editor.target);
+        }
+    }
+
+    internal static void PropertyFieldOrSkip(SerializedObject serializedObject, string propertyName)
+    {
+        if (serializedObject == null)
+        {
+            return;
+        }
+
+        SerializedProperty property = serializedObject.FindProperty(propertyName);
+        if (property == null)
+        {
+            EditorGUILayout.HelpBox(
+                $"Missing serialized property '{propertyName}' on {serializedObject.targetObject?.GetType().Name}. Reimport the quest asset or restart the Unity Editor.",
+                MessageType.Warning);
+            return;
+        }
+
+        EditorGUILayout.PropertyField(property);
+    }
+}
+
 [CustomNodeEditor(typeof(QuestChatNode))]
 public class QuestChatNodeEditor : NodeEditor
 {
@@ -13,6 +48,12 @@ public class QuestChatNodeEditor : NodeEditor
 
     public override void OnBodyGUI()
     {
+        if (target == null)
+        {
+            return;
+        }
+
+        QuestNodeEditorDrawing.EnsureSerializedObjectMatchesTarget(this);
         serializedObject.Update();
         NodeEditorGUILayout.PortField((target as QuestChatNode)?.GetInputPort("inFlow"));
         NodeEditorGUILayout.PortField((target as QuestChatNode)?.GetOutputPort("next"));
@@ -23,8 +64,9 @@ public class QuestChatNodeEditor : NodeEditor
 
     private void DrawDefaultNodeFields()
     {
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("targetNpc"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("body"));
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "targetNpc");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "body");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "tip");
     }
 
     private static void DrawDeleteButton(QuestNodeBase node)
@@ -69,6 +111,12 @@ public class QuestFinishNodeEditor : NodeEditor
 
     public override void OnBodyGUI()
     {
+        if (target == null)
+        {
+            return;
+        }
+
+        QuestNodeEditorDrawing.EnsureSerializedObjectMatchesTarget(this);
         serializedObject.Update();
         NodeEditorGUILayout.PortField((target as QuestFinishNode)?.GetInputPort("inFlow"));
         NodeEditorGUILayout.PortField((target as QuestFinishNode)?.GetOutputPort("next"));
@@ -79,9 +127,9 @@ public class QuestFinishNodeEditor : NodeEditor
 
     private void DrawDefaultNodeFields()
     {
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("targetNpc"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("coinReward"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("handRewardItem"));
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "targetNpc");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "coinReward");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "handRewardItem");
     }
 
     private static void DrawDeleteButton(QuestNodeBase node)
@@ -126,6 +174,12 @@ public class QuestGiftNodeEditor : NodeEditor
 
     public override void OnBodyGUI()
     {
+        if (target == null)
+        {
+            return;
+        }
+
+        QuestNodeEditorDrawing.EnsureSerializedObjectMatchesTarget(this);
         serializedObject.Update();
         NodeEditorGUILayout.PortField((target as QuestGiftNode)?.GetInputPort("inFlow"));
         NodeEditorGUILayout.PortField((target as QuestGiftNode)?.GetOutputPort("next"));
@@ -136,10 +190,11 @@ public class QuestGiftNodeEditor : NodeEditor
 
     private void DrawDefaultNodeFields()
     {
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("targetNpc"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("giftPrompt"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("requiredItem"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("requiredAmount"));
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "targetNpc");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "giftPrompt");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "tip");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "requiredItem");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "requiredAmount");
     }
 
     private static void DrawDeleteButton(QuestNodeBase node)
@@ -184,6 +239,12 @@ public class QuestWorldObjectiveNodeEditor : NodeEditor
 
     public override void OnBodyGUI()
     {
+        if (target == null)
+        {
+            return;
+        }
+
+        QuestNodeEditorDrawing.EnsureSerializedObjectMatchesTarget(this);
         serializedObject.Update();
         NodeEditorGUILayout.PortField((target as QuestWorldObjectiveNode)?.GetInputPort("inFlow"));
         NodeEditorGUILayout.PortField((target as QuestWorldObjectiveNode)?.GetOutputPort("next"));
@@ -194,8 +255,8 @@ public class QuestWorldObjectiveNodeEditor : NodeEditor
 
     private void DrawDefaultNodeFields()
     {
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("targetNpc"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("objectiveKey"));
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "targetNpc");
+        QuestNodeEditorDrawing.PropertyFieldOrSkip(serializedObject, "objectiveKey");
     }
 
     private static void DrawDeleteButton(QuestNodeBase node)

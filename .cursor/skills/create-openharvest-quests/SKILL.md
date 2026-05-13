@@ -16,7 +16,7 @@ Add new quest graph assets under `Assets/ScriptableObjects/Quests/` with valid `
    - `Assets/ScriptableObjects/Databases/QuestDatabase.asset`
    - 2-3 existing quest assets in `Assets/ScriptableObjects/Quests/`
    - Node scripts in `Assets/Components/QuestsV2/` when needed
-2. Design quests with varied structures and themes.
+2. Design quests with varied structures and themes **using only existing node types** (see below).
 3. Create `<QuestAssetName>.asset` and `<QuestAssetName>.asset.meta`.
 4. Register each new quest GUID in `Assets/ScriptableObjects/Databases/QuestDatabase.asset`.
 5. Verify all references and run a quick `git diff` check.
@@ -27,7 +27,26 @@ Do **not** always force the same quest flow pattern.
 
 - The user explicitly does **not** want every quest to follow one fixed structure.
 - Treat `chat -> gift -> chat -> finish` as only one option.
-- Vary step composition across a batch (for example: chat chains, multi-gift relays, world-objective steps, short 2-3 node quests, tutorial tours across multiple NPCs).
+- Vary step composition across a batch (for example: chat chains, multi-gift relays, short 2-3 node quests, tutorial tours across multiple NPCs).
+
+## Node types (strict — no custom nodes, zero world objectives)
+
+For quests created with this skill (including batches and “generated” content), **only** use these three node classes from `Assets/Components/QuestsV2/`:
+
+| Class | `m_Script` GUID | Use |
+|-------|-----------------|-----|
+| `QuestChatNode` | `cacdc6ed98f954da9be097f054ef5b26` | Dialogue / single-line chat |
+| `QuestGiftNode` | `53b552c3ec1df4c6c998d906abcbb611` | Item hand-in step |
+| `QuestFinishNode` | `427a07f6770dc4fc3848453c7855fdb6` | Rewards / end |
+
+**Zero `QuestWorldObjectiveNode`:** Do **not** add world-objective nodes in agent-authored quest assets. The class exists for hand-built or separately specified work; this skill never uses GUID `411c58c55867492580b22286258a431a`.
+
+**Do not:**
+
+- Add or reference **new** `Quest*Node` C# types, other XNode node scripts, or mystery GUIDs.
+- Invent node behavior that requires code the user did not ship.
+
+**If the design needs a new node type** (behavior not covered by the three above): **stop and ask the user** before writing any new C# or asset that implies a new node.
 
 ## Quest Asset Rules
 
@@ -38,12 +57,15 @@ Do **not** always force the same quest flow pattern.
   - Set `displayName` (human-readable)
   - `chatUIPrefab`: `{fileID: 1000, guid: 399b5284a57df47908efaec1c04b7cdb, type: 3}`
   - `entryNode` must point to first actionable node
-- Use valid node script GUIDs:
-  - `QuestChatNode`: `cacdc6ed98f954da9be097f054ef5b26`
-  - `QuestGiftNode`: `53b552c3ec1df4c6c998d906abcbb611`
-  - `QuestFinishNode`: `427a07f6770dc4fc3848453c7855fdb6`
-  - `QuestWorldObjectiveNode`: `411c58c55867492580b22286258a431a`
+- Per-node `m_Script` must be **one of** the three GUIDs in the table above only.
 - Ensure flow links are coherent (`next` -> next node `inFlow`).
+- **`QuestGiftNode`:** `giftPrompt` is NPC chat when offering the gift. Optional `tip` is the journal line (shown in **Quest UI** details).
+- **`QuestChatNode`:** `body` is NPC chat. Optional `tip` is the same journal hint for the **Quest UI** details while that chat step is current.
+
+## YAML serialization (ports)
+
+- **Never** use inline flow maps for `ports` (for example `ports: {keys: [...], values: [...]}`). Commas inside `_typeQualifiedName` break Unity’s YAML parser and cause `Expected closing '}'` / XNode port deserialization errors.
+- Always use the **expanded multiline** `ports:` layout (see `CleanupCrew.asset` or `HarborFishingRun.asset`): `keys:` list, then `values:` with full `_fieldName`, `_node`, `_typeQualifiedName` (split across lines), `connections`, etc.
 
 ## Meta File Rules
 
@@ -74,6 +96,7 @@ Update `Assets/ScriptableObjects/Databases/QuestDatabase.asset`:
 
 - [ ] Each quest has matching `.asset` and `.asset.meta`.
 - [ ] `questId` values are unique and readable.
+- [ ] Every node uses only the three allowed `m_Script` GUIDs (no custom node types, **no** `QuestWorldObjectiveNode`).
 - [ ] Step structures are varied across the batch.
 - [ ] All new GUIDs are in `QuestDatabase.asset`.
 - [ ] No unrelated files were modified.
