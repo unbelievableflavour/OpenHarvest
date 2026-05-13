@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
@@ -32,8 +33,45 @@ namespace Tests
             Object.DestroyImmediate(action);
         }
 
+        [Test]
+        public void ApplyStoreConfiguration_SetsAutoTypeMessagesFromScriptableStrings()
+        {
+            var storeRoot = new GameObject("Store");
+            storeRoot.AddComponent<Store>();
+
+            var titleGo = new GameObject("Title");
+            titleGo.transform.SetParent(storeRoot.transform, false);
+            titleGo.AddComponent<UnityEngine.UI.Text>().text = "NAME_OF_STORE";
+            AutoType titleAuto = titleGo.AddComponent<AutoType>();
+
+            var descGo = new GameObject("Desc");
+            descGo.transform.SetParent(storeRoot.transform, false);
+            descGo.AddComponent<UnityEngine.UI.Text>().text = "STORE_DESCRIPTION";
+            AutoType descAuto = descGo.AddComponent<AutoType>();
+
+            Store store = storeRoot.GetComponent<Store>();
+            store.storeTitleLabel = titleAuto;
+            store.storeDescriptionLabel = descAuto;
+
+            var action = ScriptableObject.CreateInstance<NpcStoreInteractionOptionAction>();
+            SetPrivateField(action, "storeName", "Hi");
+            SetPrivateField(action, "storeDescription", "Ho");
+
+            MethodInfo apply = typeof(NpcStoreInteractionOptionAction).GetMethod(
+                "ApplyStoreConfiguration",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(apply);
+            apply.Invoke(action, new object[] { storeRoot, null });
+
+            Assert.AreEqual("Hi", titleAuto.GetMessage());
+            Assert.AreEqual("Ho", descAuto.GetMessage());
+
+            Object.DestroyImmediate(storeRoot);
+            Object.DestroyImmediate(action);
+        }
+
         [UnityTest]
-        public System.Collections.IEnumerator ShowInstancedOptionContent_InvokesAfterInstantiateCallback()
+        public IEnumerator ShowInstancedOptionContent_InvokesAfterInstantiateCallback()
         {
             var root = new GameObject("InteractionUIRoot");
             var current = new GameObject("CurrentInteractionRoot").transform;

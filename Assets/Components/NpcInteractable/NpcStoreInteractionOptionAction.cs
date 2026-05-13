@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu(
     fileName = "Npc Store Option Action",
@@ -65,15 +66,8 @@ public class NpcStoreInteractionOptionAction : NpcInteractionOptionAction
         Store store = instantiatedStore.GetComponentInChildren<Store>();
         if (store != null)
         {
-            if (store.storeTitleLabel != null)
-            {
-                store.storeTitleLabel.ResetText(storeName);
-            }
-
-            if (store.storeDescriptionLabel != null)
-            {
-                store.storeDescriptionLabel.ResetText(storeDescription);
-            }
+            ApplyStoreLabel(store.storeTitleLabel, storeName);
+            ApplyStoreLabel(store.storeDescriptionLabel, storeDescription);
         }
 
         StoreItemsLister storeItemsLister = instantiatedStore.GetComponentInChildren<StoreItemsLister>();
@@ -91,5 +85,26 @@ public class NpcStoreInteractionOptionAction : NpcInteractionOptionAction
         }
 
         storeItemsLister.SetupStore(npc);
+    }
+
+    private static void ApplyStoreLabel(AutoType label, string value)
+    {
+        if (label == null)
+        {
+            return;
+        }
+
+        // AutoType may already be animating placeholder text from prefab.
+        // Stop that coroutine so stale characters are not appended afterward.
+        label.StopAllCoroutines();
+        label.ResetText(value);
+
+        Text labelText = label.GetComponent<Text>();
+        if (labelText == null)
+        {
+            return;
+        }
+
+        label.Refresh();
     }
 }

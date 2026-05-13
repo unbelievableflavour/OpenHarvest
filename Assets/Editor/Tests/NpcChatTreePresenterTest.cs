@@ -65,6 +65,38 @@ namespace Tests
             Object.DestroyImmediate(graph);
         }
 
+        [Test]
+        public void BeginSingleLine_WithAutoTypeBody_SetsAutoTypeMessage()
+        {
+            _root = new GameObject("ChatPresenterRoot");
+            _root.SetActive(false);
+
+            var presenter = _root.AddComponent<NpcChatTreePresenter>();
+
+            var bodyGo = new GameObject("Body");
+            bodyGo.transform.SetParent(_root.transform, false);
+            var bodyText = bodyGo.AddComponent<Text>();
+            bodyText.text = "PLACEHOLDER";
+            var bodyAutoType = bodyGo.AddComponent<AutoType>();
+
+            var choiceRootGo = new GameObject("ChoiceRoot", typeof(RectTransform));
+            choiceRootGo.transform.SetParent(_root.transform, false);
+            var choiceRoot = choiceRootGo.GetComponent<RectTransform>();
+
+            var templateGo = new GameObject("Template", typeof(RectTransform), typeof(Image), typeof(Button));
+            templateGo.transform.SetParent(choiceRoot.transform, false);
+
+            SetPrivateField(presenter, "bodyText", bodyText);
+            SetPrivateField(presenter, "choiceRoot", choiceRoot);
+            SetPrivateField(presenter, "choiceButtonTemplate", templateGo.GetComponent<Button>());
+
+            _root.SetActive(true);
+
+            presenter.BeginSingleLine("Howdy", npc: null, showContinue: false);
+
+            Assert.AreEqual("Howdy", bodyAutoType.GetMessage());
+        }
+
         private static NpcChatGraph BuildTwoChoiceGraph()
         {
             var graph = ScriptableObject.CreateInstance<NpcChatGraph>();

@@ -18,10 +18,11 @@ MonoBehaviour:
     keys:
     - inFlow
     - choices
+    - choices 0
     values:
     - _fieldName: inFlow
       _node: {fileID: -3994283445494224415}
-      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
         PublicKeyToken=b77a5c561934e089
       connections:
       - fieldName: choices 0
@@ -41,9 +42,22 @@ MonoBehaviour:
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
+    - _fieldName: choices 0
+      _node: {fileID: -3994283445494224415}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 4232762145913583484}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 1
   inFlow: 0
   body: .. Noope! But you can ask my sister. Maybe she will give hers!
-  choices: []
+  choices:
+  - Who is your sister?
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,6 +74,7 @@ MonoBehaviour:
   - {fileID: 619494313931745589}
   - {fileID: -3994283445494224415}
   - {fileID: 3419684224072039207}
+  - {fileID: 4232762145913583484}
   entryNode: {fileID: 619494313931745589}
 --- !u!114 &619494313931745589
 MonoBehaviour:
@@ -84,7 +99,7 @@ MonoBehaviour:
     values:
     - _fieldName: inFlow
       _node: {fileID: 619494313931745589}
-      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
         PublicKeyToken=b77a5c561934e089
       connections: []
       _direction: 0
@@ -151,7 +166,7 @@ MonoBehaviour:
     values:
     - _fieldName: inFlow
       _node: {fileID: 3419684224072039207}
-      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
         PublicKeyToken=b77a5c561934e089
       connections:
       - fieldName: choices 1
@@ -174,3 +189,58 @@ MonoBehaviour:
   inFlow: 0
   body: Yes I love slugs! But for some weird reason they dont sell..
   choices: []
+--- !u!114 &4232762145913583484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32859a7625e524e4eac6c27d0e71be1a, type: 3}
+  m_Name: NpcChatNode_4
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 720, y: 0}
+  ports:
+    keys:
+    - inFlow
+    - choices
+    - choices 0
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 4232762145913583484}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: choices 0
+        node: {fileID: -3994283445494224415}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: choices
+      _node: {fileID: 4232762145913583484}
+      _typeQualifiedName: System.Collections.Generic.List`1[[System.String, mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib,
+        Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: choices 0
+      _node: {fileID: 4232762145913583484}
+      _typeQualifiedName: System.String, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 1
+  inFlow: 0
+  body: You can't tell? Come on she looks exactly like me!
+  choices:
+  - Uh... ok..

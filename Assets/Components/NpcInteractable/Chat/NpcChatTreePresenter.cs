@@ -81,10 +81,7 @@ public class NpcChatTreePresenter : MonoBehaviour
 
         if (_singleLinePending)
         {
-            if (bodyText != null)
-            {
-                bodyText.text = _singleLineBody;
-            }
+            ApplyBodyText(_singleLineBody);
 
             SpeakLine(_singleLineBody);
             if (_singleLineShowContinue)
@@ -107,23 +104,11 @@ public class NpcChatTreePresenter : MonoBehaviour
             return;
         }
 
-        if (bodyText != null)
-        {
-            bodyText.text = node.body;
-        }
+        ApplyBodyText(node.body);
 
         SpeakLine(node.body);
 
-        if (node.ChoiceCount == 0)
-        {
-            NodePort nextPort = node.GetOutputPort("choices");
-            bool hasNext = nextPort != null && nextPort.IsConnected;
-            if (hasNext)
-            {
-                AddChoiceRow("Continue", () => OnLeafContinue());
-            }
-        }
-        else
+        if (node.ChoiceCount > 0)
         {
             for (int i = 0; i < node.ChoiceCount; i++)
             {
@@ -134,6 +119,25 @@ public class NpcChatTreePresenter : MonoBehaviour
         }
 
         RebuildChatLayout();
+    }
+
+    private void ApplyBodyText(string content)
+    {
+        if (bodyText == null)
+        {
+            return;
+        }
+
+        AutoType autoType = bodyText.GetComponent<AutoType>();
+        if (autoType == null)
+        {
+            bodyText.text = content;
+            return;
+        }
+
+        autoType.StopAllCoroutines();
+        autoType.ResetText(content);
+        autoType.Refresh();
     }
 
     private void RebuildChatLayout()
@@ -148,28 +152,6 @@ public class NpcChatTreePresenter : MonoBehaviour
         {
             LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
         }
-    }
-
-    private void OnLeafContinue()
-    {
-        if (_session == null)
-        {
-            return;
-        }
-
-        if (!_session.TryChoose(0, out bool ended))
-        {
-            CloseChat();
-            return;
-        }
-
-        if (ended || _session.IsFinished)
-        {
-            CloseChat();
-            return;
-        }
-
-        RefreshView();
     }
 
     private void OnSingleLineContinue()

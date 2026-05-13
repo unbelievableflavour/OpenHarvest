@@ -5,7 +5,7 @@ using XNode;
 [CreateNodeMenu("OpenHarvest/NPC Chat/Chat Node")]
 public class NpcChatNode : Node
 {
-    [Input(ShowBackingValue.Never)] public bool inFlow;
+    [Input(ShowBackingValue.Never)] public string inFlow;
 
     [TextArea(3, 10)]
     [Tooltip("Spoken / shown dialogue for this step.")]
@@ -51,12 +51,6 @@ public class NpcChatNode : Node
         }
 
         NodePort port = GetOutputPort($"choices {choiceIndex}");
-        if (port == null && choiceIndex == 0)
-        {
-            // Fallback for graphs/tests where only the base list port exists.
-            port = GetOutputPort("choices");
-        }
-
         if (port == null || !port.IsConnected)
         {
             return null;

@@ -48,7 +48,7 @@ namespace Tests
             a.UpdatePorts();
             b.UpdatePorts();
 
-            var outPort = a.GetOutputPort("choices 0") ?? a.GetOutputPort("choices");
+            var outPort = a.GetOutputPort("choices 0");
             var inPort = b.GetInputPort("inFlow");
             Assert.IsNotNull(outPort, "Expected an output port for choices.");
             Assert.IsNotNull(inPort, "Expected input port 'inFlow'.");

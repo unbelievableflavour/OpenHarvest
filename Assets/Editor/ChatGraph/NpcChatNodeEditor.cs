@@ -32,42 +32,15 @@ public class NpcChatNodeEditor : NodeEditor
         EditorGUILayout.LabelField("Choices", EditorStyles.boldLabel);
 
         SerializedProperty choicesProp = serializedObject.FindProperty("choices");
-        bool didChangeChoices = false;
-
-        for (int i = 0; i < choicesProp.arraySize; i++)
-        {
-            SerializedProperty choiceProp = choicesProp.GetArrayElementAtIndex(i);
-
-            EditorGUILayout.BeginHorizontal();
-            EditorGUI.BeginChangeCheck();
-            string nextValue = EditorGUILayout.TextField(choiceProp.stringValue, GUILayout.ExpandWidth(true));
-            if (EditorGUI.EndChangeCheck())
-            {
-                choiceProp.stringValue = nextValue;
-                didChangeChoices = true;
-            }
-
-            if (GUILayout.Button("-", GUILayout.Width(24f)))
-            {
-                choicesProp.DeleteArrayElementAtIndex(i);
-                didChangeChoices = true;
-                EditorGUILayout.EndHorizontal();
-                break;
-            }
-
-            NodePort outputPort = node.GetOutputPort($"choices {i}");
-            NodeEditorGUILayout.PortField(GUIContent.none, outputPort, GUILayout.Width(18f));
-            EditorGUILayout.EndHorizontal();
-        }
-
-        if (GUILayout.Button("+ Add Choice"))
-        {
-            int index = choicesProp.arraySize;
-            choicesProp.InsertArrayElementAtIndex(index);
-            SerializedProperty inserted = choicesProp.GetArrayElementAtIndex(index);
-            inserted.stringValue = "Continue";
-            didChangeChoices = true;
-        }
+        EditorGUI.BeginChangeCheck();
+        NodeEditorGUILayout.DynamicPortList(
+            "choices",
+            typeof(string),
+            choicesProp.serializedObject,
+            NodePort.IO.Output,
+            Node.ConnectionType.Override,
+            Node.TypeConstraint.None);
+        bool didChangeChoices = EditorGUI.EndChangeCheck();
 
         EditorGUILayout.Space(8f);
         if (GUILayout.Button("Delete Node"))
