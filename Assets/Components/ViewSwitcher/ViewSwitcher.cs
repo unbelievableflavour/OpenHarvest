@@ -56,21 +56,20 @@ public class ViewSwitcher : MonoBehaviour
 
     public void setActiveView(string id)
     {
-        EnsureDefaultCurrentView();
-        if (currentView.view != null)
-        {
-            currentView.view.SetActive(false);
-        }
-
         foreach (View view in views)
         {
-            if(view.id != id)
+            if (view.view == null)
             {
                 continue;
             }
-            currentView = view;
-            view.view.SetActive(true);
-            OnViewChanged?.Invoke(id);
+
+            bool isTarget = view.id == id;
+            view.view.SetActive(isTarget);
+            if (isTarget)
+            {
+                currentView = view;
+                OnViewChanged?.Invoke(id);
+            }
         }
     }
 }
