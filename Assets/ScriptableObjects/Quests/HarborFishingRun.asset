@@ -1,0 +1,308 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_ChatStart
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -920, y: -456}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 101}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 101}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 102}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: d487cfd8a0ea048e492fc63301b2d955, type: 2}
+  body: The early catch was weak. Can you help me restock the dock with fresh salmon?
+--- !u!114 &102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b552c3ec1df4c6c998d906abcbb611, type: 3}
+  m_Name: QuestNode_Gift
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -472, y: -472}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 102}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 101}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 102}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 105}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: d487cfd8a0ea048e492fc63301b2d955, type: 2}
+  giftPrompt: Bring me 5 salmon and I can finish today's orders.
+  requiredItem: {fileID: 11400000, guid: e470ce79c326a6a4db2673bcd97fbda2, type: 2}
+  requiredAmount: 5
+--- !u!114 &103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacdc6ed98f954da9be097f054ef5b26, type: 3}
+  m_Name: QuestNode_ChatEnd
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 920, y: -440}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 103}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 106}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 103}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 104}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: d487cfd8a0ea048e492fc63301b2d955, type: 2}
+  body: Excellent haul. Salmon, eel, and moonfish should cover all orders.
+--- !u!114 &104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 427a07f6770dc4fc3848453c7855fdb6, type: 3}
+  m_Name: QuestNode_Finish
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 1368, y: -440}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 104}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 103}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 104}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: d487cfd8a0ea048e492fc63301b2d955, type: 2}
+  coinReward: 2000
+  handRewardItem: {fileID: 0}
+--- !u!114 &105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b552c3ec1df4c6c998d906abcbb611, type: 3}
+  m_Name: QuestNode_GiftEel
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -8, y: -472}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 105}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 102}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 105}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 106}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: d487cfd8a0ea048e492fc63301b2d955, type: 2}
+  giftPrompt: Nice start. Now bring me 3 eel.
+  requiredItem: {fileID: 11400000, guid: c9e8a7c72019b964c800428394648f14, type: 2}
+  requiredAmount: 3
+--- !u!114 &106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b552c3ec1df4c6c998d906abcbb611, type: 3}
+  m_Name: QuestNode_GiftMoonfish
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 440, y: -472}
+  ports:
+    keys:
+    - inFlow
+    - next
+    values:
+    - _fieldName: inFlow
+      _node: {fileID: 106}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: next
+        node: {fileID: 105}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: next
+      _node: {fileID: 106}
+      _typeQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+      connections:
+      - fieldName: inFlow
+        node: {fileID: 103}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  inFlow: 0
+  next: 0
+  targetNpc: {fileID: 11400000, guid: d487cfd8a0ea048e492fc63301b2d955, type: 2}
+  giftPrompt: Last step, bring me 2 moonfish.
+  requiredItem: {fileID: 11400000, guid: d6d51c2ecca96374ca89419341c47df0, type: 2}
+  requiredAmount: 2
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c1ed10e13eee437faf7d47594e427e7, type: 3}
+  m_Name: HarborFishingRun
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 101}
+  - {fileID: 102}
+  - {fileID: 105}
+  - {fileID: 106}
+  - {fileID: 103}
+  - {fileID: 104}
+  questId: harbor_fishing_run
+  displayName: Harbor Fishing Run
+  chatUIPrefab: {fileID: 1000, guid: 399b5284a57df47908efaec1c04b7cdb, type: 3}
+  entryNode: {fileID: 101}
