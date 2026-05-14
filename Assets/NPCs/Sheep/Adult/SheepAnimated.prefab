@@ -676,7 +676,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2477920441206668227}
   - component: {fileID: 9050201284769241496}
-  - component: {fileID: 4601304112105900734}
   - component: {fileID: 3668379245346290625}
   - component: {fileID: 6228355521185345502}
   - component: {fileID: 6669756957651422914}
@@ -722,33 +721,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uniqueId: SheepAnimated_b1b8156a-aea2-41ba-ad9a-543912d9dd0f
---- !u!54 &4601304112105900734
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2477920441206668226}
-  serializedVersion: 4
-  m_Mass: 1000
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 116
-  m_CollisionDetection: 0
 --- !u!114 &3668379245346290625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -856,6 +828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   definition: {fileID: 11400000, guid: a5cc0c5df6ad4f868b81b36753b51718, type: 2}
+  currentInteractionRoot: {fileID: 0}
   maxDistance: 2
 --- !u!114 &8285531830135735017
 MonoBehaviour:

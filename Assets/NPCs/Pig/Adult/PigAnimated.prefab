@@ -41,7 +41,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1829258601772179364}
   - component: {fileID: 6774144574331562456}
-  - component: {fileID: 349766969020772057}
   - component: {fileID: 8877816787198476116}
   - component: {fileID: 8385502592510222828}
   - component: {fileID: 422753190939126518}
@@ -92,33 +91,6 @@ MonoBehaviour:
   followTarget: {fileID: 0}
   movesWhenFurtherAwayThen: 5
   interactionAimRotationSpeed: 8
---- !u!54 &349766969020772057
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1829258601772179365}
-  serializedVersion: 4
-  m_Mass: 1000
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 116
-  m_CollisionDetection: 0
 --- !u!114 &8877816787198476116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,6 +160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   definition: {fileID: 11400000, guid: 5c66a1478e6084e979b4bc7a5c217e0b, type: 2}
+  currentInteractionRoot: {fileID: 0}
   maxDistance: 2
 --- !u!1 &2171412069793552646
 GameObject:
