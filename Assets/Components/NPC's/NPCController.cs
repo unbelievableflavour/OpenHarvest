@@ -27,10 +27,15 @@ public class NPCController : MonoBehaviour
             return;
         }
 
-        if (NPCAnimator != null && (NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("GivingIdle")
-         || NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleToGive"))) {
-            NPCAnimator.Play("GiveToIdle");
-        } 
+        // New animation system.
+        if (NPCAnimator != null && (
+            NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("GivingIdle") // old animation system
+         || NPCAnimator.GetCurrentAnimatorStateInfo(1).IsName("GivingIdle") // new animation system
+         || NPCAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleToGive") // old animation system
+         || NPCAnimator.GetCurrentAnimatorStateInfo(1).IsName("IdleToGive") // new animation system
+        )) {
+            NPCAnimator.Play("GiveToIdle"); // new animation system
+        }
 
         handSlot.SetActive(false);
     }
