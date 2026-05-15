@@ -6,7 +6,7 @@ using static Definitions;
 public class NPCController : MonoBehaviour
 {
     public GameObject handSlot;
-    public Animator NPCAnimator;
+    public Animator NPCAnimator; // if no animator, it will just toggle the handSlot game object.
     public event EventHandler<Grabbable> gaveItem;
     public event EventHandler<Grabbable> grabbedItem;
     
