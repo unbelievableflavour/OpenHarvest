@@ -11,6 +11,9 @@ public class NpcGiftInteractionOptionAction : NpcInteractionOptionAction
     [TextArea(2, 6)]
     [SerializeField, Tooltip("Message shown in chat-style UI when this gift action is selected.")]
     private string giftPrompt = "Would you like to give me something?";
+    [TextArea(2, 6)]
+    [SerializeField, Tooltip("Message shown after the player gives an item. Leave empty to skip the dialog.")]
+    private string giftReceivedText = "Thank you!";
 
     public override bool IsValid(NpcInteractionOption option)
     {
@@ -39,23 +42,19 @@ public class NpcGiftInteractionOptionAction : NpcInteractionOptionAction
 
         ShowGiftPrompt(interactionUI, interactable);
 
-        if (QuestRuntimeService.Instance == null)
+        NpcGiftBridge bridge = interactable.GetComponentInParent<NpcGiftBridge>();
+        if (bridge != null)
         {
-            NPCController npc = interactable.GetComponentInParent<NPCController>();
-            if (npc == null)
-            {
-                npc = interactable.GetComponent<NPCController>();
-            }
-
-            if (npc != null)
-            {
-                npc.HoldOutHand();
-            }
-
+            bridge.BeginGenericGift(chatUIPrefab, giftReceivedText);
             return;
         }
 
-        QuestRuntimeService.Instance.RequestGenericGift(interactable);
+        // Fallback for NPCs without a bridge: just hold out the hand.
+        NPCController npc = interactable.GetComponentInParent<NPCController>();
+        if (npc != null)
+        {
+            npc.HoldOutHand();
+        }
     }
 
     private void ShowGiftPrompt(InteractionUIController interactionUI, NpcProximityInteractable interactable)

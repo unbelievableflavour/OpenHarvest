@@ -10,6 +10,10 @@ public class QuestWorldObjectiveNode : QuestNodeBase
     [Tooltip("Must match the key passed from gameplay code (e.g. BaubleHangingLocations).")]
     [SerializeField] private string objectiveKey = "default";
 
+    [TextArea(2, 6)]
+    [Tooltip("Optional player-facing hint for quest tracker / journal UI.")]
+    public string tip = string.Empty;
+
     public string ObjectiveKey => objectiveKey != null ? objectiveKey.Trim() : string.Empty;
 
     public override void RunAction(InteractionUIController interactionUI, NpcProximityInteractable interactable, QuestGraph graph)

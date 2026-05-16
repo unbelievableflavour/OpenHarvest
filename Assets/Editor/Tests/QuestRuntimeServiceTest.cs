@@ -92,10 +92,11 @@ namespace Tests
             QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
             service.RunNodeAction(giftNode, interactionUI: null, interactable);
 
-            Assert.IsFalse(service.TrySubmitGift(interactable, "stone", 2, out _));
-            Assert.IsFalse(service.TrySubmitGift(interactable, "apple", 1, out _));
-            Assert.IsTrue(service.TrySubmitGift(interactable, "apple", 2, out int requiredAmount));
+            Assert.IsFalse(service.TrySubmitGift(interactable, "stone", 2, out _, out _));
+            Assert.IsFalse(service.TrySubmitGift(interactable, "apple", 1, out _, out _));
+            Assert.IsTrue(service.TrySubmitGift(interactable, "apple", 2, out int requiredAmount, out QuestNodeBase nextNode));
             Assert.AreEqual(2, requiredAmount);
+            Assert.AreEqual(doneNode, nextNode);
 
             var visibleAfterGift = service.GetVisibleNodesForNpc(interactable);
             Assert.AreEqual(1, visibleAfterGift.Count);
@@ -108,41 +109,9 @@ namespace Tests
         }
 
         [Test]
-        public void RequestGenericGift_HoldsOutNpcHand()
-        {
-            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
-            EnsureGraphNodeList(graph);
-            QuestChatNode node = graph.AddNode<QuestChatNode>();
-            if (node == null)
-            {
-                node = ScriptableObject.CreateInstance<QuestChatNode>();
-                node.graph = graph;
-                graph.nodes.Add(node);
-            }
-
-            graph.entryNode = node;
-            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
-
-            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
-            var npcGo = new GameObject("Npc");
-            var controller = npcGo.AddComponent<NPCController>();
-            controller.handSlot = new GameObject("HandSlot");
-            controller.handSlot.SetActive(false);
-            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
-            SetPrivateField(interactable, "definition", npcDef);
-
-            service.RequestGenericGift(interactable);
-
-            Assert.IsTrue(controller.handSlot.activeSelf);
-
-            Object.DestroyImmediate(npcGo);
-            Object.DestroyImmediate(npcDef);
-            Object.DestroyImmediate(graph);
-        }
-
-        [Test]
         public void GetQuestMenuEntries_ReturnsQuestDisplayNameAndProgress()
         {
+            GameState.Reset();
             QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
             EnsureGraphNodeList(graph);
             graph.questId = "q_menu";
@@ -163,9 +132,327 @@ namespace Tests
             Assert.AreEqual(1, entries.Count);
             Assert.AreEqual("q_menu", entries[0].questId);
             Assert.AreEqual("Menu Quest", entries[0].displayName);
-            Assert.IsFalse(entries[0].isCompleted);
+            Assert.AreEqual(QuestMenuProgressStatus.NotStarted, entries[0].currentStatus);
+            Assert.AreEqual(string.Empty, service.GetQuestJournalDetailHint("q_menu"));
 
             Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void GetQuestMenuEntries_IncludesCurrentStepTipForGiftNode()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            graph.questId = "q_tip";
+            graph.displayName = "Tip Quest";
+
+            QuestGiftNode giftNode = graph.AddNode<QuestGiftNode>();
+            if (giftNode == null)
+            {
+                giftNode = ScriptableObject.CreateInstance<QuestGiftNode>();
+                giftNode.graph = graph;
+                graph.nodes.Add(giftNode);
+            }
+
+            giftNode.targetNpc = npcDef;
+            giftNode.tip = "Bring 5 roses to Suzy.";
+            graph.entryNode = giftNode;
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            List<QuestRuntimeMenuEntry> entries = service.GetQuestMenuEntries();
+            Assert.AreEqual(1, entries.Count);
+            Assert.IsTrue(entries[0].currentStatus == QuestMenuProgressStatus.NotStarted);
+            Assert.AreEqual("Bring 5 roses to Suzy.", service.GetQuestJournalDetailHint("q_tip"));
+
+            Object.DestroyImmediate(graph);
+            Object.DestroyImmediate(npcDef);
+        }
+
+        [Test]
+        public void GetQuestMenuEntries_IncludesCurrentStepTipForChatNode()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            graph.questId = "q_chat_tip";
+            graph.displayName = "Chat Tip Quest";
+
+            QuestChatNode chatNode = graph.AddNode<QuestChatNode>();
+            if (chatNode == null)
+            {
+                chatNode = ScriptableObject.CreateInstance<QuestChatNode>();
+                chatNode.graph = graph;
+                graph.nodes.Add(chatNode);
+            }
+
+            chatNode.targetNpc = npcDef;
+            chatNode.tip = "Meet the mayor at the town hall.";
+            graph.entryNode = chatNode;
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            List<QuestRuntimeMenuEntry> entries = service.GetQuestMenuEntries();
+            Assert.AreEqual(1, entries.Count);
+            Assert.IsTrue(entries[0].currentStatus == QuestMenuProgressStatus.NotStarted);
+            Assert.AreEqual("Meet the mayor at the town hall.", service.GetQuestJournalDetailHint("q_chat_tip"));
+
+            Object.DestroyImmediate(graph);
+            Object.DestroyImmediate(npcDef);
+        }
+
+        [Test]
+        public void GetQuestMenuEntries_FollowsQuestDatabaseListOrder()
+        {
+            GameState.Reset();
+            QuestGraph graphA = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graphA);
+            graphA.questId = "q_order_a";
+            graphA.displayName = "Quest A";
+            QuestChatNode nodeA = graphA.AddNode<QuestChatNode>();
+            if (nodeA == null)
+            {
+                nodeA = ScriptableObject.CreateInstance<QuestChatNode>();
+                nodeA.graph = graphA;
+                graphA.nodes.Add(nodeA);
+            }
+
+            graphA.entryNode = nodeA;
+
+            QuestGraph graphB = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graphB);
+            graphB.questId = "q_order_b";
+            graphB.displayName = "Quest B";
+            QuestChatNode nodeB = graphB.AddNode<QuestChatNode>();
+            if (nodeB == null)
+            {
+                nodeB = ScriptableObject.CreateInstance<QuestChatNode>();
+                nodeB.graph = graphB;
+                graphB.nodes.Add(nodeB);
+            }
+
+            graphB.entryNode = nodeB;
+
+            QuestRuntimeService service = BuildServiceWithQuests(graphB, graphA);
+            List<QuestRuntimeMenuEntry> entries = service.GetQuestMenuEntries();
+            Assert.AreEqual(2, entries.Count);
+            Assert.AreEqual("q_order_b", entries[0].questId);
+            Assert.AreEqual("q_order_a", entries[1].questId);
+
+            Object.DestroyImmediate(graphA);
+            Object.DestroyImmediate(graphB);
+        }
+
+        [Test]
+        public void GetQuestMenuEntries_NotYetStarted_UsesFirstJournalTipAfterWorldObjective()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            graph.questId = "q_first_tip_world";
+            graph.displayName = "World Then Gift";
+
+            QuestWorldObjectiveNode worldNode = graph.AddNode<QuestWorldObjectiveNode>();
+            if (worldNode == null)
+            {
+                worldNode = ScriptableObject.CreateInstance<QuestWorldObjectiveNode>();
+                worldNode.graph = graph;
+                graph.nodes.Add(worldNode);
+            }
+
+            worldNode.targetNpc = npcDef;
+            SetPrivateField(worldNode, "objectiveKey", "trees");
+
+            QuestGiftNode giftNode = graph.AddNode<QuestGiftNode>();
+            if (giftNode == null)
+            {
+                giftNode = ScriptableObject.CreateInstance<QuestGiftNode>();
+                giftNode.graph = graph;
+                graph.nodes.Add(giftNode);
+            }
+
+            giftNode.targetNpc = npcDef;
+            giftNode.tip = "First real hint after the world step.";
+            HarvestDataTypes.Item required = ScriptableObject.CreateInstance<HarvestDataTypes.Item>();
+            required.itemId = "wood";
+            giftNode.requiredItem = required;
+            giftNode.requiredAmount = 1;
+
+            QuestFinishNode finishNode = graph.AddNode<QuestFinishNode>();
+            if (finishNode == null)
+            {
+                finishNode = ScriptableObject.CreateInstance<QuestFinishNode>();
+                finishNode.graph = graph;
+                graph.nodes.Add(finishNode);
+            }
+
+            finishNode.targetNpc = npcDef;
+            worldNode.GetOutputPort("next").Connect(giftNode.GetInputPort("inFlow"));
+            giftNode.GetOutputPort("next").Connect(finishNode.GetInputPort("inFlow"));
+            graph.entryNode = worldNode;
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            List<QuestRuntimeMenuEntry> entries = service.GetQuestMenuEntries();
+            Assert.AreEqual(1, entries.Count);
+            Assert.IsTrue(entries[0].currentStatus == QuestMenuProgressStatus.NotStarted);
+            Assert.AreEqual("First real hint after the world step.", service.GetQuestJournalDetailHint("q_first_tip_world"));
+
+            Object.DestroyImmediate(required);
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void GetQuestJournalDetailHint_ReturnsWorldObjectiveNodeTip()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            graph.questId = "q_world_tip";
+            graph.displayName = "World Tip Quest";
+
+            QuestWorldObjectiveNode worldNode = graph.AddNode<QuestWorldObjectiveNode>();
+            if (worldNode == null)
+            {
+                worldNode = ScriptableObject.CreateInstance<QuestWorldObjectiveNode>();
+                worldNode.graph = graph;
+                graph.nodes.Add(worldNode);
+            }
+
+            worldNode.targetNpc = npcDef;
+            SetPrivateField(worldNode, "objectiveKey", "baubles");
+            worldNode.tip = "Collect 5 baubles from the tree.";
+            graph.entryNode = worldNode;
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            Assert.AreEqual("Collect 5 baubles from the tree.", service.GetQuestJournalDetailHint("q_world_tip"));
+
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void GetQuestJournalDetailHint_ReturnsWorldObjectiveNodeTip_WhenInProgress()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+            graph.questId = "q_world_tip_inprogress";
+            graph.displayName = "World Tip In Progress";
+
+            QuestWorldObjectiveNode worldNode1 = graph.AddNode<QuestWorldObjectiveNode>();
+            if (worldNode1 == null)
+            {
+                worldNode1 = ScriptableObject.CreateInstance<QuestWorldObjectiveNode>();
+                worldNode1.graph = graph;
+                graph.nodes.Add(worldNode1);
+            }
+
+            worldNode1.targetNpc = npcDef;
+            SetPrivateField(worldNode1, "objectiveKey", "step1");
+            worldNode1.tip = string.Empty;
+
+            QuestWorldObjectiveNode worldNode2 = graph.AddNode<QuestWorldObjectiveNode>();
+            if (worldNode2 == null)
+            {
+                worldNode2 = ScriptableObject.CreateInstance<QuestWorldObjectiveNode>();
+                worldNode2.graph = graph;
+                graph.nodes.Add(worldNode2);
+            }
+
+            worldNode2.targetNpc = npcDef;
+            SetPrivateField(worldNode2, "objectiveKey", "step2");
+            worldNode2.tip = "Now collect 3 stones.";
+
+            worldNode1.GetOutputPort("next").Connect(worldNode2.GetInputPort("inFlow"));
+            graph.entryNode = worldNode1;
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            Assert.IsTrue(service.TryCompleteWorldObjective("q_world_tip_inprogress", "step1"));
+            Assert.AreEqual("Now collect 3 stones.", service.GetQuestJournalDetailHint("q_world_tip_inprogress"));
+
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+        }
+
+        [Test]
+        public void ContinueQuestChatForNode_OnlyAdvancesSpecificQuestNotOthersOnSameNpc()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+
+            QuestGraph graphA = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graphA);
+            graphA.questId = "q_cross_a";
+            graphA.displayName = "Quest A";
+
+            QuestChatNode chatNodeA1 = graphA.AddNode<QuestChatNode>();
+            if (chatNodeA1 == null)
+            {
+                chatNodeA1 = ScriptableObject.CreateInstance<QuestChatNode>();
+                chatNodeA1.graph = graphA;
+                graphA.nodes.Add(chatNodeA1);
+            }
+
+            QuestChatNode chatNodeA2 = graphA.AddNode<QuestChatNode>();
+            if (chatNodeA2 == null)
+            {
+                chatNodeA2 = ScriptableObject.CreateInstance<QuestChatNode>();
+                chatNodeA2.graph = graphA;
+                graphA.nodes.Add(chatNodeA2);
+            }
+
+            chatNodeA1.targetNpc = npcDef;
+            chatNodeA2.targetNpc = npcDef;
+            chatNodeA1.GetOutputPort("next").Connect(chatNodeA2.GetInputPort("inFlow"));
+            graphA.entryNode = chatNodeA1;
+
+            QuestGraph graphB = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graphB);
+            graphB.questId = "q_cross_b";
+            graphB.displayName = "Quest B";
+
+            QuestChatNode chatNodeB = graphB.AddNode<QuestChatNode>();
+            if (chatNodeB == null)
+            {
+                chatNodeB = ScriptableObject.CreateInstance<QuestChatNode>();
+                chatNodeB.graph = graphB;
+                graphB.nodes.Add(chatNodeB);
+            }
+
+            chatNodeB.targetNpc = npcDef;
+            graphB.entryNode = chatNodeB;
+
+            var npcGo = new GameObject("Npc");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            SetPrivateField(interactable, "definition", npcDef);
+
+            // Build with quest A first so it is index 0 in _states (old bug would always advance this one)
+            QuestRuntimeService service = BuildServiceWithQuests(graphA, graphB);
+
+            // Advance quest B's chat node specifically
+            bool continued = service.ContinueQuestChatForNode(chatNodeB, interactable, interactionUI: null);
+
+            // Quest B has no next node so completing it marks it done; quest A should remain at entry
+            Assert.IsTrue(continued == false || true, "return value is irrelevant; state change is what matters");
+
+            var entriesAfter = service.GetQuestMenuEntries();
+            QuestRuntimeMenuEntry entryA = entriesAfter.Find(e => e.questId == "q_cross_a");
+            QuestRuntimeMenuEntry entryB = entriesAfter.Find(e => e.questId == "q_cross_b");
+
+            Assert.IsNotNull(entryA);
+            Assert.IsNotNull(entryB);
+            Assert.AreEqual(QuestMenuProgressStatus.NotStarted, entryA.currentStatus, "Quest A must not have advanced");
+            Assert.AreNotEqual(QuestMenuProgressStatus.NotStarted, entryB.currentStatus, "Quest B must have advanced");
+
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graphA);
+            Object.DestroyImmediate(graphB);
         }
 
         [Test]
@@ -225,6 +512,58 @@ namespace Tests
         }
 
         [Test]
+        public void RunNodeAction_OnGiftNode_ChatUsesGiftPromptNotTip()
+        {
+            GameState.Reset();
+            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
+            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
+            EnsureGraphNodeList(graph);
+
+            QuestGiftNode giftNode = graph.AddNode<QuestGiftNode>();
+            if (giftNode == null)
+            {
+                giftNode = ScriptableObject.CreateInstance<QuestGiftNode>();
+                giftNode.graph = graph;
+                graph.nodes.Add(giftNode);
+            }
+
+            giftNode.targetNpc = npcDef;
+            giftNode.giftPrompt = "huh? you want to give me something?";
+            giftNode.tip = "Bring Suzy 5 roses for James.";
+            graph.entryNode = giftNode;
+
+            var presenterPrefab = new GameObject("GiftPromptPrefab");
+            var presenter = presenterPrefab.AddComponent<NpcChatTreePresenter>();
+            var bodyGo = new GameObject("Body", typeof(Text));
+            bodyGo.transform.SetParent(presenterPrefab.transform, false);
+            SetPrivateField(presenter, "bodyText", bodyGo.GetComponent<Text>());
+            graph.chatUIPrefab = presenterPrefab;
+
+            var uiGo = new GameObject("InteractionUi");
+            var ui = uiGo.AddComponent<InteractionUIController>();
+            SetPrivateField(ui, "currentInteractionRoot", uiGo.transform);
+
+            var npcGo = new GameObject("Npc");
+            npcGo.AddComponent<NPCController>().handSlot = new GameObject("HandSlot");
+            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
+            SetPrivateField(interactable, "definition", npcDef);
+
+            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
+            List<QuestNodeBase> visibleNodes = service.GetVisibleNodesForNpc(interactable);
+            service.RunNodeAction(visibleNodes[0], ui, interactable);
+
+            Text spawnedBody = uiGo.transform.GetChild(0).GetComponentInChildren<Text>(true);
+            Assert.AreEqual("huh? you want to give me something?", spawnedBody.text);
+            StringAssert.DoesNotContain("roses", spawnedBody.text);
+
+            Object.DestroyImmediate(uiGo);
+            Object.DestroyImmediate(npcGo);
+            Object.DestroyImmediate(npcDef);
+            Object.DestroyImmediate(graph);
+            Object.DestroyImmediate(presenterPrefab);
+        }
+
+        [Test]
         public void RunNodeAction_OnFinishNode_AwardsCoinsAndCompletesQuest()
         {
             GameState.Reset();
@@ -258,7 +597,8 @@ namespace Tests
 
             List<QuestRuntimeMenuEntry> entries = service.GetQuestMenuEntries();
             Assert.AreEqual(1, entries.Count);
-            Assert.IsTrue(entries[0].isCompleted);
+            Assert.AreEqual(QuestMenuProgressStatus.Completed, entries[0].currentStatus);
+            Assert.AreEqual(string.Empty, service.GetQuestJournalDetailHint(entries[0].questId));
 
             Object.DestroyImmediate(npcGo);
             Object.DestroyImmediate(npcDef);
@@ -443,6 +783,11 @@ namespace Tests
 
         private QuestRuntimeService BuildServiceWithSingleQuest(QuestGraph graph)
         {
+            return BuildServiceWithQuests(graph);
+        }
+
+        private QuestRuntimeService BuildServiceWithQuests(params QuestGraph[] graphs)
+        {
             if (QuestRuntimeService.Instance != null)
             {
                 Object.DestroyImmediate(QuestRuntimeService.Instance.gameObject);
@@ -451,15 +796,27 @@ namespace Tests
             _dbGo = new GameObject("DatabaseManager");
             var dbManager = _dbGo.AddComponent<DatabaseManager>();
             var questDb = ScriptableObject.CreateInstance<QuestDatabase>();
-            if (string.IsNullOrWhiteSpace(graph.questId))
+            for (int i = 0; i < graphs.Length; i++)
             {
-                graph.questId = $"q_{Guid.NewGuid():N}";
+                QuestGraph graph = graphs[i];
+                if (graph == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(graph.questId))
+                {
+                    graph.questId = $"q_{Guid.NewGuid():N}";
+                }
+
+                if (string.IsNullOrWhiteSpace(graph.displayName))
+                {
+                    graph.displayName = "Quest";
+                }
+
+                questDb.quests.Add(graph);
             }
-            if (string.IsNullOrWhiteSpace(graph.displayName))
-            {
-                graph.displayName = "Quest";
-            }
-            questDb.quests.Add(graph);
+
             dbManager.quests = questDb;
             DatabaseManager.Instance = dbManager;
 

@@ -7,6 +7,10 @@ public class QuestGiftNode : QuestNodeBase
     [Tooltip("Message shown in chat-style UI when this gift step is requested.")]
     public string giftPrompt = "Could you give me this item?";
 
+    [TextArea(2, 6)]
+    [Tooltip("Optional player-facing hint for quest tracker / journal UI. Not shown in NPC chat.")]
+    public string tip = string.Empty;
+
     [Tooltip("Required item for this gift step. Leave empty to accept any item.")]
     public HarvestDataTypes.Item requiredItem;
     [Min(1)]

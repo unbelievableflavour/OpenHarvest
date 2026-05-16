@@ -2,12 +2,20 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>Quest row progress for the journal / quest menu list.</summary>
+public enum QuestMenuProgressStatus
+{
+    NotStarted,
+    InProgress,
+    Completed,
+}
+
 [Serializable]
 public class QuestRuntimeMenuEntry
 {
     public string questId;
     public string displayName;
-    public bool isCompleted;
+    public QuestMenuProgressStatus currentStatus;
 }
 
 public class QuestRuntimeService : MonoBehaviour
@@ -23,8 +31,6 @@ public class QuestRuntimeService : MonoBehaviour
     private readonly List<QuestState> _states = new List<QuestState>();
 
     public static QuestRuntimeService Instance { get; private set; }
-
-    public event Action<NpcProximityInteractable> OnGenericGiftRequested;
 
     /// <summary>
     /// Raised after V2 quest progress is written to <see cref="GameState.questRuntimeStates"/> (trimmed quest id).
@@ -87,23 +93,322 @@ public class QuestRuntimeService : MonoBehaviour
     public List<QuestRuntimeMenuEntry> GetQuestMenuEntries()
     {
         var entries = new List<QuestRuntimeMenuEntry>();
-        for (int i = 0; i < _states.Count; i++)
+        QuestDatabase db = DatabaseManager.Instance != null ? DatabaseManager.Instance.quests : null;
+        if (db == null || db.quests == null)
         {
-            QuestState state = _states[i];
-            if (state == null || state.Graph == null)
+            return entries;
+        }
+
+        Dictionary<string, QuestState> stateByQuestId = BuildQuestStateLookupByQuestId();
+
+        for (int i = 0; i < db.quests.Count; i++)
+        {
+            QuestGraph graph = db.quests[i];
+            if (graph == null || graph.GetEntryNode() == null)
             {
                 continue;
             }
 
+            string questId = string.IsNullOrWhiteSpace(graph.questId) ? string.Empty : graph.questId.Trim();
+            string displayName = string.IsNullOrWhiteSpace(graph.displayName) ? "Quest" : graph.displayName.Trim();
+
+            stateByQuestId.TryGetValue(questId, out QuestState state);
+
+            QuestMenuProgressStatus resolvedStatus = ResolveMenuProgressStatus(state, graph, questId);
+
             entries.Add(new QuestRuntimeMenuEntry
             {
-                questId = state.Graph.questId,
-                displayName = string.IsNullOrWhiteSpace(state.Graph.displayName) ? "Quest" : state.Graph.displayName.Trim(),
-                isCompleted = state.IsCompleted
+                questId = questId,
+                displayName = displayName,
+                currentStatus = resolvedStatus
             });
         }
 
         return entries;
+    }
+
+    private static QuestMenuProgressStatus ResolveMenuProgressStatus(QuestState state, QuestGraph graph, string questId)
+    {
+        if (state != null)
+        {
+            if (state.IsCompleted)
+            {
+                return QuestMenuProgressStatus.Completed;
+            }
+
+            if (IsAtQuestEntry(state))
+            {
+                return QuestMenuProgressStatus.NotStarted;
+            }
+
+            return QuestMenuProgressStatus.InProgress;
+        }
+
+        if (TryGetQuestCompletedFromSave(questId, out bool completedFromSave) && completedFromSave)
+        {
+            return QuestMenuProgressStatus.Completed;
+        }
+
+        if (IsSavedProgressAtEntryOrUnknown(graph, questId))
+        {
+            return QuestMenuProgressStatus.NotStarted;
+        }
+
+        return QuestMenuProgressStatus.InProgress;
+    }
+
+    /// <summary>
+    /// Journal hint for the quest detail UI: first tip along the main path when not yet started,
+    /// otherwise the current chat/gift step tip. Empty when complete or when no tip is set.
+    /// </summary>
+    public string GetQuestJournalDetailHint(string questId)
+    {
+        if (string.IsNullOrWhiteSpace(questId))
+        {
+            return string.Empty;
+        }
+
+        string qid = questId.Trim();
+        QuestGraph graph = FindQuestGraphByQuestId(qid);
+        if (graph == null)
+        {
+            return string.Empty;
+        }
+
+        QuestState state = FindQuestStateByQuestId(qid);
+        if (state != null)
+        {
+            if (state.IsCompleted)
+            {
+                return string.Empty;
+            }
+
+            if (IsAtQuestEntry(state))
+            {
+                return GetFirstJournalTipAlongMainPath(graph);
+            }
+
+            return GetMenuTipForState(state);
+        }
+
+        if (TryGetQuestCompletedFromSave(qid, out bool completedFromSave) && completedFromSave)
+        {
+            return string.Empty;
+        }
+
+        if (IsSavedProgressAtEntryOrUnknown(graph, qid))
+        {
+            return GetFirstJournalTipAlongMainPath(graph);
+        }
+
+        return string.Empty;
+    }
+
+    private static QuestGraph FindQuestGraphByQuestId(string questId)
+    {
+        if (string.IsNullOrWhiteSpace(questId))
+        {
+            return null;
+        }
+
+        QuestDatabase db = DatabaseManager.Instance != null ? DatabaseManager.Instance.quests : null;
+        if (db == null)
+        {
+            return null;
+        }
+
+        return db.FindById(questId.Trim());
+    }
+
+    private QuestState FindQuestStateByQuestId(string questId)
+    {
+        if (string.IsNullOrWhiteSpace(questId))
+        {
+            return null;
+        }
+
+        string qid = questId.Trim();
+        for (int i = 0; i < _states.Count; i++)
+        {
+            QuestState state = _states[i];
+            if (state?.Graph == null || string.IsNullOrWhiteSpace(state.Graph.questId))
+            {
+                continue;
+            }
+
+            if (string.Equals(state.Graph.questId.Trim(), qid, StringComparison.Ordinal))
+            {
+                return state;
+            }
+        }
+
+        return null;
+    }
+
+    private Dictionary<string, QuestState> BuildQuestStateLookupByQuestId()
+    {
+        var map = new Dictionary<string, QuestState>(StringComparer.Ordinal);
+        for (int i = 0; i < _states.Count; i++)
+        {
+            QuestState state = _states[i];
+            if (state?.Graph == null || string.IsNullOrWhiteSpace(state.Graph.questId))
+            {
+                continue;
+            }
+
+            map[state.Graph.questId.Trim()] = state;
+        }
+
+        return map;
+    }
+
+    private static bool TryGetQuestCompletedFromSave(string questId, out bool isCompleted)
+    {
+        isCompleted = false;
+        if (string.IsNullOrWhiteSpace(questId) || GameState.Instance == null || GameState.Instance.questRuntimeStates == null)
+        {
+            return false;
+        }
+
+        if (!GameState.Instance.questRuntimeStates.TryGetValue(questId, out QuestRuntimeProgressState saved))
+        {
+            return false;
+        }
+
+        isCompleted = saved.isCompleted;
+        return true;
+    }
+
+    private static bool IsSavedProgressAtEntryOrUnknown(QuestGraph graph, string questId)
+    {
+        if (graph == null)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(questId) || GameState.Instance == null || GameState.Instance.questRuntimeStates == null)
+        {
+            return true;
+        }
+
+        if (!GameState.Instance.questRuntimeStates.TryGetValue(questId, out QuestRuntimeProgressState saved))
+        {
+            return true;
+        }
+
+        return IsSavedProgressAtEntry(graph, saved);
+    }
+
+    private static bool IsSavedProgressAtEntry(QuestGraph graph, QuestRuntimeProgressState saved)
+    {
+        if (graph == null || saved == null || saved.isCompleted)
+        {
+            return false;
+        }
+
+        if (saved.pendingGiftNodeIndex >= 0)
+        {
+            return false;
+        }
+
+        int entryIdx = GetNodeIndex(graph, graph.GetEntryNode());
+        if (entryIdx < 0)
+        {
+            return false;
+        }
+
+        if (saved.currentNodeIndex < 0)
+        {
+            return true;
+        }
+
+        return saved.currentNodeIndex == entryIdx;
+    }
+
+    private static bool IsAtQuestEntry(QuestState state)
+    {
+        if (state == null || state.IsCompleted || state.Graph == null)
+        {
+            return false;
+        }
+
+        if (state.PendingGiftNode != null)
+        {
+            return false;
+        }
+
+        int entryIdx = GetNodeIndex(state.Graph, state.Graph.GetEntryNode());
+        int currentIdx = GetNodeIndex(state.Graph, state.CurrentNode);
+        if (entryIdx < 0 || currentIdx < 0)
+        {
+            return false;
+        }
+
+        return currentIdx == entryIdx;
+    }
+
+    private static string GetFirstJournalTipAlongMainPath(QuestGraph graph)
+    {
+        if (graph == null)
+        {
+            return string.Empty;
+        }
+
+        QuestNodeBase node = graph.GetEntryNode();
+        const int maxSteps = 256;
+        for (int step = 0; step < maxSteps && node != null; step++)
+        {
+            if (node is QuestGiftNode giftNode)
+            {
+                if (!string.IsNullOrWhiteSpace(giftNode.tip))
+                {
+                    return giftNode.tip.Trim();
+                }
+            }
+            else if (node is QuestChatNode chatNode)
+            {
+                if (!string.IsNullOrWhiteSpace(chatNode.tip))
+                {
+                    return chatNode.tip.Trim();
+                }
+            }
+            else if (node is QuestWorldObjectiveNode worldNode)
+            {
+                if (!string.IsNullOrWhiteSpace(worldNode.tip))
+                {
+                    return worldNode.tip.Trim();
+                }
+            }
+
+            node = node.GetNextNode();
+        }
+
+        return string.Empty;
+    }
+
+    private static string GetMenuTipForState(QuestState state)
+    {
+        if (state == null || state.IsCompleted)
+        {
+            return string.Empty;
+        }
+
+        if (state.CurrentNode is QuestGiftNode giftNode)
+        {
+            return string.IsNullOrWhiteSpace(giftNode.tip) ? string.Empty : giftNode.tip.Trim();
+        }
+
+        if (state.CurrentNode is QuestChatNode chatNode)
+        {
+            return string.IsNullOrWhiteSpace(chatNode.tip) ? string.Empty : chatNode.tip.Trim();
+        }
+
+        if (state.CurrentNode is QuestWorldObjectiveNode worldNode)
+        {
+            return string.IsNullOrWhiteSpace(worldNode.tip) ? string.Empty : worldNode.tip.Trim();
+        }
+
+        return string.Empty;
     }
 
     public void RunNodeAction(QuestNodeBase node, InteractionUIController interactionUI, NpcProximityInteractable interactable)
@@ -125,7 +430,6 @@ public class QuestRuntimeService : MonoBehaviour
             SaveState(state);
             giftNode.RunAction(interactionUI, interactable, state.Graph);
             PromptNpcGiftHandoff(interactable);
-            OnGenericGiftRequested?.Invoke(interactable);
             return;
         }
 
@@ -154,9 +458,11 @@ public class QuestRuntimeService : MonoBehaviour
         NpcProximityInteractable interactable,
         string itemId,
         int handedAmount,
-        out int requiredAmount)
+        out int requiredAmount,
+        out QuestNodeBase nextNode)
     {
         requiredAmount = 0;
+        nextNode = null;
         if (interactable == null)
         {
             return false;
@@ -190,6 +496,7 @@ public class QuestRuntimeService : MonoBehaviour
             state.PendingGiftNode = null;
             requiredAmount = needed;
             AdvanceState(state, giftedNode);
+            nextNode = state.CurrentNode;
             return true;
         }
 
@@ -239,12 +546,6 @@ public class QuestRuntimeService : MonoBehaviour
         return false;
     }
 
-    public void RequestGenericGift(NpcProximityInteractable interactable)
-    {
-        PromptNpcGiftHandoff(interactable);
-        OnGenericGiftRequested?.Invoke(interactable);
-    }
-
     public bool RunCurrentNodeForNpc(NpcProximityInteractable interactable, InteractionUIController interactionUI)
     {
         if (interactable == null)
@@ -262,22 +563,15 @@ public class QuestRuntimeService : MonoBehaviour
         return true;
     }
 
-    public bool ContinueQuestChatForNpc(NpcProximityInteractable interactable, InteractionUIController interactionUI)
+    public bool ContinueQuestChatForNode(QuestNodeBase node, NpcProximityInteractable interactable, InteractionUIController interactionUI)
     {
-        if (interactable == null)
+        if (node == null)
         {
             return false;
         }
 
-        List<QuestNodeBase> nodes = GetVisibleNodesForNpc(interactable);
-        if (nodes.Count == 0 || nodes[0] == null)
-        {
-            return false;
-        }
-
-        QuestNodeBase currentNode = nodes[0];
-        QuestState state = FindStateByNode(currentNode);
-        if (state == null || state.IsCompleted || state.CurrentNode == null)
+        QuestState state = FindStateByNode(node);
+        if (state == null || state.IsCompleted || state.CurrentNode == null || state.CurrentNode != node)
         {
             return false;
         }
