@@ -32,8 +32,6 @@ public class QuestRuntimeService : MonoBehaviour
 
     public static QuestRuntimeService Instance { get; private set; }
 
-    public event Action<NpcProximityInteractable> OnGenericGiftRequested;
-
     /// <summary>
     /// Raised after V2 quest progress is written to <see cref="GameState.questRuntimeStates"/> (trimmed quest id).
     /// </summary>
@@ -432,7 +430,6 @@ public class QuestRuntimeService : MonoBehaviour
             SaveState(state);
             giftNode.RunAction(interactionUI, interactable, state.Graph);
             PromptNpcGiftHandoff(interactable);
-            OnGenericGiftRequested?.Invoke(interactable);
             return;
         }
 
@@ -461,9 +458,11 @@ public class QuestRuntimeService : MonoBehaviour
         NpcProximityInteractable interactable,
         string itemId,
         int handedAmount,
-        out int requiredAmount)
+        out int requiredAmount,
+        out QuestNodeBase nextNode)
     {
         requiredAmount = 0;
+        nextNode = null;
         if (interactable == null)
         {
             return false;
@@ -497,6 +496,7 @@ public class QuestRuntimeService : MonoBehaviour
             state.PendingGiftNode = null;
             requiredAmount = needed;
             AdvanceState(state, giftedNode);
+            nextNode = state.CurrentNode;
             return true;
         }
 
@@ -544,12 +544,6 @@ public class QuestRuntimeService : MonoBehaviour
         }
 
         return false;
-    }
-
-    public void RequestGenericGift(NpcProximityInteractable interactable)
-    {
-        PromptNpcGiftHandoff(interactable);
-        OnGenericGiftRequested?.Invoke(interactable);
     }
 
     public bool RunCurrentNodeForNpc(NpcProximityInteractable interactable, InteractionUIController interactionUI)

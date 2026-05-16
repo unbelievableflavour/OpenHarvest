@@ -92,10 +92,11 @@ namespace Tests
             QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
             service.RunNodeAction(giftNode, interactionUI: null, interactable);
 
-            Assert.IsFalse(service.TrySubmitGift(interactable, "stone", 2, out _));
-            Assert.IsFalse(service.TrySubmitGift(interactable, "apple", 1, out _));
-            Assert.IsTrue(service.TrySubmitGift(interactable, "apple", 2, out int requiredAmount));
+            Assert.IsFalse(service.TrySubmitGift(interactable, "stone", 2, out _, out _));
+            Assert.IsFalse(service.TrySubmitGift(interactable, "apple", 1, out _, out _));
+            Assert.IsTrue(service.TrySubmitGift(interactable, "apple", 2, out int requiredAmount, out QuestNodeBase nextNode));
             Assert.AreEqual(2, requiredAmount);
+            Assert.AreEqual(doneNode, nextNode);
 
             var visibleAfterGift = service.GetVisibleNodesForNpc(interactable);
             Assert.AreEqual(1, visibleAfterGift.Count);
@@ -103,39 +104,6 @@ namespace Tests
 
             Object.DestroyImmediate(npcGo);
             Object.DestroyImmediate(required);
-            Object.DestroyImmediate(npcDef);
-            Object.DestroyImmediate(graph);
-        }
-
-        [Test]
-        public void RequestGenericGift_HoldsOutNpcHand()
-        {
-            QuestGraph graph = ScriptableObject.CreateInstance<QuestGraph>();
-            EnsureGraphNodeList(graph);
-            QuestChatNode node = graph.AddNode<QuestChatNode>();
-            if (node == null)
-            {
-                node = ScriptableObject.CreateInstance<QuestChatNode>();
-                node.graph = graph;
-                graph.nodes.Add(node);
-            }
-
-            graph.entryNode = node;
-            QuestRuntimeService service = BuildServiceWithSingleQuest(graph);
-
-            var npcDef = ScriptableObject.CreateInstance<NpcInteractableDefinition>();
-            var npcGo = new GameObject("Npc");
-            var controller = npcGo.AddComponent<NPCController>();
-            controller.handSlot = new GameObject("HandSlot");
-            controller.handSlot.SetActive(false);
-            var interactable = npcGo.AddComponent<NpcProximityInteractable>();
-            SetPrivateField(interactable, "definition", npcDef);
-
-            service.RequestGenericGift(interactable);
-
-            Assert.IsTrue(controller.handSlot.activeSelf);
-
-            Object.DestroyImmediate(npcGo);
             Object.DestroyImmediate(npcDef);
             Object.DestroyImmediate(graph);
         }

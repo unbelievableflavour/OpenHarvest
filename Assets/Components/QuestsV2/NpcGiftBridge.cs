@@ -2,14 +2,18 @@ using BNG;
 using UnityEngine;
 
 /// <summary>
-/// Bridges NPC item handoff events into the quest runtime gift system.
+/// Bridges NPC item handoff events into the gift system (both quest and generic gifts).
 /// Add this on an NPC root that also has <see cref="NPCController"/> and
 /// <see cref="NpcProximityInteractable"/> (same object or parent/child).
 /// </summary>
-public class QuestNpcGiftBridge : MonoBehaviour
+public class NpcGiftBridge : MonoBehaviour
 {
     private NPCController _npc;
     private NpcProximityInteractable _interactable;
+
+    private bool _pendingGenericGift;
+    private GameObject _pendingChatUIPrefab;
+    private string _pendingResponseText;
 
     private void Awake()
     {
@@ -33,9 +37,21 @@ public class QuestNpcGiftBridge : MonoBehaviour
         }
     }
 
+    public void BeginGenericGift(GameObject chatUIPrefab, string responseText)
+    {
+        _pendingGenericGift = true;
+        _pendingChatUIPrefab = chatUIPrefab;
+        _pendingResponseText = responseText;
+
+        if (_npc != null)
+        {
+            _npc.HoldOutHand();
+        }
+    }
+
     private void HandleNpcGrabbedItem(object sender, Grabbable grabbable)
     {
-        if (QuestRuntimeService.Instance == null || _interactable == null)
+        if (_interactable == null)
         {
             return;
         }
@@ -45,22 +61,67 @@ public class QuestNpcGiftBridge : MonoBehaviour
             return;
         }
 
-        if (!QuestRuntimeService.Instance.TrySubmitGift(_interactable, itemId, handedAmount, out int requiredAmount))
+        if (QuestRuntimeService.Instance != null &&
+            QuestRuntimeService.Instance.TrySubmitGift(_interactable, itemId, handedAmount, out int requiredAmount, out QuestNodeBase nextNode))
+        {
+            ConsumeAndDropOverflow(grabbable, stack, requiredAmount);
+
+            if (_npc != null)
+            {
+                _npc.BackToIdle();
+            }
+
+            InteractionUIController interactionUI = FindFirstObjectByType<InteractionUIController>(FindObjectsInactive.Include);
+            if (nextNode != null && !(nextNode is QuestWorldObjectiveNode))
+            {
+                QuestRuntimeService.Instance.RunNodeAction(nextNode, interactionUI, _interactable);
+                return;
+            }
+
+            EventManager.Emit("interactionUIToMain");
+            return;
+        }
+
+        HandleGenericGift(grabbable, stack);
+    }
+
+    private void HandleGenericGift(Grabbable grabbable, ItemStack stack)
+    {
+        if (!_pendingGenericGift)
         {
             return;
         }
 
-        ConsumeAndDropOverflow(grabbable, stack, requiredAmount);
+        GameObject chatUIPrefab = _pendingChatUIPrefab;
+        string responseText = _pendingResponseText;
+        _pendingGenericGift = false;
+        _pendingChatUIPrefab = null;
+        _pendingResponseText = null;
+
+        int amount = stack != null ? Mathf.Max(1, stack.GetStackSize()) : 1;
+        ConsumeAndDropOverflow(grabbable, stack, amount);
 
         if (_npc != null)
         {
             _npc.BackToIdle();
         }
 
-        InteractionUIController interactionUI = FindFirstObjectByType<InteractionUIController>(FindObjectsInactive.Include);
-        if (QuestRuntimeService.Instance.RunCurrentNodeForNpc(_interactable, interactionUI))
+        if (!string.IsNullOrWhiteSpace(responseText) && chatUIPrefab != null)
         {
-            return;
+            InteractionUIController interactionUI = FindFirstObjectByType<InteractionUIController>(FindObjectsInactive.Include);
+            if (interactionUI != null)
+            {
+                NPCController npc = _npc;
+                interactionUI.ShowInstancedOptionContent(chatUIPrefab, _interactable, go =>
+                {
+                    NpcChatTreePresenter presenter = go.GetComponentInChildren<NpcChatTreePresenter>(true);
+                    if (presenter != null)
+                    {
+                        presenter.BeginSingleLine(responseText, npc, showContinue: false);
+                    }
+                });
+                return;
+            }
         }
 
         EventManager.Emit("interactionUIToMain");
