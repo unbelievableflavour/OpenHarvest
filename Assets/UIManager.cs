@@ -1,3 +1,4 @@
+using BNG;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -5,10 +6,15 @@ public class UIManager : MonoBehaviour
     [SerializeField] private ViewSwitcher viewSwitcher;
     [SerializeField] private string mainViewId = "default";
 
-    private FirstPersonController cachedFpsController;
+    private FirstPersonController fpsController;
+    private SmoothLocomotion smoothLocomotion;
+    private PlayerTeleport playerTeleport;
+
     private bool cachedControllerState;
     private bool cachedCameraCanMove = true;
     private bool cachedPlayerCanMove = true;
+    private bool smoothLocomotionAllowInput = true;
+    private bool playerTeleportEnabled = true;
     private CursorLockMode cachedCursorLockMode = CursorLockMode.Locked;
     private bool cachedCursorVisible = false;
 
@@ -19,7 +25,9 @@ public class UIManager : MonoBehaviour
             viewSwitcher = FindFirstObjectByType<ViewSwitcher>();
         }
 
-        cachedFpsController = FindFirstObjectByType<FirstPersonController>();
+        fpsController = FindFirstObjectByType<FirstPersonController>();
+        smoothLocomotion = FindFirstObjectByType<SmoothLocomotion>();
+        playerTeleport = FindFirstObjectByType<PlayerTeleport>();
     }
 
     private void OnEnable()
@@ -46,10 +54,10 @@ public class UIManager : MonoBehaviour
     private void HandleViewChanged(string viewId)
     {
         bool isMain = string.Equals(viewId, mainViewId);
-        ApplyPcInteractionState(!isMain);
+        ApplyPlayerInteractionState(!isMain);
     }
 
-    private void ApplyPcInteractionState(bool uiVisible)
+    private void ApplyPlayerInteractionState(bool uiVisible)
     {
         if (uiVisible)
         {
@@ -57,42 +65,37 @@ public class UIManager : MonoBehaviour
             {
                 cachedCursorLockMode = Cursor.lockState;
                 cachedCursorVisible = Cursor.visible;
-                if (cachedFpsController != null)
+                if (fpsController != null)
                 {
-                    cachedCameraCanMove = cachedFpsController.cameraCanMove;
-                    cachedPlayerCanMove = cachedFpsController.playerCanMove;
+                    cachedCameraCanMove = fpsController.cameraCanMove;
+                    cachedPlayerCanMove = fpsController.playerCanMove;
                 }
+                if (smoothLocomotion != null) smoothLocomotionAllowInput = smoothLocomotion.AllowInput;
+                if (playerTeleport != null) playerTeleportEnabled = playerTeleport.enabled;
                 cachedControllerState = true;
             }
 
-            if (cachedFpsController != null)
+            if (fpsController != null)
             {
-                cachedFpsController.cameraCanMove = false;
-                cachedFpsController.playerCanMove = false;
+                fpsController.cameraCanMove = false;
+                fpsController.playerCanMove = false;
             }
-
+            if (smoothLocomotion != null) smoothLocomotion.AllowInput = false;
+            if (playerTeleport != null) playerTeleport.enabled = false;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             return;
         }
 
-        if (cachedFpsController != null && cachedControllerState)
+        if (fpsController != null)
         {
-            cachedFpsController.cameraCanMove = cachedCameraCanMove;
-            cachedFpsController.playerCanMove = cachedPlayerCanMove;
+            fpsController.cameraCanMove = cachedCameraCanMove;
+            fpsController.playerCanMove = cachedPlayerCanMove;
         }
-
-        if (cachedControllerState)
-        {
-            Cursor.lockState = cachedCursorLockMode;
-            Cursor.visible = cachedCursorVisible;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-
+        if (smoothLocomotion != null) smoothLocomotion.AllowInput = smoothLocomotionAllowInput;
+        if (playerTeleport != null) playerTeleport.enabled = playerTeleportEnabled;
+        Cursor.lockState = cachedCursorLockMode;
+        Cursor.visible = cachedCursorVisible;
         cachedControllerState = false;
     }
 }
