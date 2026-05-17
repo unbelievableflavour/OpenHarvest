@@ -5,6 +5,7 @@ public class ObjectRespawner : MonoBehaviour
 {
     public ParticleSystem spawnEffect;
     public int daysUntilRespawn = 1;
+    public bool usePlaceableId = false;
 
     private string uid;
     private ObjectSpawner objectSpawner;
@@ -12,7 +13,9 @@ public class ObjectRespawner : MonoBehaviour
     void Start()
     {
         objectSpawner = GetComponent<ObjectSpawner>();
-        uid = GetComponent<UniqueId>().uniqueId;
+        uid = usePlaceableId
+            ? GetComponentInParent<PlacedObjectInstanceId>(true)?.instanceId ?? string.Empty
+            : GetComponent<UniqueId>().uniqueId;
         TimeController.Instance.ListenToDayChange(handleNewDayStarted);
         RespawningObject respawningObject = findRespawningObjectByUid(uid);
 
