@@ -82,15 +82,10 @@ public class AnimalInformation : MonoBehaviour
         }
     }
 
-    public void SetAnimalName(string newName)
+    public void SaveAnimalName()
     {
-        if (animal == null || string.IsNullOrWhiteSpace(newName))
-        {
-            return;
-        }
-
-        animal.name = newName.Trim();
-        if (nameValue != null) nameValue.text = animal.name;
+        if (animal == null || nameValue == null) return;
+        animal.name = nameValue.text.Trim();
     }
 
     void OnTriggerEnter(Collider other)
