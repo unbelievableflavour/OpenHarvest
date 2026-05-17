@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 [Serializable]
@@ -37,6 +38,9 @@ public class NpcInteractionOption
 [CreateAssetMenu(fileName = "New Npc Interactable", menuName = "OpenHarvest/NPC/Interactable Definition", order = 0)]
 public class NpcInteractableDefinition : ScriptableObject
 {
+    [Tooltip("Stable identifier used to persist follow state across scenes. Auto-generated from npcName.")]
+    public string npcId = "";
+
     [Tooltip("Display name of this character.")]
     public string npcName = "NPC";
 
@@ -47,4 +51,47 @@ public class NpcInteractableDefinition : ScriptableObject
     [Tooltip("Choices offered when the player opens interaction with this NPC.")]
     public List<NpcInteractionOption> options = new List<NpcInteractionOption>();
 
+    private void OnValidate()
+    {
+        string generated = GenerateNpcId(npcName);
+        if (!string.IsNullOrWhiteSpace(generated))
+        {
+            npcId = generated;
+        }
+    }
+
+    private static string GenerateNpcId(string source)
+    {
+        if (string.IsNullOrWhiteSpace(source))
+        {
+            return "npc";
+        }
+
+        string trimmed = source.Trim().ToLowerInvariant();
+        var sb = new StringBuilder(trimmed.Length);
+        bool previousWasUnderscore = false;
+
+        for (int i = 0; i < trimmed.Length; i++)
+        {
+            char c = trimmed[i];
+            bool isAlphaNumeric = (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9');
+            if (isAlphaNumeric)
+            {
+                sb.Append(c);
+                previousWasUnderscore = false;
+                continue;
+            }
+
+            if (previousWasUnderscore)
+            {
+                continue;
+            }
+
+            sb.Append('_');
+            previousWasUnderscore = true;
+        }
+
+        string value = sb.ToString().Trim('_');
+        return string.IsNullOrWhiteSpace(value) ? "npc" : value;
+    }
 }
