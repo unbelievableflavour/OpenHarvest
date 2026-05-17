@@ -16,6 +16,8 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         Move
     }
 
+    public static PlacementSystem Instance { get; private set; }
+
     private const string PlacementBlockerName = "__PlacementBlocker";
     private const int IgnoreRaycastLayer = 2;
     private static readonly int PlacementBlockerLayerMask = 1 << IgnoreRaycastLayer;
@@ -100,6 +102,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 
     private void Awake()
     {
+        Instance = this;
         InitializeToolControllers();
     }
 
@@ -415,7 +418,8 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
         Vector3 worldPosition,
         int objectId,
         GameObject supportObject = null,
-        Quaternion? worldRotation = null)
+        Quaternion? worldRotation = null,
+        string instanceId = null)
     {
         int resolvedIndex = ResolveObjectIndex(objectId);
         if (resolvedIndex == -1)
@@ -432,6 +436,11 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             // Keep world-space transform while attaching, so stacked children follow parent movement.
             newObject.transform.SetParent(supportObject.transform, true);
         }
+
+        // Assign a stable per-instance ID. Use the saved value when loading; generate a new GUID for fresh placement.
+        var placedId = newObject.GetComponent<PlacedObjectInstanceId>() ?? newObject.AddComponent<PlacedObjectInstanceId>();
+        placedId.instanceId = string.IsNullOrEmpty(instanceId) ? System.Guid.NewGuid().ToString() : instanceId;
+
         EnsurePlacementBlocker(newObject);
         placedGameObjects.Add(newObject);
         return newObject;
@@ -639,7 +648,7 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
                 saveablePlacedObject.rotationW
             );
 
-            GameObject loadedObject = PlaceStructureWithoutPreview(worldPosition, resolvedIndex, null, worldRotation);
+            GameObject loadedObject = PlaceStructureWithoutPreview(worldPosition, resolvedIndex, null, worldRotation, saveablePlacedObject.instanceId);
             loadedObjects.Add(loadedObject);
         }
 
@@ -716,9 +725,11 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
 
             Vector3 position = placedObject.transform.position;
             Quaternion rotation = placedObject.transform.rotation;
+            string instanceId = placedObject.GetComponent<PlacedObjectInstanceId>()?.instanceId ?? string.Empty;
             saveableObjects.Add(new SaveablePlacedObject
             {
                 objectId = objectId,
+                instanceId = instanceId,
                 positionX = position.x,
                 positionY = position.y,
                 positionZ = position.z,
@@ -1522,6 +1533,8 @@ public class PlacementSystem : MonoBehaviour, IPlacementToolHost
             placedGameObjects.Add(placedObject);
         }
     }
+
+    public void RemovePlacedObject(GameObject placedObject) => DeletePlacedObject(placedObject, false);
 
     private void DeletePlacedObject(GameObject placedObject, bool refundToInventory)
     {

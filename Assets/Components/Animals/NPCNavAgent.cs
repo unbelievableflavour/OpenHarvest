@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -68,8 +69,6 @@ public class NPCNavAgent : MonoBehaviour
         _defaultNavAgentSpeed = agent.speed;
         _defaultNavAgentAcceleration = agent.acceleration;
 
-        // NavMeshAgent writes to transform directly; any attached Rigidbody must be kinematic
-        // to avoid fighting the agent's position updates.
         if (TryGetComponent<Rigidbody>(out var rb))
         {
             rb.isKinematic = true;
@@ -95,8 +94,6 @@ public class NPCNavAgent : MonoBehaviour
             mainCam = Camera.main.transform;
         }
 
-        // Capture the anchor AFTER the agent has had a chance to snap onto the NavMesh;
-        // sampling a valid point avoids anchoring wander around a wall-edge snap position.
         Vector3 seed = transform.position;
         if (NavMesh.SamplePosition(seed, out var hit, 5f, NavMesh.AllAreas))
         {
@@ -109,6 +106,27 @@ public class NPCNavAgent : MonoBehaviour
         }
 
         nextWanderAt = Time.time + firstWanderDelay;
+
+        // Resume following for unique NPCs (no instance tracked) or for freshly spawned animals
+        // (no plateau). Plateau-based animals whose model is hidden by AnimalInformation are
+        // already inactive, so their Start() won't run.
+        bool specificInstanceTracked = !string.IsNullOrEmpty(GameState.Instance?.followingNpcInstanceId);
+        bool hasPlateauId = !string.IsNullOrEmpty(GetPlateauInstanceId());
+        if (GameState.Instance?.followingNpcId == GetNpcId() && (!specificInstanceTracked || !hasPlateauId))
+        {
+            StartCoroutine(ResumeFollowOnStart());
+        }
+    }
+
+    IEnumerator ResumeFollowOnStart()
+    {
+        yield return null;
+
+        Transform player = ResolvePlayerFollowTarget();
+        if (player != null)
+        {
+            Follow(player);
+        }
     }
 
     protected virtual void Update()
@@ -123,8 +141,6 @@ public class NPCNavAgent : MonoBehaviour
             return;
         }
 
-        // Follow must not be blocked by activity culling (wander) or the agent never
-        // receives destinations / StartMoving() and the walk anim won't play while close.
         if (followTarget != null)
         {
             TickFollow();
@@ -251,15 +267,39 @@ public class NPCNavAgent : MonoBehaviour
         }
     }
 
-    /// <summary>Start following a target transform (e.g. the player).</summary>
+    public string GetNpcId()
+    {
+        string id = GetComponentInChildren<NpcProximityInteractable>(true)?.Definition?.npcId;
+        return string.IsNullOrWhiteSpace(id) ? gameObject.name : id;
+    }
+
+    private string GetPlateauInstanceId()
+    {
+        return GetComponentInParent<AnimalInformation>(true)?.plateauInstanceId;
+    }
+
+    /// <summary>Start following a target transform (e.g. the player).
+    /// Any other NPC that is currently following is automatically stopped first.</summary>
     public void Follow(Transform target)
     {
+        StopAnyOtherFollowingNpc();
+
         followTarget = target;
         nextFollowRefreshAt = 0f;
         if (agent != null)
         {
             agent.speed = FollowMoveSpeed;
             agent.acceleration = FollowAcceleration;
+        }
+
+        if (GameState.Instance != null)
+        {
+            GameState.Instance.followingNpcId = GetNpcId();
+            string myPlateauId = GetPlateauInstanceId();
+            if (!string.IsNullOrEmpty(myPlateauId))
+            {
+                GameState.Instance.followingNpcInstanceId = myPlateauId;
+            }
         }
     }
 
@@ -276,6 +316,24 @@ public class NPCNavAgent : MonoBehaviour
         spawnAnchor = transform.position;
         ScheduleNextWander();
         StopMoving();
+
+        if (GameState.Instance != null && GameState.Instance.followingNpcId == GetNpcId())
+        {
+            GameState.Instance.followingNpcId = null;
+            GameState.Instance.followingNpcInstanceId = null;
+        }
+    }
+
+    private void StopAnyOtherFollowingNpc()
+    {
+        var all = FindObjectsByType<NPCNavAgent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var other in all)
+        {
+            if (other != this && other.followTarget != null)
+            {
+                other.StopFollowing();
+            }
+        }
     }
 
     /// <summary>

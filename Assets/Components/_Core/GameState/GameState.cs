@@ -71,13 +71,7 @@ public class CurrentGameState {
 
     public Dictionary<string, List<SaveablePlacedObject>> placedObjectsByScene = new Dictionary<string, List<SaveablePlacedObject>>();
 
-    public Dictionary<string, List<Animal>> animals = new Dictionary<string, List<Animal>>
-    {
-        {"chickens", new List<Animal>()},
-        {"cows", new List<Animal>()},
-        {"sheep", new List<Animal>()},
-        {"pigs", new List<Animal>()}
-    };
+    public List<Animal> animals = new List<Animal>();
 
     public SaveableWindmill windmill;
 
@@ -98,6 +92,9 @@ public class CurrentGameState {
     private int totalAmount = 0;
 
     public Transform currentPlayerPosition;
+
+    public string followingNpcId = null; // NPC id to get from the DB and spawn in new scenes when following.
+    public string followingNpcInstanceId = null; // UniqueId of the specific scene instance; set for animals where multiple exist per scene
 
     public float timeLastItemDropped = 0;// used for making sure stack doesn't increase twice.
     public string idLastItemDropped = "";// used for making sure stack doesn't increase twice.

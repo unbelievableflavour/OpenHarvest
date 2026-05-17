@@ -38,11 +38,15 @@ public class NpcInteractionOption
 [CreateAssetMenu(fileName = "New Npc Interactable", menuName = "OpenHarvest/NPC/Interactable Definition", order = 0)]
 public class NpcInteractableDefinition : ScriptableObject
 {
+    [ReadOnly]
     [Tooltip("Stable identifier used to persist follow state across scenes. Auto-generated from npcName.")]
     public string npcId = "";
 
     [Tooltip("Display name of this character.")]
     public string npcName = "NPC";
+
+    [Tooltip("Prefab to spawn when this NPC needs to follow the player into a scene where they are not placed.")]
+    public GameObject prefab;
 
     [TextArea(1, 4)]
     [Tooltip("Optional line under the name; shown on the interaction panel and spoken when the panel opens (requires NPCVoice on this NPC).")]

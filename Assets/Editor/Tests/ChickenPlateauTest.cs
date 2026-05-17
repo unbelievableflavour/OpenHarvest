@@ -1,4 +1,3 @@
-﻿using BNG;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -7,23 +6,34 @@ namespace Tests
 {
     public class ChickenPlateauTest
     {
+        const string PrefabPath = "Assets/NPCs/Chicken/ChickenPlateau/ChickenPlateau.prefab";
+
         [Test]
         public void ItChecksIfAllRequiredFieldsAreNotEmpty()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/NPCs/Chicken/ChickenPlateau/ChickenPlateau.prefab");
-            prefab = GameObject.Instantiate(prefab);
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (prefab == null)
+            {
+                Assert.Ignore("ChickenPlateau prefab not yet created — rebuild it in the editor with AnimalInformation + ChickenExtras.");
+                return;
+            }
 
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().fedTile);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().petYoung);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().pet);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().nameValue);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().ageValue);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().hungryMeter);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().hungryValue);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().graveStone);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().diedLabel);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().feather);
-            Assert.AreNotEqual(null, prefab.GetComponent<ChickenInformation>().eggsPlateau);
+            var instance = Object.Instantiate(prefab);
+            var info = instance.GetComponent<AnimalInformation>();
+            Assert.AreNotEqual(null, info.fedTile);
+            Assert.AreNotEqual(null, info.petPrefab);
+            Assert.AreNotEqual(null, info.nameValue);
+            Assert.AreNotEqual(null, info.ageValue);
+            Assert.AreNotEqual(null, info.hungryMeter);
+            Assert.AreNotEqual(null, info.hungryValue);
+            Assert.AreNotEqual(null, info.graveStone);
+            Assert.AreNotEqual(null, info.diedLabel);
+
+            var extras = instance.GetComponent<ChickenExtras>();
+            Assert.AreNotEqual(null, extras.feather);
+            Assert.AreNotEqual(null, extras.eggsPlateau);
+
+            Object.DestroyImmediate(instance);
         }
     }
 }

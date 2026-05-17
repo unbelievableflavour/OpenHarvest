@@ -82,6 +82,66 @@ namespace Tests
             Assert.AreEqual(0, GameState.Instance.getTotalAmount());
         }
 
+        [Test]
+        public void FollowingNpcId_DefaultsToNull()
+        {
+            Assert.IsNull(GameState.Instance.followingNpcId);
+        }
+
+        [Test]
+        public void FollowingNpcId_IsClearedOnReset()
+        {
+            GameState.Instance.followingNpcId = "Jeff";
+
+            GameState.Reset();
+
+            Assert.IsNull(GameState.Instance.followingNpcId);
+        }
+
+        [Test]
+        public void FollowingNpcInstanceId_DefaultsToNull()
+        {
+            Assert.IsNull(GameState.Instance.followingNpcInstanceId);
+        }
+
+        [Test]
+        public void FollowingNpcInstanceId_IsClearedOnReset()
+        {
+            GameState.Instance.followingNpcInstanceId = "ranch_abc123";
+
+            GameState.Reset();
+
+            Assert.IsNull(GameState.Instance.followingNpcInstanceId);
+        }
+
+        [Test]
+        public void Animals_DefaultsToEmptyList()
+        {
+            Assert.IsNotNull(GameState.Instance.animals);
+            Assert.AreEqual(0, GameState.Instance.animals.Count);
+        }
+
+        [Test]
+        public void Animals_IsClearedOnReset()
+        {
+            GameState.Instance.animals.Add(new Animal { plateauInstanceId = "abc", name = "Bob" });
+
+            GameState.Reset();
+
+            Assert.AreEqual(0, GameState.Instance.animals.Count);
+        }
+
+        [Test]
+        public void Animals_CanAddAndFindByPlateauInstanceId()
+        {
+            var animal = new Animal { plateauInstanceId = "plateau_001", name = "Bessie" };
+            GameState.Instance.animals.Add(animal);
+
+            var found = GameState.Instance.animals.Find(a => a.plateauInstanceId == "plateau_001");
+
+            Assert.AreEqual("Bessie", found.name);
+        }
+
         [TearDown]
         public void Cleanup()
         {

@@ -6,6 +6,9 @@ public class SaveablePlacedObject
 {
     public string objectId;
 
+    [OptionalField]
+    public string instanceId;
+
     public float positionX;
     public float positionY;
     public float positionZ;

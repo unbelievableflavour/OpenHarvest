@@ -26,7 +26,7 @@ namespace Tests
             Assert.AreNotEqual(null, firstMesh.sharedMaterials[0]);
             Assert.AreNotEqual(null, firstMesh.sharedMesh);
 
-            Assert.AreNotEqual(null, animal.GetComponent<UniqueId>().uniqueId);
+            Assert.AreNotEqual(null, animal.GetComponent<DetermineModelByAge>());
             Assert.AreNotEqual(null, animal.GetComponent<ShavingController>().spawnEffect);
             Assert.AreNotEqual(null, animal.GetComponent<ShavingController>().wool1);
             Assert.AreNotEqual(null, animal.GetComponent<ShavingController>().wool2);
