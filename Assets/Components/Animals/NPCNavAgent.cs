@@ -374,6 +374,13 @@ public class NPCNavAgent : MonoBehaviour
         }
 
         Quaternion look = Quaternion.LookRotation(d.normalized, Vector3.up);
+
+        // Once close enough, stop tracking — prevents the UI from drifting as the player moves.
+        if (Quaternion.Angle(transform.rotation, look) < 5f)
+        {
+            return;
+        }
+
         transform.rotation = Quaternion.Slerp(
             transform.rotation,
             look,
