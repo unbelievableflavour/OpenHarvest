@@ -14,7 +14,10 @@ public class SaveGame
     public Dictionary<string, List<SaveableItem>> itemStashes;
     [OptionalField]
     public Dictionary<string, List<SaveablePlacedObject>> placedObjectsByScene;
-    public Dictionary<string, List<Animal>> animals;
+    [OptionalField]
+    public List<Animal> animalsList;
+    [OptionalField]
+    public Dictionary<string, List<Animal>> animals; // DEPRECATED — used for save migration only
     public Dictionary<string, ItemOfTheWeek> itemsOfTheWeek;
 
     public SaveableContractsOfTheWeek contractsOfTheWeek;

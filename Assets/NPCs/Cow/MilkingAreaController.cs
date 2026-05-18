@@ -23,7 +23,7 @@ public class MilkingAreaController : MonoBehaviour
 
     private void Start()
     {
-        uid = GetComponent<UniqueId>().uniqueId;
+        uid = GetComponentInParent<DetermineModelByAge>(true)?.plateauInstanceId ?? string.Empty;
         TimeController.Instance.ListenToDayChange(handleNewDayStarted);
 
         RespawningObject respawningObject = findRespawningObjectByUid(uid);

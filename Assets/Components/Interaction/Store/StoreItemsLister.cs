@@ -7,7 +7,6 @@ public class StoreItemsLister : MonoBehaviour
     public ViewSwitcher viewSwitcher;
     public StoreDetailPage storeDetailPage;
     public GameObject itemRowPrefab;
-    public GameObject animalRowPrefab;
     public GameObject decorationalButton;
     public GameObject functionalButton;
 
@@ -21,9 +20,7 @@ public class StoreItemsLister : MonoBehaviour
     private List<HarvestDataTypes.StoreProduct> decorationalItemsInStore = new List<HarvestDataTypes.StoreProduct>();
     private List<HarvestDataTypes.StoreProduct> functionalItemsInStore = new List<HarvestDataTypes.StoreProduct>();
 
-    public GameObject petInitialiser;
 
-    List<string> animalsList = new List<string>() { "Chicken", "Cow", "Pig", "Sheep" };
 
     //You gotta run this before a store is operatable
     public void SetupStore(NPCController npc)
@@ -89,19 +86,12 @@ public class StoreItemsLister : MonoBehaviour
                 continue;
             }
 
-            GameObject row = Instantiate(animalsList.Contains(product.id) ? animalRowPrefab : itemRowPrefab) as GameObject;
+            GameObject row = Instantiate(itemRowPrefab);
             row.SetActive(true);
             var text = row.GetComponentInChildren<Text>();
             text.text = product.displayName;
             row.transform.SetParent(scrollViewContent, false);
 
-            var animalRow = row.GetComponentInChildren<BuyAnimalController>();
-            if (animalRow)
-            {
-                animalRow.SetItem(product);
-                animalRow.SetItemLister(this);
-                continue;
-            }
             var itemRow = row.GetComponentInChildren<ItemRow>();
             itemRow.SetItem(product);
             itemRow.SetStoreItemsLister(this);
@@ -112,15 +102,7 @@ public class StoreItemsLister : MonoBehaviour
     {
         foreach (Transform item in scrollViewContent)
         {
-            var animalRow = item.GetComponentInChildren<BuyAnimalController>();
-            if (animalRow)
-            {
-                animalRow.Refresh();
-                continue;
-            }
-
-            var itemRow = item.GetComponentInChildren<ItemRow>();
-            itemRow.Refresh();
+            item.GetComponentInChildren<ItemRow>()?.Refresh();
         }
     }
 
@@ -159,9 +141,5 @@ public class StoreItemsLister : MonoBehaviour
         }
     }
 
-    public void InitialisePet(HarvestDataTypes.StoreProduct item)
-    {
-        petInitialiser.SetActive(true);
-        petInitialiser.GetComponent<PetInitialiser>().SetItem(item);
-    }
+
 }

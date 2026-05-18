@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class KeyboardController : MonoBehaviour
@@ -19,6 +20,8 @@ public class KeyboardController : MonoBehaviour
     private Color capsLockButtonImageBackupColor;
     private Color shiftButtonImageBackupColor;
 
+
+    public UnityEvent onSubmit;
 
     private Text submitField;
 
@@ -95,6 +98,7 @@ public class KeyboardController : MonoBehaviour
     {
         submitField.text = inputField.text.ToString();
         submitField = null;
+        onSubmit?.Invoke();
         Clear();
         this.gameObject.SetActive(false);
     }

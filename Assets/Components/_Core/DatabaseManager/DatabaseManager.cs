@@ -6,6 +6,7 @@ public class DatabaseManager : MonoBehaviour
 	public ContractDatabase contracts;
 	public ItemDatabase items;
     public QuestDatabase quests;
+    public NpcDatabase npcs;
     public PlaceableObjectDatabase placeableObjects;
     public UnlockableDatabase unlockables;
     public SceneDatabase scenes;

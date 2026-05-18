@@ -1140,7 +1140,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6903055086905299560}
-  - component: {fileID: 3492764645305691430}
   - component: {fileID: 2915054025239083130}
   m_Layer: 0
   m_Name: MilkingArea
@@ -1166,19 +1165,6 @@ Transform:
   - {fileID: 1079645996795450680}
   m_Father: {fileID: 6932206174574696445}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3492764645305691430
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6903055086905299561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03148f6b019b55d47a242a09d325ac56, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uniqueId: CowAnimated_483a09e0-4be8-4515-9671-d9efc0cfee31
 --- !u!114 &2915054025239083130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1210,8 +1196,8 @@ GameObject:
   - component: {fileID: 4400465183784335252}
   - component: {fileID: 6823717440059307546}
   - component: {fileID: 7949289872961362418}
-  - component: {fileID: 3027399146056689797}
   - component: {fileID: 2245459913976892859}
+  - component: {fileID: 4862177952084540985}
   m_Layer: 12
   m_Name: CowAnimated
   m_TagString: Untagged
@@ -1304,7 +1290,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 6932206174574696444}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 1.66
+  m_Radius: 1.45
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -1317,21 +1303,6 @@ NavMeshAgent:
   m_BaseOffset: 0.86
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &3027399146056689797
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6932206174574696444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a72d5bdb8c74222b071b9bc0c942053, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  definition: {fileID: 11400000, guid: 85a69b4ac084f40af9547c41120c4dfd, type: 2}
-  currentInteractionRoot: {fileID: 0}
-  maxDistance: 3
 --- !u!114 &2245459913976892859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1346,6 +1317,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handSlot: {fileID: 4389973917568487727}
   NPCAnimator: {fileID: 0}
+--- !u!114 &4862177952084540985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6932206174574696444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a72d5bdb8c74222b071b9bc0c942053, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  definition: {fileID: 11400000, guid: 85a69b4ac084f40af9547c41120c4dfd, type: 2}
+  currentInteractionRoot: {fileID: 0}
+  maxDistance: 3
 --- !u!1 &7664534480282358260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1694,7 +1680,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: a564d74d9fa308748a0591d826577211,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.33
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a564d74d9fa308748a0591d826577211,
         type: 3}

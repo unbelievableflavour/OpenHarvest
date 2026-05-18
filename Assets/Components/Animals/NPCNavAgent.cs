@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -68,8 +69,6 @@ public class NPCNavAgent : MonoBehaviour
         _defaultNavAgentSpeed = agent.speed;
         _defaultNavAgentAcceleration = agent.acceleration;
 
-        // NavMeshAgent writes to transform directly; any attached Rigidbody must be kinematic
-        // to avoid fighting the agent's position updates.
         if (TryGetComponent<Rigidbody>(out var rb))
         {
             rb.isKinematic = true;
@@ -95,8 +94,6 @@ public class NPCNavAgent : MonoBehaviour
             mainCam = Camera.main.transform;
         }
 
-        // Capture the anchor AFTER the agent has had a chance to snap onto the NavMesh;
-        // sampling a valid point avoids anchoring wander around a wall-edge snap position.
         Vector3 seed = transform.position;
         if (NavMesh.SamplePosition(seed, out var hit, 5f, NavMesh.AllAreas))
         {
@@ -109,6 +106,22 @@ public class NPCNavAgent : MonoBehaviour
         }
 
         nextWanderAt = Time.time + firstWanderDelay;
+
+        if (ShouldBeFollowing())
+        {
+            StartCoroutine(ResumeFollowOnStart());
+        }
+    }
+
+    IEnumerator ResumeFollowOnStart()
+    {
+        yield return null;
+
+        Transform player = ResolvePlayerFollowTarget();
+        if (player != null)
+        {
+            Follow(player);
+        }
     }
 
     protected virtual void Update()
@@ -123,8 +136,6 @@ public class NPCNavAgent : MonoBehaviour
             return;
         }
 
-        // Follow must not be blocked by activity culling (wander) or the agent never
-        // receives destinations / StartMoving() and the walk anim won't play while close.
         if (followTarget != null)
         {
             TickFollow();
@@ -251,15 +262,56 @@ public class NPCNavAgent : MonoBehaviour
         }
     }
 
-    /// <summary>Start following a target transform (e.g. the player).</summary>
+    public string GetNpcId()
+    {
+        string id = GetComponentInChildren<NpcProximityInteractable>(true)?.Definition?.npcId;
+        return string.IsNullOrWhiteSpace(id) ? gameObject.name : id;
+    }
+
+    private string GetPlateauInstanceId()
+    {
+        var animal = GetComponentInParent<AnimalInformation>(true);
+        if (animal != null) return animal.plateauInstanceId;
+        return GetComponentInParent<DetermineModelByAge>(true)?.plateauInstanceId;
+    }
+
+    private bool ShouldBeFollowing()
+    {
+        if (GameState.Instance?.followingNpcId != GetNpcId()) return false;
+
+        string trackedInstanceId = GameState.Instance?.followingNpcInstanceId;
+        if (string.IsNullOrEmpty(trackedInstanceId))
+        {
+            return true; // Unique NPC (Jeff, Santa) — no specific instance needed
+        }
+
+        // Animal follow: only the NPC whose plateauId matches the tracked instance should follow.
+        string myPlateauId = GetPlateauInstanceId();
+        return !string.IsNullOrEmpty(myPlateauId) && myPlateauId == trackedInstanceId;
+    }
+
+    /// <summary>Start following a target transform (e.g. the player).
+    /// Any other NPC that is currently following is automatically stopped first.</summary>
     public void Follow(Transform target)
     {
+        StopAnyOtherFollowingNpc();
+
         followTarget = target;
         nextFollowRefreshAt = 0f;
         if (agent != null)
         {
             agent.speed = FollowMoveSpeed;
             agent.acceleration = FollowAcceleration;
+        }
+
+        if (GameState.Instance != null)
+        {
+            GameState.Instance.followingNpcId = GetNpcId();
+            string myPlateauId = GetPlateauInstanceId();
+            if (!string.IsNullOrEmpty(myPlateauId))
+            {
+                GameState.Instance.followingNpcInstanceId = myPlateauId;
+            }
         }
     }
 
@@ -276,6 +328,24 @@ public class NPCNavAgent : MonoBehaviour
         spawnAnchor = transform.position;
         ScheduleNextWander();
         StopMoving();
+
+        if (GameState.Instance != null && GameState.Instance.followingNpcId == GetNpcId())
+        {
+            GameState.Instance.followingNpcId = null;
+            GameState.Instance.followingNpcInstanceId = null;
+        }
+    }
+
+    private void StopAnyOtherFollowingNpc()
+    {
+        var all = FindObjectsByType<NPCNavAgent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var other in all)
+        {
+            if (other != this && other.followTarget != null)
+            {
+                other.StopFollowing();
+            }
+        }
     }
 
     /// <summary>
@@ -316,6 +386,13 @@ public class NPCNavAgent : MonoBehaviour
         }
 
         Quaternion look = Quaternion.LookRotation(d.normalized, Vector3.up);
+
+        // Once close enough, stop tracking — prevents the UI from drifting as the player moves.
+        if (Quaternion.Angle(transform.rotation, look) < 5f)
+        {
+            return;
+        }
+
         transform.rotation = Quaternion.Slerp(
             transform.rotation,
             look,

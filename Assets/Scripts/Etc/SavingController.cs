@@ -30,7 +30,7 @@ public class SavingController : MonoBehaviour
         save.soilGrids = GameState.Instance.soilGrids;
         save.itemStashes = GameState.Instance.itemStashes;
         save.placedObjectsByScene = GameState.Instance.placedObjectsByScene;
-        save.animals = GameState.Instance.animals;
+        save.animalsList = GameState.Instance.animals;
         save.itemsOfTheWeek = GameState.Instance.itemsOfTheWeek;
         save.contractsOfTheWeek = GameState.Instance.contractsOfTheWeek.ToSaveable();
 
@@ -82,7 +82,7 @@ public class SavingController : MonoBehaviour
         GameState.Instance.soilGrids = save.soilGrids;
         GameState.Instance.itemStashes = save.itemStashes;
         GameState.Instance.placedObjectsByScene = save.placedObjectsByScene;
-        GameState.Instance.animals = save.animals;
+        GameState.Instance.animals = save.animalsList ?? new System.Collections.Generic.List<Animal>();
 
         GameState.Instance.itemsOfTheWeek = save.itemsOfTheWeek;
 
@@ -378,7 +378,7 @@ public class SavingController : MonoBehaviour
         //Migration to build 9
         if (save.buildNumber < 9)
         {
-            Debug.Log("Run migration for build 8 on save: " + saveNumber);
+            Debug.Log("Run migration for build 9 on save: " + saveNumber);
 
             save.settings["refreshRate"] = "0";
             save.settings["useFog"] = "false";

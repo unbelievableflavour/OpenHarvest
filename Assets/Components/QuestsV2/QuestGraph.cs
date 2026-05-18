@@ -8,6 +8,7 @@ using System.Text;
     order = 30)]
 public class QuestGraph : NodeGraph
 {
+    [ReadOnly]
     public string questId = "quest_id";
     public string displayName = "Quest";
     [Tooltip("Shared chat UI prefab for all chat nodes in this quest graph.")]
