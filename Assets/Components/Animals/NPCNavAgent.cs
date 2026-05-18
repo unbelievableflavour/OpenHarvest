@@ -107,12 +107,7 @@ public class NPCNavAgent : MonoBehaviour
 
         nextWanderAt = Time.time + firstWanderDelay;
 
-        // Resume following for unique NPCs (no instance tracked) or for freshly spawned animals
-        // (no plateau). Plateau-based animals whose model is hidden by AnimalInformation are
-        // already inactive, so their Start() won't run.
-        bool specificInstanceTracked = !string.IsNullOrEmpty(GameState.Instance?.followingNpcInstanceId);
-        bool hasPlateauId = !string.IsNullOrEmpty(GetPlateauInstanceId());
-        if (GameState.Instance?.followingNpcId == GetNpcId() && (!specificInstanceTracked || !hasPlateauId))
+        if (ShouldBeFollowing())
         {
             StartCoroutine(ResumeFollowOnStart());
         }
@@ -275,7 +270,24 @@ public class NPCNavAgent : MonoBehaviour
 
     private string GetPlateauInstanceId()
     {
-        return GetComponentInParent<AnimalInformation>(true)?.plateauInstanceId;
+        var animal = GetComponentInParent<AnimalInformation>(true);
+        if (animal != null) return animal.plateauInstanceId;
+        return GetComponentInParent<DetermineModelByAge>(true)?.plateauInstanceId;
+    }
+
+    private bool ShouldBeFollowing()
+    {
+        if (GameState.Instance?.followingNpcId != GetNpcId()) return false;
+
+        string trackedInstanceId = GameState.Instance?.followingNpcInstanceId;
+        if (string.IsNullOrEmpty(trackedInstanceId))
+        {
+            return true; // Unique NPC (Jeff, Santa) — no specific instance needed
+        }
+
+        // Animal follow: only the NPC whose plateauId matches the tracked instance should follow.
+        string myPlateauId = GetPlateauInstanceId();
+        return !string.IsNullOrEmpty(myPlateauId) && myPlateauId == trackedInstanceId;
     }
 
     /// <summary>Start following a target transform (e.g. the player).
