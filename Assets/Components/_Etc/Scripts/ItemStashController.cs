@@ -12,11 +12,16 @@ public class ItemStashController : MonoBehaviour
     public Transform inventorySlots;
     public string itemStashName;
 
+    [Tooltip("When enabled, uses the placed object's instance ID as the stash key so each placed copy has its own inventory.")]
+    public bool usePlaceableId = false;
+
     string[] itemsThatShouldNotBeSaved = new string[] { "Wallet", "Backpack", "BackpackBig", "Basket" };
     ItemDatabase itemDatabase;
+    string resolvedStashKey;
 
     void Start()
     {
+        ResolveStashKey();
         SceneSwitcher.Instance.beforeSceneSwitch += beforeSceneSwitch;
         LoadItemDatabase();
         LoadInventory();
@@ -144,14 +149,48 @@ public class ItemStashController : MonoBehaviour
         SetInGameState();
     }
 
+    private void ResolveStashKey()
+    {
+        if (!usePlaceableId)
+        {
+            resolvedStashKey = itemStashName;
+            return;
+        }
+
+        PlacedObjectInstanceId placedId = GetComponentInParent<PlacedObjectInstanceId>(true);
+        if (placedId != null && !string.IsNullOrEmpty(placedId.instanceId))
+        {
+            resolvedStashKey = placedId.instanceId;
+            return;
+        }
+
+        resolvedStashKey = itemStashName;
+    }
+
+    private string GetActiveStashKey()
+    {
+        if (!string.IsNullOrEmpty(resolvedStashKey))
+        {
+            return resolvedStashKey;
+        }
+
+        return itemStashName;
+    }
+
     private List<SaveableItem> GetFromGameState()
     {
-        return GameState.Instance.itemStashes[itemStashName];
+        string stashKey = GetActiveStashKey();
+        if (!GameState.Instance.itemStashes.TryGetValue(stashKey, out List<SaveableItem> items) || items == null)
+        {
+            return new List<SaveableItem>();
+        }
+
+        return items;
     }
 
     protected void SetInGameState()
     {
-        GameState.Instance.itemStashes[itemStashName] = storedItems;
+        GameState.Instance.itemStashes[GetActiveStashKey()] = storedItems;
     }
 
     protected void beforeSceneSwitch(object sender, EventArgs e)
