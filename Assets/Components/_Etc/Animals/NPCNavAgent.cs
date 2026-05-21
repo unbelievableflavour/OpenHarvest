@@ -27,6 +27,7 @@ public class NPCNavAgent : MonoBehaviour
     const float FollowRefreshInterval = 0.25f;
     const float FollowMoveSpeed = 5f;
     const float FollowAcceleration = 10f;
+    const float FollowSpawnBehindDistance = 2f;
 
     [Header("Animation")]
     public Animator animator;
@@ -48,6 +49,8 @@ public class NPCNavAgent : MonoBehaviour
     [Header("Follow")]
     [Tooltip("If set, the animal will follow this transform instead of wandering (speed/stop/refresh are fixed in code).")]
     public Transform followTarget;
+    [Tooltip("While following, warp near the player when horizontal distance exceeds this (e.g. after a scene load).")]
+    public float followCatchUpDistance = 30f;
 
     [Header("Activity Culling")]
     [Tooltip("Only move when the main camera is further away than this distance. Set to 0 to disable culling.")]
@@ -193,8 +196,19 @@ public class NPCNavAgent : MonoBehaviour
 
     void TickFollowState()
     {
+        if (followTarget == null)
+        {
+            return;
+        }
+
+        if (GetHorizontalDistanceToFollowTarget() > followCatchUpDistance)
+        {
+            RespawnNearFollowTarget();
+            return;
+        }
+
         EnsureAgent();
-        if (agent == null || followTarget == null)
+        if (agent == null)
         {
             return;
         }
@@ -210,7 +224,7 @@ public class NPCNavAgent : MonoBehaviour
         }
         nextFollowRefreshAt = Time.time + FollowRefreshInterval;
 
-        float distanceToTarget = Vector3.Distance(transform.position, followTarget.position);
+        float distanceToTarget = GetHorizontalDistanceToFollowTarget();
         if (distanceToTarget <= FollowStopDistance)
         {
             StopMoving();
@@ -423,6 +437,69 @@ public class NPCNavAgent : MonoBehaviour
         var animal = GetComponentInParent<AnimalInformation>(true);
         if (animal != null) return animal.plateauInstanceId;
         return GetComponentInParent<DetermineModelByAge>(true)?.plateauInstanceId;
+    }
+
+    float GetHorizontalDistanceToFollowTarget()
+    {
+        if (followTarget == null)
+        {
+            return float.MaxValue;
+        }
+
+        Vector3 from = transform.position;
+        Vector3 to = followTarget.position;
+        from.y = 0f;
+        to.y = 0f;
+        return Vector3.Distance(from, to);
+    }
+
+    void RespawnNearFollowTarget()
+    {
+        if (followTarget == null)
+        {
+            return;
+        }
+
+        Vector3 spawnPosition = followTarget.position;
+        Quaternion spawnRotation = followTarget.rotation;
+
+        Vector3 flatForward = followTarget.forward;
+        flatForward.y = 0f;
+        if (flatForward.sqrMagnitude > 0.0001f)
+        {
+            flatForward.Normalize();
+            Vector3 behind = followTarget.position - flatForward * FollowSpawnBehindDistance;
+            if (NavMesh.SamplePosition(behind, out NavMeshHit behindHit, 5f, NavMesh.AllAreas))
+            {
+                spawnPosition = behindHit.position;
+            }
+            else
+            {
+                spawnPosition = behind;
+            }
+        }
+
+        transform.SetPositionAndRotation(spawnPosition, spawnRotation);
+        spawnAnchor = spawnPosition;
+
+        EnsureAgent();
+        if (agent == null || !agent.isOnNavMesh)
+        {
+            nextFollowRefreshAt = 0f;
+            return;
+        }
+
+        Vector3 warpPosition = spawnPosition;
+        if (NavMesh.SamplePosition(spawnPosition, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+        {
+            warpPosition = hit.position;
+            spawnAnchor = hit.position;
+        }
+
+        agent.Warp(warpPosition);
+        agent.ResetPath();
+        agent.isStopped = false;
+        nextFollowRefreshAt = 0f;
     }
 
     private bool ShouldBeFollowing()
