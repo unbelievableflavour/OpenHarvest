@@ -46,6 +46,7 @@ namespace Tests
 
                 Assert.IsTrue(defaultEmitted);
                 Assert.AreEqual(playerGo.transform, nav.followTarget);
+                Assert.AreEqual(NPCNavAgent.NpcNavAgentState.Follow, nav.State);
             }
             finally
             {
@@ -72,6 +73,7 @@ namespace Tests
 
                 Assert.IsTrue(defaultEmitted);
                 Assert.IsNull(nav.followTarget);
+                Assert.AreEqual(NPCNavAgent.NpcNavAgentState.Idle, nav.State);
             }
             finally
             {

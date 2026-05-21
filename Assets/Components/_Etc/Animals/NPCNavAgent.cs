@@ -16,6 +16,13 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class NPCNavAgent : MonoBehaviour
 {
+    public enum NpcNavAgentState
+    {
+        Idle,
+        Follow,
+        Interact,
+    }
+
     const float FollowStopDistance = 2f;
     const float FollowRefreshInterval = 0.25f;
     const float FollowMoveSpeed = 5f;
@@ -50,24 +57,25 @@ public class NPCNavAgent : MonoBehaviour
     [Tooltip("How fast the NPC yaws toward the player while the interaction menu is open.")]
     [SerializeField] private float interactionAimRotationSpeed = 8f;
 
+    public NpcNavAgentState State { get; private set; } = NpcNavAgentState.Idle;
+
     NavMeshAgent agent;
     Transform mainCam;
     Vector3 spawnAnchor;
     float nextWanderAt;
     float nextFollowRefreshAt;
     bool isActive = true;
-    bool movementSuppressed;
-    Transform interactionAimTarget;
+    Quaternion? lockedInteractionAim;
+    bool interactionAimSettled;
     static NPCNavAgent s_activeInteractionNav;
-    bool _restoreNavAgentUpdateRotation;
+    bool _savedAgentRotationPreference;
+    bool _restoreNavAgentUpdateRotation = true;
     float _defaultNavAgentSpeed;
     float _defaultNavAgentAcceleration;
 
     protected virtual void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        _defaultNavAgentSpeed = agent.speed;
-        _defaultNavAgentAcceleration = agent.acceleration;
+        EnsureAgent();
 
         if (TryGetComponent<Rigidbody>(out var rb))
         {
@@ -75,16 +83,37 @@ public class NPCNavAgent : MonoBehaviour
         }
     }
 
+    void EnsureAgent()
+    {
+        if (agent != null)
+        {
+            return;
+        }
+
+        agent = GetComponent<NavMeshAgent>();
+        if (agent == null)
+        {
+            return;
+        }
+
+        _defaultNavAgentSpeed = agent.speed;
+        _defaultNavAgentAcceleration = agent.acceleration;
+    }
+
+    bool CanUseNavMeshPath()
+    {
+        EnsureAgent();
+        return agent != null && agent.isOnNavMesh;
+    }
+
     private void OnDestroy()
     {
         if (s_activeInteractionNav == this)
         {
             s_activeInteractionNav = null;
-            if (agent != null)
-            {
-                agent.updateRotation = _restoreNavAgentUpdateRotation;
-            }
         }
+
+        RestoreAgentRotation();
     }
 
     protected virtual void Start()
@@ -126,19 +155,78 @@ public class NPCNavAgent : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (interactionAimTarget != null)
+        switch (State)
         {
-            TickInteractionAim();
+            case NpcNavAgentState.Interact:
+                TickInteract();
+                return;
+            case NpcNavAgentState.Follow:
+                TickFollowState();
+                return;
+            case NpcNavAgentState.Idle:
+                TickIdle();
+                return;
         }
+    }
 
-        if (movementSuppressed)
+    void TickInteract()
+    {
+        if (interactionAimSettled || !lockedInteractionAim.HasValue)
         {
             return;
         }
 
-        if (followTarget != null)
+        Quaternion look = lockedInteractionAim.Value;
+
+        if (Quaternion.Angle(transform.rotation, look) < 5f)
         {
-            TickFollow();
+            transform.rotation = look;
+            interactionAimSettled = true;
+            return;
+        }
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            look,
+            Time.deltaTime * interactionAimRotationSpeed);
+    }
+
+    void TickFollowState()
+    {
+        EnsureAgent();
+        if (agent == null || followTarget == null)
+        {
+            return;
+        }
+
+        if (!CanUseNavMeshPath())
+        {
+            return;
+        }
+
+        if (Time.time < nextFollowRefreshAt)
+        {
+            return;
+        }
+        nextFollowRefreshAt = Time.time + FollowRefreshInterval;
+
+        float distanceToTarget = Vector3.Distance(transform.position, followTarget.position);
+        if (distanceToTarget <= FollowStopDistance)
+        {
+            StopMoving();
+            return;
+        }
+
+        StartMoving();
+        agent.stoppingDistance = FollowStopDistance;
+        agent.SetDestination(followTarget.position);
+    }
+
+    void TickIdle()
+    {
+        EnsureAgent();
+        if (agent == null || !CanUseNavMeshPath())
+        {
             return;
         }
 
@@ -148,7 +236,28 @@ public class NPCNavAgent : MonoBehaviour
             return;
         }
 
-        TickWander();
+        if (agent.pathPending)
+        {
+            return;
+        }
+
+        bool arrived = agent.remainingDistance <= agent.stoppingDistance + 0.05f;
+        if (!arrived)
+        {
+            return;
+        }
+
+        if (agent.hasPath || agent.velocity.sqrMagnitude > 0.01f)
+        {
+            StopMoving();
+        }
+
+        if (Time.time < nextWanderAt)
+        {
+            return;
+        }
+
+        PickNewWanderDestination();
     }
 
     void UpdateActiveState()
@@ -169,50 +278,6 @@ public class NPCNavAgent : MonoBehaviour
         {
             StopMoving();
         }
-    }
-
-    void TickWander()
-    {
-        if (agent.pathPending)
-        {
-            return;
-        }
-
-        bool arrived = agent.remainingDistance <= agent.stoppingDistance + 0.05f;
-        if (arrived)
-        {
-            if (agent.hasPath || agent.velocity.sqrMagnitude > 0.01f)
-            {
-                StopMoving();
-            }
-
-            if (Time.time < nextWanderAt)
-            {
-                return;
-            }
-
-            PickNewWanderDestination();
-        }
-    }
-
-    void TickFollow()
-    {
-        if (Time.time < nextFollowRefreshAt)
-        {
-            return;
-        }
-        nextFollowRefreshAt = Time.time + FollowRefreshInterval;
-
-        float distanceToTarget = Vector3.Distance(transform.position, followTarget.position);
-        if (distanceToTarget <= FollowStopDistance)
-        {
-            StopMoving();
-            return;
-        }
-
-        StartMoving();
-        agent.stoppingDistance = FollowStopDistance;
-        agent.SetDestination(followTarget.position);
     }
 
     void PickNewWanderDestination()
@@ -237,7 +302,8 @@ public class NPCNavAgent : MonoBehaviour
 
     void StartMoving()
     {
-        if (agent.isOnNavMesh && agent.isStopped)
+        EnsureAgent();
+        if (agent != null && agent.isOnNavMesh && agent.isStopped)
         {
             agent.isStopped = false;
         }
@@ -250,7 +316,8 @@ public class NPCNavAgent : MonoBehaviour
 
     void StopMoving()
     {
-        if (agent.isOnNavMesh)
+        EnsureAgent();
+        if (agent != null && agent.isOnNavMesh)
         {
             agent.ResetPath();
             agent.isStopped = true;
@@ -260,6 +327,89 @@ public class NPCNavAgent : MonoBehaviour
         {
             animator.Play(idleStateName);
         }
+    }
+
+    void SetState(NpcNavAgentState newState)
+    {
+        if (State == newState)
+        {
+            return;
+        }
+
+        OnExitState(State);
+        State = newState;
+        OnEnterState(newState);
+    }
+
+    void OnExitState(NpcNavAgentState exiting)
+    {
+        if (exiting != NpcNavAgentState.Interact)
+        {
+            return;
+        }
+
+        lockedInteractionAim = null;
+        interactionAimSettled = false;
+        RestoreAgentRotation();
+    }
+
+    void OnEnterState(NpcNavAgentState entering)
+    {
+        EnsureAgent();
+        if (agent == null)
+        {
+            return;
+        }
+
+        switch (entering)
+        {
+            case NpcNavAgentState.Interact:
+                DisableAgentRotation();
+                StopMoving();
+                break;
+            case NpcNavAgentState.Follow:
+                RestoreAgentRotation();
+                agent.speed = FollowMoveSpeed;
+                agent.acceleration = FollowAcceleration;
+                nextFollowRefreshAt = 0f;
+                break;
+            case NpcNavAgentState.Idle:
+                RestoreAgentRotation();
+                agent.speed = _defaultNavAgentSpeed;
+                agent.acceleration = _defaultNavAgentAcceleration;
+                break;
+        }
+    }
+
+    void DisableAgentRotation()
+    {
+        EnsureAgent();
+        if (agent == null || _savedAgentRotationPreference)
+        {
+            return;
+        }
+
+        _restoreNavAgentUpdateRotation = agent.updateRotation;
+        _savedAgentRotationPreference = true;
+        agent.updateRotation = false;
+    }
+
+    void RestoreAgentRotation()
+    {
+        if (!_savedAgentRotationPreference)
+        {
+            return;
+        }
+
+        EnsureAgent();
+        if (agent == null)
+        {
+            _savedAgentRotationPreference = false;
+            return;
+        }
+
+        agent.updateRotation = _restoreNavAgentUpdateRotation;
+        _savedAgentRotationPreference = false;
     }
 
     public string GetNpcId()
@@ -282,10 +432,9 @@ public class NPCNavAgent : MonoBehaviour
         string trackedInstanceId = GameState.Instance?.followingNpcInstanceId;
         if (string.IsNullOrEmpty(trackedInstanceId))
         {
-            return true; // Unique NPC (Jeff, Santa) — no specific instance needed
+            return true;
         }
 
-        // Animal follow: only the NPC whose plateauId matches the tracked instance should follow.
         string myPlateauId = GetPlateauInstanceId();
         return !string.IsNullOrEmpty(myPlateauId) && myPlateauId == trackedInstanceId;
     }
@@ -297,13 +446,6 @@ public class NPCNavAgent : MonoBehaviour
         StopAnyOtherFollowingNpc();
 
         followTarget = target;
-        nextFollowRefreshAt = 0f;
-        if (agent != null)
-        {
-            agent.speed = FollowMoveSpeed;
-            agent.acceleration = FollowAcceleration;
-        }
-
         if (GameState.Instance != null)
         {
             GameState.Instance.followingNpcId = GetNpcId();
@@ -313,27 +455,25 @@ public class NPCNavAgent : MonoBehaviour
                 GameState.Instance.followingNpcInstanceId = myPlateauId;
             }
         }
+
+        SetState(NpcNavAgentState.Follow);
     }
 
     /// <summary>Stop following and resume wandering around the current position.</summary>
     public void StopFollowing()
     {
         followTarget = null;
-        if (agent != null)
-        {
-            agent.speed = _defaultNavAgentSpeed;
-            agent.acceleration = _defaultNavAgentAcceleration;
-        }
-
-        spawnAnchor = transform.position;
-        ScheduleNextWander();
-        StopMoving();
 
         if (GameState.Instance != null && GameState.Instance.followingNpcId == GetNpcId())
         {
             GameState.Instance.followingNpcId = null;
             GameState.Instance.followingNpcInstanceId = null;
         }
+
+        spawnAnchor = transform.position;
+        ScheduleNextWander();
+        StopMoving();
+        SetState(NpcNavAgentState.Idle);
     }
 
     private void StopAnyOtherFollowingNpc()
@@ -348,55 +488,18 @@ public class NPCNavAgent : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// When true, navigation and wander/follow logic are frozen (e.g. while the player is
-    /// interacting). The agent stops on the NavMesh until released.
-    /// </summary>
-    public void SetMovementSuppressed(bool suppressed)
+    static bool TryComputeHorizontalLookRotation(Vector3 from, Vector3 lookAtPosition, out Quaternion rotation)
     {
-        if (movementSuppressed == suppressed)
-        {
-            return;
-        }
-
-        movementSuppressed = suppressed;
-        if (suppressed)
-        {
-            StopMoving();
-        }
-        else
-        {
-            nextWanderAt = Time.time + 0.25f;
-        }
-    }
-
-    void TickInteractionAim()
-    {
-        Transform t = interactionAimTarget;
-        if (t == null)
-        {
-            return;
-        }
-
-        Vector3 d = t.position - transform.position;
+        Vector3 d = lookAtPosition - from;
         d.y = 0f;
         if (d.sqrMagnitude < 0.0001f)
         {
-            return;
+            rotation = Quaternion.identity;
+            return false;
         }
 
-        Quaternion look = Quaternion.LookRotation(d.normalized, Vector3.up);
-
-        // Once close enough, stop tracking — prevents the UI from drifting as the player moves.
-        if (Quaternion.Angle(transform.rotation, look) < 5f)
-        {
-            return;
-        }
-
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            look,
-            Time.deltaTime * interactionAimRotationSpeed);
+        rotation = Quaternion.LookRotation(d.normalized, Vector3.up);
+        return true;
     }
 
     /// <summary>
@@ -411,17 +514,20 @@ public class NPCNavAgent : MonoBehaviour
         }
 
         s_activeInteractionNav = this;
-        interactionAimTarget = lookAt;
-        if (agent != null)
+        interactionAimSettled = false;
+        lockedInteractionAim = lookAt != null
+            && TryComputeHorizontalLookRotation(transform.position, lookAt.position, out Quaternion aim)
+            ? aim
+            : null;
+        if (!lockedInteractionAim.HasValue)
         {
-            _restoreNavAgentUpdateRotation = agent.updateRotation;
-            agent.updateRotation = false;
+            interactionAimSettled = true;
         }
 
-        SetMovementSuppressed(true);
+        SetState(NpcNavAgentState.Interact);
     }
 
-    /// <summary>Stop aiming and resume normal navigation.</summary>
+    /// <summary>Stop aiming and resume follow or idle navigation.</summary>
     public void EndInteractionAim()
     {
         if (s_activeInteractionNav == this)
@@ -429,13 +535,21 @@ public class NPCNavAgent : MonoBehaviour
             s_activeInteractionNav = null;
         }
 
-        interactionAimTarget = null;
-        if (agent != null)
+        if (State != NpcNavAgentState.Interact)
         {
-            agent.updateRotation = _restoreNavAgentUpdateRotation;
+            return;
         }
 
-        SetMovementSuppressed(false);
+        NpcNavAgentState resumeState = followTarget != null
+            ? NpcNavAgentState.Follow
+            : NpcNavAgentState.Idle;
+
+        if (resumeState == NpcNavAgentState.Idle)
+        {
+            nextWanderAt = Time.time + 0.25f;
+        }
+
+        SetState(resumeState);
     }
 
     public static void EndAnyInteractionAim()

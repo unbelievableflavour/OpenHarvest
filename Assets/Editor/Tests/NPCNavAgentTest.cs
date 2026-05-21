@@ -32,6 +32,7 @@ namespace Tests
             lookTargetGo.transform.position = new Vector3(0f, 0f, 5f);
 
             nav.BeginInteractionAim(lookTargetGo.transform);
+            Assert.AreEqual(NPCNavAgent.NpcNavAgentState.Interact, nav.State);
             lookTargetGo.transform.position = new Vector3(-5f, 0f, 0f);
 
             SimulateInteractionAimUntilSettled();
@@ -67,6 +68,7 @@ namespace Tests
             lookTargetGo.transform.position = new Vector3(0f, 0f, 5f);
             nav.BeginInteractionAim(lookTargetGo.transform);
             nav.EndInteractionAim();
+            Assert.AreEqual(NPCNavAgent.NpcNavAgentState.Idle, nav.State);
 
             Quaternion before = npcGo.transform.rotation;
             lookTargetGo.transform.position = new Vector3(-5f, 0f, 0f);
@@ -77,6 +79,33 @@ namespace Tests
             }
 
             Assert.Less(Quaternion.Angle(before, npcGo.transform.rotation), 1f);
+        }
+
+        [Test]
+        public void EndInteractionAim_WithoutBeginInteraction_DoesNotDisableAgentRotation()
+        {
+            var agent = npcGo.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            agent.updateRotation = true;
+
+            nav.EndInteractionAim();
+
+            Assert.IsTrue(agent.updateRotation);
+            Assert.AreEqual(NPCNavAgent.NpcNavAgentState.Idle, nav.State);
+        }
+
+        [Test]
+        public void Follow_EnablesAgentRotation_AfterInteract()
+        {
+            var agent = npcGo.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            lookTargetGo.transform.position = new Vector3(0f, 0f, 5f);
+            nav.BeginInteractionAim(lookTargetGo.transform);
+            Assert.IsFalse(agent.updateRotation);
+
+            nav.Follow(lookTargetGo.transform);
+            nav.EndInteractionAim();
+
+            Assert.IsTrue(agent.updateRotation);
+            Assert.AreEqual(NPCNavAgent.NpcNavAgentState.Follow, nav.State);
         }
 
         void SimulateInteractionAimUntilSettled()

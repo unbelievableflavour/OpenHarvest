@@ -298,7 +298,8 @@ public class InteractionUIController : MonoBehaviour
     }
 
 
-    private void OnGoodbyeClicked()
+    /// <summary>Leave the NPC interaction UI and return to the main gameplay view (same as Goodbye).</summary>
+    public void CloseToGameplay()
     {
         UIEventSender sender = uiEventSender != null
             ? uiEventSender
@@ -313,6 +314,11 @@ public class InteractionUIController : MonoBehaviour
         }
 
         OnGoodbye?.Invoke();
+    }
+
+    private void OnGoodbyeClicked()
+    {
+        CloseToGameplay();
     }
 
     public void ShowInstancedOptionContent(GameObject prefab)

@@ -6,7 +6,7 @@ using UnityEngine;
     order = 5)]
 public class NpcFollowToggleInteractionOptionAction : NpcInteractionOptionAction
 {
-    [SerializeField] private string followLabel = "Follow me";
+    [SerializeField] private string followLabel = "Follow";
     [SerializeField] private string stopFollowingLabel = "Stop following";
 
     public override bool IsValid(NpcInteractionOption option)
@@ -27,7 +27,7 @@ public class NpcFollowToggleInteractionOptionAction : NpcInteractionOptionAction
             return string.IsNullOrWhiteSpace(stopFollowingLabel) ? "Stop following" : stopFollowingLabel.Trim();
         }
 
-        return string.IsNullOrWhiteSpace(followLabel) ? "Follow me" : followLabel.Trim();
+        return string.IsNullOrWhiteSpace(followLabel) ? "Follow" : followLabel.Trim();
     }
 
     public override void Execute(
@@ -51,14 +51,16 @@ public class NpcFollowToggleInteractionOptionAction : NpcInteractionOptionAction
         {
             nav.StopFollowing();
         }
-        else if (t != null)
+        else if (t == null)
+        {
+            return;
+        }
+        else
         {
             nav.Follow(t);
         }
 
-        if (interactionUI != null && interactable.Definition != null)
-        {
-            interactionUI.SetDefinition(interactable.Definition, interactable);
-        }
+        nav.EndInteractionAim();
+        interactionUI?.CloseToGameplay();
     }
 }
