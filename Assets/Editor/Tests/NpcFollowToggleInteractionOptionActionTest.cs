@@ -7,6 +7,7 @@ namespace Tests
     {
         NpcFollowToggleInteractionOptionAction action;
         GameObject playerGo;
+        InteractionUIController interactionUI;
 
         [SetUp]
         public void SetUp()
@@ -14,14 +15,69 @@ namespace Tests
             GameState.Reset();
             action = ScriptableObject.CreateInstance<NpcFollowToggleInteractionOptionAction>();
             playerGo = new GameObject("Player");
+            GameState.Instance.currentPlayerPosition = playerGo.transform;
+
+            var uiGo = new GameObject("InteractionUI");
+            interactionUI = uiGo.AddComponent<InteractionUIController>();
         }
 
         [TearDown]
         public void Cleanup()
         {
             Object.DestroyImmediate(action);
+            Object.DestroyImmediate(interactionUI != null ? interactionUI.gameObject : null);
             Object.DestroyImmediate(playerGo);
             GameState.Reset();
+        }
+
+        [Test]
+        public void Execute_WhenStartingFollow_EmitsDefaultAndEndsInteractionAim()
+        {
+            var (nav, interactable) = CreateNpcSetup("Jeff");
+            EditModeLifecycle.InvokeAwake(nav);
+
+            bool defaultEmitted = false;
+            System.Action onDefault = () => defaultEmitted = true;
+            EventManager.Subscribe("default", onDefault);
+
+            try
+            {
+                action.Execute(interactionUI, interactable, new NpcInteractionOption());
+
+                Assert.IsTrue(defaultEmitted);
+                Assert.AreEqual(playerGo.transform, nav.followTarget);
+            }
+            finally
+            {
+                EventManager.Unsubscribe("default", onDefault);
+                Object.DestroyImmediate(nav.gameObject);
+            }
+        }
+
+        [Test]
+        public void Execute_WhenStoppingFollow_EmitsDefaultAndEndsInteractionAim()
+        {
+            var (nav, interactable) = CreateNpcSetup("Jeff");
+            EditModeLifecycle.InvokeAwake(nav);
+            nav.Follow(playerGo.transform);
+            nav.BeginInteractionAim(playerGo.transform);
+
+            bool defaultEmitted = false;
+            System.Action onDefault = () => defaultEmitted = true;
+            EventManager.Subscribe("default", onDefault);
+
+            try
+            {
+                action.Execute(interactionUI, interactable, new NpcInteractionOption());
+
+                Assert.IsTrue(defaultEmitted);
+                Assert.IsNull(nav.followTarget);
+            }
+            finally
+            {
+                EventManager.Unsubscribe("default", onDefault);
+                Object.DestroyImmediate(nav.gameObject);
+            }
         }
 
         // --- ResolveDisplayName ---
@@ -29,9 +85,10 @@ namespace Tests
         [Test]
         public void ResolveDisplayName_WhenInteractableIsNull_ReturnsFollowLabel()
         {
-            string label = action.ResolveDisplayName(new NpcInteractionOption(), null);
+            var option = new NpcInteractionOption { displayName = "" };
+            string label = action.ResolveDisplayName(option, null);
 
-            Assert.AreEqual("Follow me", label);
+            Assert.AreEqual("Follow", label);
         }
 
         [Test]
@@ -42,7 +99,7 @@ namespace Tests
 
             string label = action.ResolveDisplayName(new NpcInteractionOption(), interactable);
 
-            Assert.AreEqual("Follow me", label);
+            Assert.AreEqual("Follow", label);
 
             Object.DestroyImmediate(nav.gameObject);
         }
@@ -144,6 +201,7 @@ namespace Tests
         {
             var go = new GameObject(name);
             var nav = go.AddComponent<NPCNavAgent>();
+            EditModeLifecycle.InvokeAwake(nav);
             var interactable = go.AddComponent<NpcProximityInteractable>();
             return (nav, interactable);
         }

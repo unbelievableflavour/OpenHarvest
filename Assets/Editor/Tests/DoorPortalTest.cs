@@ -12,7 +12,7 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/DoorPortal/DoorPortal.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Etc/DoorPortal/DoorPortal.prefab");
             portal = GameObject.Instantiate(prefab);
         }
 

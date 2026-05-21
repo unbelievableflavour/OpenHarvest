@@ -11,7 +11,7 @@ namespace Crops
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Crops/Radish/Radish.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Etc/Crops/Radish/Radish.prefab");
             plant = GameObject.Instantiate(prefab);
         }
         [Test]

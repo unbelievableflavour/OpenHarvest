@@ -15,11 +15,11 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            var audioManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/AudioManager/AudioManager.prefab");
+            var audioManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Etc/AudioManager/AudioManager.prefab");
             audioManager = GameObject.Instantiate(audioManagerPrefab);
             AudioManager.Instance = audioManager.GetComponent<AudioManager>();
 
-            var patchPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Patch/Patch.prefab");
+            var patchPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Etc/Patch/Patch.prefab");
             var patch = GameObject.Instantiate(patchPrefab);
             soilBehaviour = patch.GetComponent<SoilBehaviour>();
             soilBehaviour.m_GrassTile = new GameObject();

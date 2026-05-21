@@ -6,7 +6,7 @@ namespace Tests
 {
     public class SheepPlateauTest
     {
-        const string PrefabPath = "Assets/NPCs/Sheep/SheepPlateau/SheepPlateau.prefab";
+        const string PrefabPath = "Assets/Components/PlaceableObjects/PlateauSheep/PlateauSheep.prefab";
 
         [Test]
         public void ItChecksIfAllRequiredFieldsAreNotEmpty()
@@ -19,7 +19,8 @@ namespace Tests
             }
 
             var instance = Object.Instantiate(prefab);
-            var info = instance.GetComponent<AnimalInformation>();
+            var info = instance.GetComponentInChildren<AnimalInformation>(true);
+            Assert.IsNotNull(info, "PlateauSheep is missing AnimalInformation.");
             Assert.AreNotEqual(null, info.fedTile);
             Assert.AreNotEqual(null, info.petPrefab);
             Assert.AreNotEqual(null, info.nameValue);

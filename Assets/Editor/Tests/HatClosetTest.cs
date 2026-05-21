@@ -13,7 +13,7 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/PlaceableObjects/HomeCloset/HomeCloset.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/PlaceableObjects/HomeCloset/HomeCloset.prefab");
             Assert.IsNotNull(prefab, "Hat closet prefab not found at expected path.");
             instantiatedPrefab = GameObject.Instantiate(prefab);
             Assert.IsNotNull(

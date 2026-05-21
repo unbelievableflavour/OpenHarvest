@@ -11,7 +11,7 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/CanvasGroupIndicator/CanvasGroupIndicator.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Etc/CanvasGroupIndicator/CanvasGroupIndicator.prefab");
             canvasGroup = GameObject.Instantiate(prefab);
         }
 

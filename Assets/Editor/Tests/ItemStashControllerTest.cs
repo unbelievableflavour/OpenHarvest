@@ -74,7 +74,11 @@ namespace Tests
 
             Assert.IsTrue(GameState.Instance.itemStashes.ContainsKey(PlaceableInstanceId));
             Assert.AreEqual("Carrot", GameState.Instance.itemStashes[PlaceableInstanceId][0].id);
-            Assert.IsFalse(GameState.Instance.itemStashes.ContainsKey("storageCrate"));
+            Assert.IsFalse(
+                GameState.Instance.itemStashes.TryGetValue("storageCrate", out List<SaveableItem> legacyStash)
+                && legacyStash != null
+                && legacyStash.Count > 0
+                && legacyStash[0].id == "Carrot");
         }
 
         [Test]

@@ -12,7 +12,7 @@ namespace Player
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Player/PC/PCController.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Etc/Player/PC/PCController.prefab");
             Assert.IsNotNull(prefab, "PC player prefab not found at expected path.");
             player = GameObject.Instantiate(prefab);
         }

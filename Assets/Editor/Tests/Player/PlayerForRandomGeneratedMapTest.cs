@@ -13,7 +13,7 @@ namespace Player
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Player/PlayerForRandomGeneratedMap.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Etc/Player/PlayerForRandomGeneratedMap.prefab");
             player = GameObject.Instantiate(prefab);
             xrRigAdvanced = player.transform.Find("XR Rig Advanced");
         }
