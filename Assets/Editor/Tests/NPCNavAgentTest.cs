@@ -109,6 +109,19 @@ namespace Tests
         }
 
         [Test]
+        public void TickFollowState_RespawnsAtFollowTargetHeight()
+        {
+            nav.followCatchUpDistance = 10f;
+            lookTargetGo.transform.position = new Vector3(50f, 12f, 0f);
+            npcGo.transform.position = Vector3.zero;
+            nav.Follow(lookTargetGo.transform);
+
+            EditModeLifecycle.InvokeMethod(nav, "TickFollowState");
+
+            Assert.AreEqual(12f, npcGo.transform.position.y, 0.01f);
+        }
+
+        [Test]
         public void Follow_EnablesAgentRotation_AfterInteract()
         {
             var agent = npcGo.GetComponent<UnityEngine.AI.NavMeshAgent>();

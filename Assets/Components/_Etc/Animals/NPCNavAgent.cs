@@ -28,6 +28,7 @@ public class NPCNavAgent : MonoBehaviour
     const float FollowMoveSpeed = 5f;
     const float FollowAcceleration = 10f;
     const float FollowSpawnBehindDistance = 2f;
+    const float FollowCatchUpNavMeshSampleRadius = 8f;
 
     [Header("Animation")]
     public Animator animator;
@@ -453,6 +454,29 @@ public class NPCNavAgent : MonoBehaviour
         return Vector3.Distance(from, to);
     }
 
+    Vector3 GetCatchUpSpawnPosition()
+    {
+        float playerY = followTarget.position.y;
+        Vector3 spawnPosition = followTarget.position;
+
+        Vector3 flatForward = followTarget.forward;
+        flatForward.y = 0f;
+        if (flatForward.sqrMagnitude > 0.0001f)
+        {
+            flatForward.Normalize();
+            spawnPosition = followTarget.position - flatForward * FollowSpawnBehindDistance;
+        }
+
+        spawnPosition.y = playerY;
+
+        if (NavMesh.SamplePosition(spawnPosition, out NavMeshHit hit, FollowCatchUpNavMeshSampleRadius, NavMesh.AllAreas))
+        {
+            spawnPosition = new Vector3(hit.position.x, playerY, hit.position.z);
+        }
+
+        return spawnPosition;
+    }
+
     void RespawnNearFollowTarget()
     {
         if (followTarget == null)
@@ -460,24 +484,8 @@ public class NPCNavAgent : MonoBehaviour
             return;
         }
 
-        Vector3 spawnPosition = followTarget.position;
+        Vector3 spawnPosition = GetCatchUpSpawnPosition();
         Quaternion spawnRotation = followTarget.rotation;
-
-        Vector3 flatForward = followTarget.forward;
-        flatForward.y = 0f;
-        if (flatForward.sqrMagnitude > 0.0001f)
-        {
-            flatForward.Normalize();
-            Vector3 behind = followTarget.position - flatForward * FollowSpawnBehindDistance;
-            if (NavMesh.SamplePosition(behind, out NavMeshHit behindHit, 5f, NavMesh.AllAreas))
-            {
-                spawnPosition = behindHit.position;
-            }
-            else
-            {
-                spawnPosition = behind;
-            }
-        }
 
         transform.SetPositionAndRotation(spawnPosition, spawnRotation);
         spawnAnchor = spawnPosition;
@@ -489,14 +497,7 @@ public class NPCNavAgent : MonoBehaviour
             return;
         }
 
-        Vector3 warpPosition = spawnPosition;
-        if (NavMesh.SamplePosition(spawnPosition, out NavMeshHit hit, 5f, NavMesh.AllAreas))
-        {
-            warpPosition = hit.position;
-            spawnAnchor = hit.position;
-        }
-
-        agent.Warp(warpPosition);
+        agent.Warp(spawnPosition);
         agent.ResetPath();
         agent.isStopped = false;
         nextFollowRefreshAt = 0f;
