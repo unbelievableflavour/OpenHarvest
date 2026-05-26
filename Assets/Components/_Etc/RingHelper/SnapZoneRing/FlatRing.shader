@@ -11,71 +11,83 @@ Shader "Custom/FlatRing"
     }
     SubShader
     {
-        Tags { "Queue"="Transparent" "RenderType"="Transparent" }
+        Tags
+        {
+            "Queue" = "Overlay"
+            "RenderType" = "Transparent"
+            "RenderPipeline" = "UniversalPipeline"
+        }
         Blend SrcAlpha OneMinusSrcAlpha
         Cull Off
         ZWrite Off
+        ZTest Always
 
         Pass
         {
-            CGPROGRAM
+            Name "FlatRingForward"
+            Tags { "LightMode" = "UniversalForward" }
+
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_instancing
-            #include "UnityCG.cginc"
 
-            UNITY_INSTANCING_BUFFER_START(Props)
-            UNITY_INSTANCING_BUFFER_END(Props)
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            fixed4 _Color;
-            half   _Opacity;
-            half   _Radius;
-            half   _Thickness;
-            float  _FadeStart;
-            float  _FadeEnd;
+            CBUFFER_START(UnityPerMaterial)
+                half4 _Color;
+                half _Opacity;
+                half _Radius;
+                half _Thickness;
+                float _FadeStart;
+                float _FadeEnd;
+            CBUFFER_END
 
-            struct appdata
+            struct Attributes
             {
-                float4 vertex : POSITION;
-                float2 uv     : TEXCOORD0;
+                float4 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
-            struct v2f
+            struct Varyings
             {
-                float4 pos : SV_POSITION;
-                float2 uv  : TEXCOORD0;
-                half fade  : TEXCOORD1;
+                float4 positionHCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                half fade : TEXCOORD1;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
-            v2f vert(appdata v)
+            Varyings vert(Attributes input)
             {
-                v2f o;
-                UNITY_SETUP_INSTANCE_ID(v);
-                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                Varyings output;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-                o.pos = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv - 0.5;
+                float3 center = TransformObjectToWorld(float3(0, 0, 0));
+                output.positionHCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.uv = input.uv - 0.5;
 
-                float3 center = mul(unity_ObjectToWorld, float4(0, 0, 0, 1)).xyz;
-                half camDist = distance(center, _WorldSpaceCameraPos);
-                o.fade = 1 - saturate((camDist - _FadeStart) / (_FadeEnd - _FadeStart));
+                float camDist = distance(center, GetCameraPositionWS());
+                output.fade = 1 - saturate((camDist - _FadeStart) / (_FadeEnd - _FadeStart));
 
-                return o;
+                return output;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            half4 frag(Varyings input) : SV_Target
             {
-                UNITY_SETUP_INSTANCE_ID(i);
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                half dist = length(i.uv);
+                half dist = length(input.uv);
                 half ring = step(dist, _Radius + _Thickness)
                          * step(_Radius - _Thickness, dist);
 
-                return fixed4(_Color.rgb, _Color.a * _Opacity * ring * i.fade);
+                return half4(_Color.rgb, _Color.a * _Opacity * ring * input.fade);
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }

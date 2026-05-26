@@ -4,6 +4,7 @@ Shader "Custom/BillboardRing"
     {
         _Color      ("Ring Color", Color) = (1, 0.85, 0, 1)
         _Opacity    ("Opacity", Range(0, 1)) = 1
+        _WorldHalfExtent ("World Half Extent (m)", Float) = 0.1
         _Radius     ("Radius", Range(0.1, 0.5)) = 0.4
         _Thickness  ("Thickness", Range(0.005, 0.15)) = 0.04
         _FadeStart  ("Fade Start Dist", Float) = 10
@@ -11,89 +12,95 @@ Shader "Custom/BillboardRing"
     }
     SubShader
     {
-        Tags { "Queue"="Transparent" "RenderType"="Transparent"
-               "DisableBatching"="True" }
+        Tags
+        {
+            "Queue" = "Overlay"
+            "RenderType" = "Transparent"
+            "RenderPipeline" = "UniversalPipeline"
+            "DisableBatching" = "True"
+        }
         Blend SrcAlpha OneMinusSrcAlpha
         Cull Off
         ZWrite Off
+        ZTest Always
 
         Pass
         {
-            CGPROGRAM
+            Name "BillboardRingForward"
+            Tags { "LightMode" = "UniversalForward" }
+
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_instancing
-            #include "UnityCG.cginc"
+            #pragma multi_compile_fog
 
-            UNITY_INSTANCING_BUFFER_START(Props)
-            UNITY_INSTANCING_BUFFER_END(Props)
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            fixed4 _Color;
-            half   _Opacity;
-            half   _Radius;
-            half   _Thickness;
-            float  _FadeStart;
-            float  _FadeEnd;
+            CBUFFER_START(UnityPerMaterial)
+                half4 _Color;
+                half _Opacity;
+                float _WorldHalfExtent;
+                half _Radius;
+                half _Thickness;
+                float _FadeStart;
+                float _FadeEnd;
+            CBUFFER_END
 
-            struct appdata
+            struct Attributes
             {
-                float4 vertex : POSITION;
-                float2 uv     : TEXCOORD0;
+                float4 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
-            struct v2f
+            struct Varyings
             {
-                float4 pos : SV_POSITION;
-                float2 uv  : TEXCOORD0;
-                half fade  : TEXCOORD1;
+                float4 positionHCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                half fade : TEXCOORD1;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
-            v2f vert(appdata v)
+            Varyings vert(Attributes input)
             {
-                v2f o;
-                UNITY_SETUP_INSTANCE_ID(v);
-                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                Varyings output;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-                // World-space center of this object
-                float3 center = mul(unity_ObjectToWorld,
-                                    float4(0,0,0,1)).xyz;
-
-                // Camera-aligned axes
+                float3 center = TransformObjectToWorld(float3(0, 0, 0));
                 float3 camRight = UNITY_MATRIX_V[0].xyz;
-                float3 camUp    = UNITY_MATRIX_V[1].xyz;
+                float3 camUp = UNITY_MATRIX_V[1].xyz;
 
-                // Respect object scale
-                float2 scale = float2(
-                    length(unity_ObjectToWorld[0].xyz),
-                    length(unity_ObjectToWorld[1].xyz));
-
+                // Unity quad verts are +/-0.5; size comes from material, not transform scale.
+                float worldQuadScale = _WorldHalfExtent / 0.5;
                 float3 worldPos = center
-                    + camRight * v.vertex.x * scale.x
-                    + camUp    * v.vertex.y * scale.y;
+                    + camRight * input.positionOS.x * worldQuadScale
+                    + camUp * input.positionOS.y * worldQuadScale;
 
-                o.pos = mul(UNITY_MATRIX_VP, float4(worldPos, 1));
-                o.uv  = v.uv - 0.5; // center UVs at origin
+                output.positionHCS = TransformWorldToHClip(worldPos);
+                output.uv = input.uv - 0.5;
 
-                // Distance fade — computed per vertex (4 per quad), nearly free
-                half camDist = distance(center, _WorldSpaceCameraPos);
-                o.fade = 1 - saturate((camDist - _FadeStart) / (_FadeEnd - _FadeStart));
+                float camDist = distance(center, GetCameraPositionWS());
+                output.fade = 1 - saturate((camDist - _FadeStart) / (_FadeEnd - _FadeStart));
 
-                return o;
+                return output;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            half4 frag(Varyings input) : SV_Target
             {
-                UNITY_SETUP_INSTANCE_ID(i);
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                half dist = length(i.uv);
+                half dist = length(input.uv);
                 half ring = step(dist, _Radius + _Thickness)
                          * step(_Radius - _Thickness, dist);
 
-                return fixed4(_Color.rgb, _Color.a * _Opacity * ring * i.fade);
+                return half4(_Color.rgb, _Color.a * _Opacity * ring * input.fade);
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }

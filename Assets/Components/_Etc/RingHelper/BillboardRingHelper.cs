@@ -7,7 +7,7 @@ using BNG;
 /// </summary>
 public class BillboardRingHelper : MonoBehaviour
 {
-    static readonly int ColorId = Shader.PropertyToID("_Color");
+    static readonly int WorldHalfExtentId = Shader.PropertyToID("_WorldHalfExtent");
     static readonly int OpacityId = Shader.PropertyToID("_Opacity");
 
     [Tooltip("The Grabbable Object to Observe")]
@@ -16,39 +16,20 @@ public class BillboardRingHelper : MonoBehaviour
     [Tooltip("(Optional) If specified, the ring helper will only be valid if this Grabpoint is the nearest on the grabbable object")]
     public GrabPoint Grabpoint;
 
-    [Tooltip("Default Color of the ring")]
-    public Color RingColor = Color.white;
-
-    [Tooltip("Color to use if selected by primary controller")]
-    public Color RingSelectedColor = Color.white;
-
-    [Tooltip("Color to use if selected by secondary controller")]
-    public Color RingSecondarySelectedColor = Color.white;
-
-    [Tooltip("Legacy canvas scaler value — higher = smaller ring. 1500 matches old default.")]
-    public float ringSizeInRange = 1500f;
-
-    [Tooltip("Legacy canvas scaler value when grabbable — lower = larger ring. 1100 matches old default.")]
-    public float ringSizeGrabbable = 1100f;
-
-    [Tooltip("Don't show grab rings if left and right controllers / grabbers are holding something")]
-    public bool HideIfHandsAreFull = true;
-
     [Tooltip("How fast to lerp the opacity if being hidden / shown")]
     public float RingFadeSpeed = 5;
 
     MeshRenderer meshRenderer;
-    Transform ringVisual;
     MaterialPropertyBlock propertyBlock;
 
     Grabber leftGrabber;
     Grabber rightGrabber;
 
-    float initialOpacity;
+    float baseWorldHalfExtent;
+    float maxOpacity;
     float currentOpacity;
 
     Transform mainCam;
-    Vector3 baseRingScale = Vector3.one;
 
     void Start()
     {
@@ -66,15 +47,30 @@ public class BillboardRingHelper : MonoBehaviour
             return;
         }
 
-        ringVisual = meshRenderer.transform;
-        baseRingScale = ringVisual.localScale;
         propertyBlock = new MaterialPropertyBlock();
+        CacheMaterialDefaults(meshRenderer.sharedMaterial);
 
-        initialOpacity = RingColor.a;
         currentOpacity = 0f;
         SetRendererVisible(false);
 
         AssignGrabbers();
+    }
+
+    void CacheMaterialDefaults(Material material)
+    {
+        if (material == null)
+        {
+            baseWorldHalfExtent = 0.1f;
+            maxOpacity = 1f;
+            return;
+        }
+
+        baseWorldHalfExtent = material.HasProperty(WorldHalfExtentId)
+            ? material.GetFloat(WorldHalfExtentId)
+            : 0.1f;
+        maxOpacity = material.HasProperty(OpacityId)
+            ? material.GetFloat(OpacityId)
+            : material.color.a;
     }
 
     void Update()
@@ -108,34 +104,16 @@ public class BillboardRingHelper : MonoBehaviour
 
         if (!showRing)
         {
-            FadeOut();
+            FadeOut(false);
             return;
         }
 
-        bool isClosest = grabbable.GetClosestGrabber() != null && grabbable.IsGrabbable();
-        Grabber closestGrabber = grabbable.GetClosestGrabber();
-        Color displayColor = BillboardRingHelperLogic.GetDisplayColor(
-            isClosest,
-            closestGrabber,
-            RingColor,
-            RingSelectedColor,
-            RingSecondarySelectedColor);
-
-        float legacySize = isClosest ? ringSizeGrabbable : ringSizeInRange;
-        float uniformScale = BillboardRingHelperLogic.ScaleFromLegacyRingSize(legacySize);
-        ringVisual.localScale = baseRingScale * uniformScale;
-
-        FadeIn();
-        ApplyVisuals(displayColor, currentOpacity);
+        bool isTargetedGrabbable = BillboardRingHelperLogic.IsTargetedGrabbable(grabbable);
+        FadeIn(isTargetedGrabbable);
     }
 
     bool AreHandsFull()
     {
-        if (!HideIfHandsAreFull)
-        {
-            return false;
-        }
-
         if (leftGrabber == null || rightGrabber == null)
         {
             return false;
@@ -154,22 +132,23 @@ public class BillboardRingHelper : MonoBehaviour
         return !leftGrabber.FreshGrip && !rightGrabber.FreshGrip;
     }
 
-    void FadeIn()
+    void FadeIn(bool isTargetedGrabbable)
     {
         SetRendererVisible(true);
         currentOpacity = BillboardRingHelperLogic.StepFadeOpacity(
             currentOpacity,
-            initialOpacity,
+            maxOpacity,
             RingFadeSpeed,
             Time.deltaTime,
             fadingIn: true);
+        ApplyVisuals(currentOpacity, isTargetedGrabbable);
     }
 
-    void FadeOut()
+    void FadeOut(bool isTargetedGrabbable)
     {
         currentOpacity = BillboardRingHelperLogic.StepFadeOpacity(
             currentOpacity,
-            initialOpacity,
+            maxOpacity,
             RingFadeSpeed,
             Time.deltaTime,
             fadingIn: false);
@@ -182,15 +161,16 @@ public class BillboardRingHelper : MonoBehaviour
         }
 
         SetRendererVisible(true);
-        ApplyVisuals(RingColor, currentOpacity);
+        ApplyVisuals(currentOpacity, isTargetedGrabbable);
     }
 
-    void ApplyVisuals(Color displayColor, float opacity)
+    void ApplyVisuals(float opacity, bool isTargetedGrabbable)
     {
         meshRenderer.GetPropertyBlock(propertyBlock);
-        Color shaderColor = displayColor;
-        shaderColor.a = 1f;
-        propertyBlock.SetColor(ColorId, shaderColor);
+        float extent = BillboardRingHelperLogic.GetWorldHalfExtent(
+            baseWorldHalfExtent,
+            isTargetedGrabbable);
+        propertyBlock.SetFloat(WorldHalfExtentId, extent);
         propertyBlock.SetFloat(OpacityId, opacity);
         meshRenderer.SetPropertyBlock(propertyBlock);
     }
@@ -249,8 +229,7 @@ public class BillboardRingHelper : MonoBehaviour
 /// </summary>
 public static class BillboardRingHelperLogic
 {
-    const float LegacyReferenceSize = 1500f;
-    const float BaseRingScale = 0.15f;
+    const float TargetedExtentMultiplier = 1.12f;
 
     public static bool ShouldShowRing(bool handsFull, float distanceToCamera, float remoteGrabDistance)
     {
@@ -262,24 +241,24 @@ public static class BillboardRingHelperLogic
         return distanceToCamera <= remoteGrabDistance;
     }
 
-    public static Color GetDisplayColor(
-        bool isClosestGrabbable,
-        Grabber closestGrabber,
-        Color ringColor,
-        Color ringSelectedColor,
-        Color ringSecondarySelectedColor)
+    public static bool IsTargetedGrabbable(Grabbable grabbable)
     {
-        if (!isClosestGrabbable)
+        if (grabbable == null)
         {
-            return ringColor;
+            return false;
         }
 
-        if (closestGrabber != null && closestGrabber.HandSide == ControllerHand.Left)
+        return grabbable.GetClosestGrabber() != null && grabbable.IsGrabbable();
+    }
+
+    public static float GetWorldHalfExtent(float baseExtent, bool isTargetedGrabbable)
+    {
+        if (!isTargetedGrabbable)
         {
-            return ringSecondarySelectedColor;
+            return baseExtent;
         }
 
-        return ringSelectedColor;
+        return baseExtent * TargetedExtentMultiplier;
     }
 
     public static float StepFadeOpacity(
@@ -297,15 +276,5 @@ public static class BillboardRingHelperLogic
 
         float faded = currentOpacity - deltaTime * fadeSpeed;
         return Mathf.Max(faded, 0f);
-    }
-
-    public static float ScaleFromLegacyRingSize(float legacyRingSize)
-    {
-        if (legacyRingSize <= 0f)
-        {
-            return BaseRingScale;
-        }
-
-        return BaseRingScale * (LegacyReferenceSize / legacyRingSize);
     }
 }

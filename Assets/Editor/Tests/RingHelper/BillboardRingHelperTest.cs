@@ -1,6 +1,4 @@
-using BNG;
 using NUnit.Framework;
-using UnityEngine;
 
 namespace Tests
 {
@@ -40,38 +38,23 @@ namespace Tests
         }
 
         [Test]
-        public void GetDisplayColor_UsesRingColorWhenNotClosest()
+        public void GetWorldHalfExtent_UsesMultiplierWhenTargeted()
         {
-            Color ring = Color.yellow;
-            Color selected = Color.red;
-            Color secondary = Color.blue;
+            float result = BillboardRingHelperLogic.GetWorldHalfExtent(
+                baseExtent: 0.1f,
+                isTargetedGrabbable: true);
 
-            Color result = BillboardRingHelperLogic.GetDisplayColor(
-                isClosestGrabbable: false,
-                closestGrabber: null,
-                ring,
-                selected,
-                secondary);
-
-            Assert.AreEqual(ring, result);
+            Assert.AreEqual(0.112f, result, 0.0001f);
         }
 
         [Test]
-        public void GetDisplayColor_UsesSecondaryWhenClosestGrabberIsLeft()
+        public void GetWorldHalfExtent_UsesBaseWhenNotTargeted()
         {
-            var grabberObject = new GameObject("LeftGrabber");
-            var grabber = grabberObject.AddComponent<Grabber>();
-            grabber.HandSide = ControllerHand.Left;
+            float result = BillboardRingHelperLogic.GetWorldHalfExtent(
+                baseExtent: 0.1f,
+                isTargetedGrabbable: false);
 
-            Color result = BillboardRingHelperLogic.GetDisplayColor(
-                isClosestGrabbable: true,
-                closestGrabber: grabber,
-                Color.white,
-                Color.red,
-                Color.blue);
-
-            Object.DestroyImmediate(grabberObject);
-            Assert.AreEqual(Color.blue, result);
+            Assert.AreEqual(0.1f, result, 0.0001f);
         }
 
         [Test]
@@ -98,23 +81,6 @@ namespace Tests
                 fadingIn: false);
 
             Assert.AreEqual(0f, result, 0.0001f);
-        }
-
-        [Test]
-        public void ScaleFromLegacyRingSize_MatchesOldCanvasDefaults()
-        {
-            float inRange = BillboardRingHelperLogic.ScaleFromLegacyRingSize(1500f);
-            float grabbable = BillboardRingHelperLogic.ScaleFromLegacyRingSize(1100f);
-
-            Assert.AreEqual(0.15f, inRange, 0.0001f);
-            Assert.Greater(grabbable, inRange);
-        }
-
-        [Test]
-        public void ScaleFromLegacyRingSize_UsesBaseScaleWhenLegacySizeInvalid()
-        {
-            float result = BillboardRingHelperLogic.ScaleFromLegacyRingSize(0f);
-            Assert.AreEqual(0.15f, result, 0.0001f);
         }
     }
 }
