@@ -42,7 +42,7 @@ namespace BNG {
 
         public bool DisableColliders = true;
         List<Collider> disabledColliders = new List<Collider>();
-        List<RingHelper> disabledRingHelpers = new List<RingHelper>();
+        List<GameObject> disabledRingHelpers = new List<GameObject>();
 
         [Tooltip("If true the item inside the SnapZone will be duplicated, instead of removed, from the SnapZone.")]
         public bool DuplicateItemOnGrab = false;
@@ -369,9 +369,15 @@ namespace BNG {
             }
 
             //START_CUSTOM
-            disabledRingHelpers = grab.GetComponentsInChildren<RingHelper>(false).ToList();
-            foreach(RingHelper ringHelper in disabledRingHelpers) {
-                ringHelper.gameObject.SetActive(false);
+            disabledRingHelpers.Clear();
+            foreach (RingHelper ringHelper in grab.GetComponentsInChildren<RingHelper>(false)) {
+                disabledRingHelpers.Add(ringHelper.gameObject);
+            }
+            foreach (BillboardRingHelper ringHelper in grab.GetComponentsInChildren<BillboardRingHelper>(false)) {
+                disabledRingHelpers.Add(ringHelper.gameObject);
+            }
+            foreach (GameObject ringHelperObject in disabledRingHelpers) {
+                ringHelperObject.SetActive(false);
             }
             //END_CUSTOM
 
@@ -469,9 +475,10 @@ namespace BNG {
             disabledColliders = null;
 
             //START_CUSTOM
-            foreach(RingHelper ringHelper in disabledRingHelpers) {
-                ringHelper.gameObject.SetActive(true);
+            foreach (GameObject ringHelperObject in disabledRingHelpers) {
+                ringHelperObject.SetActive(true);
             }
+            disabledRingHelpers.Clear();
             //END_CUSTOM
 
             // Reset Kinematic status
