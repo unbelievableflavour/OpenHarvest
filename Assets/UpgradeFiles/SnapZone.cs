@@ -38,6 +38,13 @@ namespace BNG {
         /// </summary>
         [Tooltip("Multiply Item Scale times this when in snap zone.")]
         public float ScaleItem = 1f;
+
+        /// <summary>
+        /// When true, only <see cref="ScaleItem"/> applies. When false, <see cref="SnapZoneScale"/> on the held item multiplies <see cref="ScaleItem"/>.
+        /// </summary>
+        [Tooltip("When enabled, only Scale Item applies (e.g. full-size display). Otherwise item SnapZoneScale multiplies Scale Item.")]
+        public bool UseZoneScaleOnly = false;
+
         private float _scaleTo;
 
         public bool DisableColliders = true;
@@ -118,12 +125,7 @@ namespace BNG {
                 GrabGrabbable(HeldItem);
             }
 
-            //START_CUSTOM
-            if (HeldItem && HeldItem.GetComponent<SnapZoneScale>())
-            {
-                _scaleTo = HeldItem.GetComponent<SnapZoneScale>().Scale;
-            }
-            //END_CUSTOM
+            RefreshScaleTarget(HeldItem);
         }
 
         void Update() {
@@ -303,14 +305,7 @@ namespace BNG {
             // Set the parent of the object 
             grab.transform.parent = transform;
 
-            // Set scale factor            
-            // Use SnapZoneScale if specified
-            if (grab.GetComponent<SnapZoneScale>()) {
-                _scaleTo = grab.GetComponent<SnapZoneScale>().Scale;
-            }
-            else {
-                _scaleTo = ScaleItem;
-            }
+            RefreshScaleTarget(grab);
 
             // Is there an offset to apply?
             SnapZoneOffset off = grab.GetComponent<SnapZoneOffset>();
@@ -519,6 +514,18 @@ namespace BNG {
             }
 
             HeldItem = null;
+        }
+
+        void RefreshScaleTarget(Grabbable grab) {
+            float? itemScale = null;
+            if (grab != null) {
+                SnapZoneScale itemSnapZoneScale = grab.GetComponent<SnapZoneScale>();
+                if (itemSnapZoneScale != null) {
+                    itemScale = itemSnapZoneScale.Scale;
+                }
+            }
+
+            _scaleTo = SnapZoneHeldScaleLogic.ResolveMultiplier(ScaleItem, UseZoneScaleOnly, itemScale);
         }
     }
 }
