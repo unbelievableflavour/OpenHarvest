@@ -161,9 +161,11 @@ namespace Items
                 }
 
                 GameObject spawnedItem = Definitions.InstantiateItemNew(item.prefab);
-                RingHelper[] ringHelpers = spawnedItem.GetComponentsInChildren<RingHelper>();
+                BillboardRingHelper[] billboardRingHelpers = spawnedItem.GetComponentsInChildren<BillboardRingHelper>();
+                RingHelper[] canvasRingHelpers = spawnedItem.GetComponentsInChildren<RingHelper>();
                 GrabbableRingHelper[] grabbableRingHelpers = spawnedItem.GetComponentsInChildren<GrabbableRingHelper>();
-                Assert.AreEqual(true, ringHelpers.Length > 0, "Invalid RingHelper count for item: " + spawnedItem.transform.name);
+                bool hasRingIndicator = billboardRingHelpers.Length > 0 || canvasRingHelpers.Length > 0;
+                Assert.AreEqual(true, hasRingIndicator, "Invalid ring indicator count for item: " + spawnedItem.transform.name);
                 Assert.AreEqual(0, grabbableRingHelpers.Length, "Invalid GrabbableRingHelper count for item: " + spawnedItem.transform.name);
                 Object.DestroyImmediate(spawnedItem);
             }

@@ -15,7 +15,7 @@ namespace Player
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/Player/NewCustomPlayerAdvanced Variant.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Etc/Player/NewCustomPlayerAdvanced Variant.prefab");
             player = GameObject.Instantiate(prefab);
             xrRigAdvanced = player.transform.Find("XR Rig Advanced");
         }

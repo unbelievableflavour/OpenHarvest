@@ -11,7 +11,7 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/BreakableTree/BreakableTree2.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Etc/BreakableTree/BreakableTree2.prefab");
             breakable = GameObject.Instantiate(prefab);
         }
 

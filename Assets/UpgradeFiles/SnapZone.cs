@@ -38,11 +38,18 @@ namespace BNG {
         /// </summary>
         [Tooltip("Multiply Item Scale times this when in snap zone.")]
         public float ScaleItem = 1f;
+
+        /// <summary>
+        /// When true, only <see cref="ScaleItem"/> applies. When false, <see cref="SnapZoneScale"/> on the held item multiplies <see cref="ScaleItem"/>.
+        /// </summary>
+        [Tooltip("When enabled, only Scale Item applies (e.g. full-size display). Otherwise item SnapZoneScale multiplies Scale Item.")]
+        public bool UseZoneScaleOnly = false;
+
         private float _scaleTo;
 
         public bool DisableColliders = true;
         List<Collider> disabledColliders = new List<Collider>();
-        List<RingHelper> disabledRingHelpers = new List<RingHelper>();
+        List<GameObject> disabledRingHelpers = new List<GameObject>();
 
         [Tooltip("If true the item inside the SnapZone will be duplicated, instead of removed, from the SnapZone.")]
         public bool DuplicateItemOnGrab = false;
@@ -118,12 +125,7 @@ namespace BNG {
                 GrabGrabbable(HeldItem);
             }
 
-            //START_CUSTOM
-            if (HeldItem && HeldItem.GetComponent<SnapZoneScale>())
-            {
-                _scaleTo = HeldItem.GetComponent<SnapZoneScale>().Scale;
-            }
-            //END_CUSTOM
+            RefreshScaleTarget(HeldItem);
         }
 
         void Update() {
@@ -303,14 +305,7 @@ namespace BNG {
             // Set the parent of the object 
             grab.transform.parent = transform;
 
-            // Set scale factor            
-            // Use SnapZoneScale if specified
-            if (grab.GetComponent<SnapZoneScale>()) {
-                _scaleTo = grab.GetComponent<SnapZoneScale>().Scale;
-            }
-            else {
-                _scaleTo = ScaleItem;
-            }
+            RefreshScaleTarget(grab);
 
             // Is there an offset to apply?
             SnapZoneOffset off = grab.GetComponent<SnapZoneOffset>();
@@ -369,9 +364,15 @@ namespace BNG {
             }
 
             //START_CUSTOM
-            disabledRingHelpers = grab.GetComponentsInChildren<RingHelper>(false).ToList();
-            foreach(RingHelper ringHelper in disabledRingHelpers) {
-                ringHelper.gameObject.SetActive(false);
+            disabledRingHelpers.Clear();
+            foreach (RingHelper ringHelper in grab.GetComponentsInChildren<RingHelper>(false)) {
+                disabledRingHelpers.Add(ringHelper.gameObject);
+            }
+            foreach (BillboardRingHelper ringHelper in grab.GetComponentsInChildren<BillboardRingHelper>(false)) {
+                disabledRingHelpers.Add(ringHelper.gameObject);
+            }
+            foreach (GameObject ringHelperObject in disabledRingHelpers) {
+                ringHelperObject.SetActive(false);
             }
             //END_CUSTOM
 
@@ -469,9 +470,10 @@ namespace BNG {
             disabledColliders = null;
 
             //START_CUSTOM
-            foreach(RingHelper ringHelper in disabledRingHelpers) {
-                ringHelper.gameObject.SetActive(true);
+            foreach (GameObject ringHelperObject in disabledRingHelpers) {
+                ringHelperObject.SetActive(true);
             }
+            disabledRingHelpers.Clear();
             //END_CUSTOM
 
             // Reset Kinematic status
@@ -512,6 +514,18 @@ namespace BNG {
             }
 
             HeldItem = null;
+        }
+
+        void RefreshScaleTarget(Grabbable grab) {
+            float? itemScale = null;
+            if (grab != null) {
+                SnapZoneScale itemSnapZoneScale = grab.GetComponent<SnapZoneScale>();
+                if (itemSnapZoneScale != null) {
+                    itemScale = itemSnapZoneScale.Scale;
+                }
+            }
+
+            _scaleTo = SnapZoneHeldScaleLogic.ResolveMultiplier(ScaleItem, UseZoneScaleOnly, itemScale);
         }
     }
 }

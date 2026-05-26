@@ -10,7 +10,7 @@ namespace Tests
         public void ItChecksIfAllRequiredFieldsAreNotEmpty()
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-                "Assets/Components/Interfaces/RecipesUI/RecipeUI.prefab");
+                "Assets/Components/_Etc/Interfaces/RecipesUI/RecipeUI.prefab");
 
             prefab = GameObject.Instantiate(prefab);
 

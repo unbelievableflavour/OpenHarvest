@@ -6,7 +6,7 @@ namespace Tests
 {
     public class ChickenPlateauTest
     {
-        const string PrefabPath = "Assets/NPCs/Chicken/ChickenPlateau/ChickenPlateau.prefab";
+        const string PrefabPath = "Assets/Components/PlaceableObjects/PlateauChicken/PlateauChicken.prefab";
 
         [Test]
         public void ItChecksIfAllRequiredFieldsAreNotEmpty()
@@ -19,7 +19,8 @@ namespace Tests
             }
 
             var instance = Object.Instantiate(prefab);
-            var info = instance.GetComponent<AnimalInformation>();
+            var info = instance.GetComponentInChildren<AnimalInformation>(true);
+            Assert.IsNotNull(info, "PlateauChicken is missing AnimalInformation.");
             Assert.AreNotEqual(null, info.fedTile);
             Assert.AreNotEqual(null, info.petPrefab);
             Assert.AreNotEqual(null, info.nameValue);
@@ -29,7 +30,8 @@ namespace Tests
             Assert.AreNotEqual(null, info.graveStone);
             Assert.AreNotEqual(null, info.diedLabel);
 
-            var extras = instance.GetComponent<ChickenExtras>();
+            var extras = instance.GetComponentInChildren<ChickenExtras>(true);
+            Assert.IsNotNull(extras, "PlateauChicken is missing ChickenExtras.");
             Assert.AreNotEqual(null, extras.feather);
             Assert.AreNotEqual(null, extras.eggsPlateau);
 

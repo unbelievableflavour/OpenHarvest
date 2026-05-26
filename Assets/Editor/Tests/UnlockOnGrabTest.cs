@@ -9,7 +9,7 @@ namespace Tests
 {
     public class UnlockOnGrabTest
     {
-        string resourcePath = "Assets/Items/HatChicken/HatChicken.prefab";
+        string resourcePath = "Assets/Components/Items/HatChicken/HatChicken.prefab";
         HarvestDataTypes.Item item;
         string itemId = "HatChicken";
         Grabber fakeGrabber = null;

@@ -119,7 +119,7 @@ namespace Tests
         // }
         // void StartDatabaseManager()
         // {
-        //     var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ScriptableObjects/Databases/DatabaseManager/DatabaseManager.prefab");
+        //     var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Components/_Core/DatabaseManager/DatabaseManager.prefab");
         //     databaseManager = GameObject.Instantiate(prefab);
         //     DatabaseManager.Instance = databaseManager.GetComponent<DatabaseManager>();
         // }
